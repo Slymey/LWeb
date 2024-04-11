@@ -39,8 +39,6 @@ public class Parser {
         //s=" uiun=oino ounm ljn= \"ibu\" onm = 'tz tzm' nim ==imk";
         //s="<zib  j.ubnm ibn.ob=oubn.in.khb.ib. ubn>";
         
-        
-        
         Pair<String[], TokenType[]> t = tokenize(s);
         sopl(ats(t.getFirst()));
         sopl(ats(t.getSecond()));
