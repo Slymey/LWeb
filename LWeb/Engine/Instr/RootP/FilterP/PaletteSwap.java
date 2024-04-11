@@ -1,0 +1,73 @@
+package Engine.Instr.RootP.FilterP;
+
+import Common.Color;
+import static Common.Common.byteToInt;
+import Common.Counter;
+import Common.Pair;
+import Engine.Core;
+import Common.Range.Range;
+import java.awt.image.BufferedImage;
+import java.util.AbstractMap;
+import java.util.Arrays;
+
+public class PaletteSwap {
+    public static Runnable getInst(byte o[], Counter i){
+        int id = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+        int index = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+        return () -> {
+            Color cc = new Color();
+            Pair<Integer, Integer> pair[]=(Pair<Integer, Integer>[]) Core.resources.get(index).get();
+            BufferedImage bi=Core.buffers.get(id);
+            int prev = bi.getRGB(0, 0);
+            final int prev_f=prev;
+            int prevc = Arrays.binarySearch(pair, null, 
+                               (Pair<Integer, Integer> c1, Pair<Integer, Integer> c2)->{
+                return c1.getFirst()-prev_f;
+            });
+            //itterate every pixel and b-search colors
+            if(pair.length<16){
+                for(int bw:new Range(0,bi.getWidth()-1)){
+                    for(int bh:new Range(0,bi.getHeight()-1)){
+                        int c = bi.getRGB(bw, bh);
+                        if(prev==c){
+                            bi.setRGB(bw, bh, prevc);
+                        }else{
+                            int ind = Arrays.binarySearch(pair, null, 
+                                       (Pair<Integer, Integer> c1, Pair<Integer, Integer> c2)->{
+                                return c1.getFirst()-c;
+                            });
+                            if(ind>=0){
+                                prev=c;
+                                prevc=pair[ind].getSecond();
+                                bi.setRGB(bw, bh, prevc);
+                            }
+                        }
+                    }
+                }
+            }else{
+                Pair<Integer, Integer> cache[] = new Pair[64];
+                for(int bw:new Range(0,bi.getWidth()-1)){
+                    for(int bh:new Range(0,bi.getHeight()-1)){
+                        int c = bi.getRGB(bw, bh);
+                        boolean in=false;//integrate prev
+                        cc.set(c);
+                        int indp = (cc.R * 3 + cc.G * 5 + cc.B * 7 + cc.A * 11)&0x40;
+                        if(cache[indp]==null){in=true;}else if(cache[indp].getFirst()!=c){in=true;}
+                        if(in){
+                            int ind = Arrays.binarySearch(pair, null, 
+                                   (Pair<Integer, Integer> c1, Pair<Integer, Integer> c2)->{
+                                return c1.getFirst()-c;
+                            });
+                            if(ind>=0){
+                                cache[indp]=pair[ind];
+                                bi.setRGB(bw, bh, pair[ind].getSecond());
+                            }
+                        }else{
+                            bi.setRGB(bw, bh, cache[indp].getSecond());
+                        }
+                    }
+                }
+            }
+        }; 
+    }
+}
