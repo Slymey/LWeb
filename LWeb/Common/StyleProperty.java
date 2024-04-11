@@ -1,8 +1,8 @@
 
 
-package Common;
+package LWeb.Common;
 
-import static Common.Common.inList;
+import static LWeb.Common.Common.inList;
 import java.util.HashMap;
 import java.util.function.BiFunction;
 import java.util.logging.Level;

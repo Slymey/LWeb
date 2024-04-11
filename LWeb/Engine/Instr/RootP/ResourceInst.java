@@ -1,12 +1,12 @@
 
-package Engine.Instr.RootP;
+package LWeb.Engine.Instr.RootP;
 
-import static Common.Common.byteToInt;
-import static Common.Common.sg;
-import Common.Counter;
-import Common.Pair;
-import Engine.Core;
-import Engine.Instr.RootP.ResourceP.*;
+import static LWeb.Common.Common.byteToInt;
+import static LWeb.Common.Common.sg;
+import LWeb.Common.Counter;
+import LWeb.Common.Pair;
+import LWeb.Engine.Core;
+import LWeb.Engine.Instr.RootP.ResourceP.*;
 import java.util.function.Supplier;
 
 public class ResourceInst {

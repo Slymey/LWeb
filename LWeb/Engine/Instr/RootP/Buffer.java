@@ -1,9 +1,9 @@
-package Engine.Instr.RootP;
+package LWeb.Engine.Instr.RootP;
 
-import static Common.Common.byteToInt;
-import Common.Counter;
-import Engine.Core;
-import Common.Range.Range;
+import static LWeb.Common.Common.byteToInt;
+import LWeb.Common.Counter;
+import LWeb.Engine.Core;
+import LWeb.Common.Range.Range;
 import java.awt.image.BufferedImage;
 import static java.awt.image.BufferedImage.TYPE_INT_ARGB;
 

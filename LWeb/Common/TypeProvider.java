@@ -1,8 +1,8 @@
 
-package Common;
+package LWeb.Common;
 
-import static Common.Color.Color;
-import static Common.Common.*;
+import static LWeb.Common.Color.Color;
+import static LWeb.Common.Common.*;
 import java.util.HashMap;
 
 public interface TypeProvider{

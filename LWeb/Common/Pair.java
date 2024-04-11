@@ -1,4 +1,4 @@
-package Common;
+package LWeb.Common;
 
 import java.util.Map;
 //from SimpleEntry

@@ -1,6 +1,6 @@
-package Common;
+package LWeb.Common;
 
-import static Common.EllClass.Activity.*;
+import static LWeb.Common.EllClass.Activity.*;
 
 
 public class EllClass {

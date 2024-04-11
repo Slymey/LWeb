@@ -1,11 +1,11 @@
-package Common;
+package LWeb.Common;
 
-import Common.EllClass.Activity;
-import static Common.EllClass.Activity.*;
-import Compiler.Parser;
-import Compiler.Parser.TokenType;
-import static Compiler.Parser.TokenType.*;
-import static Compiler.Parser.tokenize;
+import LWeb.Common.EllClass.Activity;
+import static LWeb.Common.EllClass.Activity.*;
+import LWeb.Compiler.Parser;
+import LWeb.Compiler.Parser.TokenType;
+import static LWeb.Compiler.Parser.TokenType.*;
+import static LWeb.Compiler.Parser.tokenize;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.HashMap;

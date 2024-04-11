@@ -1,11 +1,11 @@
-package Engine;
+package LWeb.Engine;
 
-import static Common.Common.byteToInt;
-import static Common.Common.sopl;
-import Common.Counter;
-import Common.DynArray.DynArray;
-import Engine.Instr.Root;
-import Engine.Instr.RootP.ResourceP.Resource;
+import static LWeb.Common.Common.byteToInt;
+import static LWeb.Common.Common.sopl;
+import LWeb.Common.Counter;
+import LWeb.Common.DynArray.DynArray;
+import LWeb.Engine.Instr.Root;
+import LWeb.Engine.Instr.RootP.ResourceP.Resource;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.Method;
 import java.util.ArrayList;

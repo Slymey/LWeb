@@ -1,10 +1,10 @@
-package Engine.Instr.RootP.ResourceP;
+package LWeb.Engine.Instr.RootP.ResourceP;
 
-import static Common.Common.byteToInt;
-import Common.Counter;
-import Common.Pair;
-import static Common.Pair.Pair;
-import static Engine.Core.*;
+import static LWeb.Common.Common.byteToInt;
+import LWeb.Common.Counter;
+import LWeb.Common.Pair;
+import static LWeb.Common.Pair.Pair;
+import static LWeb.Engine.Core.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Arrays;

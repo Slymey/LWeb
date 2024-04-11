@@ -1,12 +1,12 @@
-package Compiler;
+package LWeb.Compiler;
 
 
-import static Common.Common.*;
-import Common.*;
-import static Common.Pair.Pair;
-import static Compiler.Parser.ell;
-import static Compiler.Parser.group;
-import static Compiler.Parser.tokenize;
+import static LWeb.Common.Common.*;
+import LWeb.Common.*;
+import static LWeb.Common.Pair.Pair;
+import static LWeb.Compiler.Parser.ell;
+import static LWeb.Compiler.Parser.group;
+import static LWeb.Compiler.Parser.tokenize;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;

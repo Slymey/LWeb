@@ -1,14 +1,14 @@
-package Engine.Instr.RootP;
+package LWeb.Engine.Instr.RootP;
 
-import Common.Color;
-import static Common.Color.color;
-import Common.Common;
-import static Common.Common.*;
-import static Common.Common.clamp;
-import Common.Counter;
-import Engine.Core;
-import Engine.Util.ColorMixers;
-import Common.Range.Range;
+import LWeb.Common.Color;
+import static LWeb.Common.Color.color;
+import LWeb.Common.Common;
+import static LWeb.Common.Common.*;
+import static LWeb.Common.Common.clamp;
+import LWeb.Common.Counter;
+import LWeb.Engine.Core;
+import LWeb.Engine.Util.ColorMixers;
+import LWeb.Common.Range.Range;
 import java.awt.image.BufferedImage;
 import java.util.function.BiFunction;
 

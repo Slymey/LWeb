@@ -1,8 +1,8 @@
 
-package Common;
+package LWeb.Common;
 
-import static Common.Common.inList;
-import static Common.Common.intToByte;
+import static LWeb.Common.Common.inList;
+import static LWeb.Common.Common.intToByte;
 
 public class Color {
     public int A;

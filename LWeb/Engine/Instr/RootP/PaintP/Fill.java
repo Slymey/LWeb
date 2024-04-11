@@ -1,9 +1,9 @@
-package Engine.Instr.RootP.PaintP;
+package LWeb.Engine.Instr.RootP.PaintP;
 
-import static Common.Common.sg;
-import Common.Counter;
+import static LWeb.Common.Common.sg;
+import LWeb.Common.Counter;
 import java.util.function.Supplier;
-import Engine.Instr.RootP.PaintP.FillP.*;
+import LWeb.Engine.Instr.RootP.PaintP.FillP.*;
 
 public class Fill {
     public static Runnable getInst(byte o[], Counter i){

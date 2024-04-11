@@ -1,7 +1,7 @@
-package Common;
+package LWeb.Common;
 
-import static Common.Common.sg;
-import Common.StyleProperty.Property;
+import static LWeb.Common.Common.sg;
+import LWeb.Common.StyleProperty.Property;
 import java.util.HashMap;
 import java.util.function.Consumer;
 

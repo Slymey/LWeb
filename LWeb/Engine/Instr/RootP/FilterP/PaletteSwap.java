@@ -1,11 +1,11 @@
-package Engine.Instr.RootP.FilterP;
+package LWeb.Engine.Instr.RootP.FilterP;
 
-import Common.Color;
-import static Common.Common.byteToInt;
-import Common.Counter;
-import Common.Pair;
-import Engine.Core;
-import Common.Range.Range;
+import LWeb.Common.Color;
+import static LWeb.Common.Common.byteToInt;
+import LWeb.Common.Counter;
+import LWeb.Common.Pair;
+import LWeb.Engine.Core;
+import LWeb.Common.Range.Range;
 import java.awt.image.BufferedImage;
 import java.util.AbstractMap;
 import java.util.Arrays;

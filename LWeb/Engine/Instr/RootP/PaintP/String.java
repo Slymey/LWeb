@@ -1,9 +1,9 @@
-package Engine.Instr.RootP.PaintP;
+package LWeb.Engine.Instr.RootP.PaintP;
 
-import static Common.Common.byteToInt;
-import static Common.Common.sopl;
-import Common.Counter;
-import Engine.Core;
+import static LWeb.Common.Common.byteToInt;
+import static LWeb.Common.Common.sopl;
+import LWeb.Common.Counter;
+import LWeb.Engine.Core;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;

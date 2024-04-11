@@ -1,4 +1,4 @@
-package Common;
+package LWeb.Common;
 
 //from SimpleEntry
 public class Triple<K,V,T>{

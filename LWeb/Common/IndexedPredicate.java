@@ -1,6 +1,6 @@
-package Common;
+package LWeb.Common;
 
-import static Common.Pair.Pair;
+import static LWeb.Common.Pair.Pair;
 import java.util.Objects;
 
 @FunctionalInterface

@@ -1,10 +1,10 @@
-package Common;
+package LWeb.Common;
 
 
-import static Common.Pair.Pair;
-import static Common.Triple.*;
-import Main.*;
-import Common.Range.Range;
+import static LWeb.Common.Pair.Pair;
+import static LWeb.Common.Triple.*;
+import LWeb.Compiler.Main.*;
+import LWeb.Common.Range.Range;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;

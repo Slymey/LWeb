@@ -1,5 +1,5 @@
 
-package Common;
+package LWeb.Common;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

@@ -1,7 +1,7 @@
-package Common;
+package LWeb.Common;
 
-import static Common.Common.*;
-import Common.StyleProperty.Property;
+import static LWeb.Common.Common.*;
+import LWeb.Common.StyleProperty.Property;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.function.BiFunction;

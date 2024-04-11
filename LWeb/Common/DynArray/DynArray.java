@@ -1,4 +1,4 @@
-package Common.DynArray;
+package LWeb.Common.DynArray;
 import java.util.Arrays;
 
 public class DynArray<T>{
