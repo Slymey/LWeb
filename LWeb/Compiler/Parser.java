@@ -12,6 +12,7 @@ import static LWeb.Common.Pair.Pair;
 import LWeb.Common.Tree;
 import static LWeb.Compiler.Parser.TokenType.*;
 import LWeb.Common.Range.Range;
+import LWeb.Common.Tree.Node;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -21,6 +22,7 @@ import java.util.stream.Stream;
 public class Parser {
     public enum TokenType{WHITESPACE, TEXT, NUMBER, OTHER, SL_COMMENT, ML_COMMENT, SQ_STRING, DQ_STRING, 
         OPEN_ANGLE, CLOSE_ANGLE, EQUALS, PERCENT, AMPERSANT,PERIOD, FWDSLASH, BCKSLASH, SINGLEQUOTE, DOUBLEQUOTE, STAR, EKMARK, DASH}
+    public static final String[] auto_closing={"p","br","hr","img","!--","input","meta","link"};
     public static final Range rangeA_Z = new Range('A','Z');
     public static final Range rangea_z = new Range('a','z');
     public static final Range range0_9 = new Range('0','9');
@@ -47,6 +49,8 @@ public class Parser {
         sopl(ats(t.getSecond()));
         ArrayList<ElementTag> doc = ell(t);
         sopl(doc);
+        Tree<ElementTag> tree = buildTree(doc);
+        sopl(tree);
         //sopl(Double.parseDouble("4.2e-4"));
         //System.out.println(findSubList());
         
@@ -348,8 +352,35 @@ public class Parser {
     }
     
     public static Tree<ElementTag> buildTree(ArrayList<ElementTag> ell){
-        Tree<ElementTag> tree = new Tree<>(new ElementTag(":root",false));
-        
+        Tree<ElementTag> tree = new Tree<>(new ElementTag(":root",false),true);
+        Node<ElementTag> lnd=tree.root;
+        for (int i = 0; i < ell.size(); i++) {
+            ElementTag el = ell.get(i);
+            if(el.textOnly){
+                lnd.addNode(el);
+                continue;
+            }
+            if(el.closingType!=-1){
+                if(inList(el.tag,auto_closing)!=-1){
+                    lnd.addNode(el);
+                    Node<ElementTag> fsn=lnd;
+                    while(fsn.getParent()!=null&&!fsn.data.tag.equals(el.tag)){
+                        fsn=fsn.getParent();
+                    }
+                    if(fsn.getParent()==null){continue;}
+                    lnd=fsn.getParent();
+                }else{
+                    lnd = lnd.addNode(el);
+                }
+                continue;
+            }
+            Node<ElementTag> fsn=lnd;
+            while(fsn.getParent()!=null&&!fsn.data.tag.equals(el.tag)){
+                fsn=fsn.getParent();
+            }
+            if(fsn.getParent()==null){continue;}
+            lnd=fsn.getParent();
+        }
         
         
         return tree;
