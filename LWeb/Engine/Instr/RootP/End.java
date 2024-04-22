@@ -11,12 +11,15 @@ public class End {
     public static Runnable getInst(byte[] o, Counter i){
         i.ended=true;
         return ()->{
+            Thread.currentThread().interrupt();
+            /*
             File outputfile = new File("image.png");
             try {
                 ImageIO.write(buffers.get(0), "png", outputfile);
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
+            */
         };
     }
 }
