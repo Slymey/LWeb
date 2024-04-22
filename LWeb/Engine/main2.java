@@ -10,7 +10,8 @@ import LWeb.Common.Range.Range;
 
 public class main2 {
 //    private int t=0;
-    static byte f[]={1,  0,0,0,0,  0,0,7,-128,  0,0,4,56,//--------redo resounces
+    static byte f[]={(byte)0x70, (byte)0x72, (byte)0x4c, (byte)0x57, (byte)0x65, (byte)0x62, (byte)0x00, (byte)0x00, //magic bytes
+                     1,  0,0,0,0,  0,0,7,-128,  0,0,4,56,//--------redo resounces
                      5,  0,0,0,1, 0,0,0,0, 0,0,0,12, (byte)0x48, (byte)0x65, (byte)0x6c, (byte)0x6c, (byte)0x6f,  (byte)0x20, (byte)0x77, (byte)0x6f, (byte)0x72, (byte)0x6c, (byte)0x64, (byte)0x21,
                      5,  0,0,0,2, 0,0,0,1, 0,0,0,0, 0,0,0,20, 0,0,0,0,
                      // type, index, |font| style, point size, font-face-len, ff[]
@@ -35,10 +36,13 @@ public class main2 {
                      3,  0,0,0,1,  0,0,0,0,  0,0,0,50,  0,0,0,50,
                      5, 0,0,0,5, 0,0,0,6, 0,0,0,10, (byte)0x74, (byte)0x65, (byte)0x73, (byte)0x74, (byte)0x5f, (byte)0x31, (byte)0x2e, (byte)0x70, (byte)0x6e, (byte)0x67,
                      5, 0,0,0,6, 0,0,0,7, 4, 0,0,0,6,
+                     5, 0,0,0,5, 0,0,0,8, 0,0,0,9, (byte)0x69, (byte)0x6d, (byte)0x61, (byte)0x67, (byte)0x65, (byte)0x2e, (byte)0x70, (byte)0x6e, (byte)0x67, 
                      1,  0,0,0,4,  0,0,0,100,  0,0,0,100,
                        2,  1,  3,  0,0,0,4,  0,0,0,7,
                      3,  0,0,0,4,  0,0,0,0,  0,0,0,100,  0,0,0,80,
-                     0};
+                     9,  0,0,0,8,
+                     //8,  0,(byte)0xff,0,0,
+                     0};//end
     /*
     static Object q[]={CoreOps.BUFFER, 0, 1920, 1080,
                        CoreOps.RESOURCE, "String", 17, "Hello world!",
@@ -56,11 +60,9 @@ public class main2 {
     static Runnable r[]={
     };
     public static void main(String args[]) throws Exception {
-        Counter i = new Counter(0);
-        r = byteToDraw(f, i);
-        for(Runnable ru:r){
-            ru.run();
-        }
+        
+        LWeb lw = new LWeb(f);
+        lw.start();
         System.out.println(Core.resources.toString());
         
         /*
