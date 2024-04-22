@@ -3,8 +3,8 @@ package LWeb.Common;
 import java.util.Map;
 //from SimpleEntry
 public class Pair<K,V> /*implements Map.Entry<K,V>*/{
-    private K first;
-    private V second;
+    public  K first;
+    public  V second;
     
     public Pair(K first, V second) {
         this.first   = first;
@@ -34,10 +34,14 @@ public class Pair<K,V> /*implements Map.Entry<K,V>*/{
         return oldSecond;
     }
     public boolean equals(Object o) {
-        if (!(o instanceof Map.Entry))
-            return false;
-        Map.Entry<?,?> e = (Map.Entry<?,?>)o;
-        return eq(first, e.getKey()) && eq(second, e.getValue());
+        if (o instanceof Map.Entry){
+            Map.Entry<?,?> e = (Map.Entry<?,?>)o;
+            return eq(first, e.getKey()) && eq(second, e.getValue());
+        }else if(o instanceof Pair){
+            Pair e = (Pair)o;
+            return eq(first, e.first) && eq(second, e.second);
+        }
+        return false;
     }
     public int hashCode() {
         return (first   == null ? 0 :   first.hashCode()) ^

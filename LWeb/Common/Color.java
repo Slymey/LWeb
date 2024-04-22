@@ -128,7 +128,7 @@ public class Color {
                         (16-n5&0xf)*16+16-n6&0xf);
                 
                 break;
-            case 8:
+            case 9:
                 n1=inList(s.charAt(1),hex);
                 n2=inList(s.charAt(2),hex);
                 n3=inList(s.charAt(3),hex);

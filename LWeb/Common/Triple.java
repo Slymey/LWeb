@@ -2,9 +2,9 @@ package LWeb.Common;
 
 //from SimpleEntry
 public class Triple<K,V,T>{
-    private K first;
-    private V second;
-    private T third;
+    public K first;
+    public V second;
+    public T third;
     
     public Triple(K first, V second, T third) {
         this.first   = first;

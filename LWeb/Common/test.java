@@ -3,7 +3,8 @@ package LWeb.Common;
 
 import static LWeb.Common.Common.*;
 import LWeb.Engine.CoreLO;
-import Common.*;
+//import Common.*;
+//import org.openide.windows.IOColorPrint;
 import static LWeb.Common.Color.Color;
 import static LWeb.Common.Pair.Pair;
 import static LWeb.Common.Triple.Triple;
@@ -11,6 +12,9 @@ import LWeb.Common.TypeProvider.*;
 import static LWeb.Compiler.Parser.group;
 import static LWeb.Compiler.Parser.tokenize;
 import LWeb.Common.Range.Range.*;
+import LWeb.Engine.Instr.RootP.Filter;
+import LWeb.Engine.Instr.RootP.Header;
+import LWeb.Engine.Instr.RootP.Paint;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -36,11 +40,13 @@ import java.util.function.Predicate;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Stream;
+import org.eclipse.persistence.logging.AbstractSessionLog;
+import org.eclipse.persistence.sessions.Session;
 
 
 public class test {
     public static void main(String args[]) throws Exception {
-        String s="zuvbn<hh<ub/*nnh/*hfhf*/ghfiz*/niuonui>ubnim";
+        //String s="zuvbn<hh<ub/*nnh/*hfhf*/ghfiz*/niuonui>ubnim";
 //        Triple<String,Integer,Integer> o=readTillTarget(s,0,">","<","/*","*/","|*","|+","|-");
 //        sopl("\n"+(s.length()));
 //        sopl(o);
@@ -113,8 +119,21 @@ public class test {
 //        });
 //        sopl(Arrays.toString(o2));
 //        Collection c;
+            ///
+            //IOColorPrint.print(io, "Green text", Color.GREEN);
+            //AbstractSessionLog.getLog().log(9, "ib") ;
+        //throw new Error();
         
-
+        //Object o = new Object[]{Paint,Filter,Header};
+        
+        
+        String s = "oun://izbn.bopm/obunm?nim=bn&bnj=kn)nljm";
+        URI u = new URI(s);
+        URI a = u.normalize();
+        System.out.println(u);
+        System.out.println(a);
+        PropScalar ps = new PropScalar(35);
+        System.out.println(lognm()+ps);
 /*
         sopl(parseDouble("\n45px"));
         TypeProvider tp1=new Length(0);
@@ -170,6 +189,8 @@ public class test {
     35
     65.6
     466px
+    #4fe
+    #26ea
     #247fab
     #247a7fab
     none

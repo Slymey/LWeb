@@ -2,14 +2,22 @@ package LWeb.Common;
 
 
 public class Calculate {
+    public enum Operation{NONE, ADD, SUB, NEGATE, MUL, DIV, INVERSE}
     TypeProvider value;
     Calculate val1;
     Calculate val2;
+    Calculate par;
     Operation op;
+    private boolean cache=false;
     
-    Calculate(Calculate c1,Operation op,Calculate c2){val1=c1;this.op=op;val2=c2;}
+    Calculate(Calculate c1,Operation op,Calculate c2){c1.par=this;c2.par=this;val1=c1;this.op=op;val2=c2;}
     Calculate(TypeProvider tv){value=tv;this.op=Operation.NONE;}
-    TypeProvider get(){
+    public TypeProvider get(){
+        if(cache)return value;
+        value = get1();
+        return value;
+    }
+    private TypeProvider get1(){
         switch(op){
             case NONE:
                 return value;
@@ -28,22 +36,15 @@ public class Calculate {
             default:return null;
         }
     }
-    TypeProvider cache(){
-        value = get();
-        return value;
+    public void invalidateCache(){
+        cache=false;
+        Calculate pr=par;
+        while(pr!=null){
+            pr.cache=false;
+            pr=pr.par;
+        }
     }
     
-    
-    enum Operation{
-        NONE,
-        ADD,
-        SUB,
-        NEGATE,
-        MUL,
-        DIV,
-        INVERSE;
-        
-    }
     
     Calculate create(String s){
         
