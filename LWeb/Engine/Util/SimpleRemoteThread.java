@@ -5,18 +5,13 @@ import java.util.Iterator;
 
 
 public class SimpleRemoteThread implements Runnable{
-    private final Object lock = new Object();
-    private volatile boolean paused = false , stopped = false;
-    private Iterator<Runnable> work;
-    public SimpleRemoteThread(Runnable[] work){
-        this.work = Arrays.asList(work).iterator();
+    public final Object lock = new Object();
+    public volatile boolean paused = false , stopped = false;
+    public SimpleRemoteThread(){
     }
     @Override
     public void run() {
         while(!stopped){
-            while (!paused&&work.hasNext()){
-                work.next().run();
-            }
             synchronized (lock){
                 try {
                     lock.wait();

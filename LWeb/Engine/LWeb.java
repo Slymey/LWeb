@@ -6,6 +6,7 @@ import static LWeb.Engine.Core.byteToDraw;
 import static LWeb.Engine.Core.resources;
 import LWeb.Engine.Instr.RootP.ResourceP.Resource;
 import LWeb.Engine.Util.SimpleRemoteThread;
+import LWeb.Engine.Util.Window;
 import static LWeb.Engine.main2.f;
 import static LWeb.Engine.main2.r;
 import java.util.concurrent.ExecutorService;
@@ -35,13 +36,18 @@ public class LWeb {
 
     public LWeb start() throws Exception{
         if(readError==null){
-            SimpleRemoteThread srt = new SimpleRemoteThread(r);
-            resources.set(0xff0000, new Resource(SimpleRemoteThread.class, srt));
-            Executors.newSingleThreadExecutor().execute(srt);
+            start1();
         }else{
             throw readError;
         }
         return this;
+    }
+    
+    private void start1(){
+        Window w=new Window(r);
+        resources.set(0xff0000, new Resource(SimpleRemoteThread.class, w.tr));
+        Executors.newSingleThreadExecutor().execute(w);
+        
     }
     
     
