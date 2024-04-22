@@ -3,6 +3,7 @@ package LWeb.Common;
 
 import static LWeb.Common.Color.Color;
 import static LWeb.Common.Common.*;
+import java.net.URI;
 import java.util.HashMap;
 
 public interface TypeProvider{
@@ -18,54 +19,16 @@ public interface TypeProvider{
     TypeProvider mul(TypeProvider p);
     TypeProvider div(TypeProvider p);
     TypeProvider inverse();
+    TypeProvider copy();
     @Override
     String toString();
 
-    /**
-     * get type provider from string eg. 35px, calc(20px + 30px), block, #ffffff
-    */
-    public static TypeProvider getType(String s, HashMap<String, Double> scales){
-        TypeProvider t = null;
-        if(s.isEmpty())return t;
-        sopl(s);
-        boolean nom = 0<=inList(s.charAt(0),new char[]{'-','.','0','1','2','3','4','5','6','7','8','9'});//check if number eg, 34px
-        if(nom){// proces into numeroc TypeProvider
-            Pair<Double, Integer> pd = parseDouble(s);
-            String sfx=s.substring(pd.getSecond());
-            sopl(" sfx:"+sfx);
-            t= getFromSufix(sfx,pd.getFirst(),scales);//get typeProvider
-            return t;
-        }
-        if(s.charAt(0)=='#'){//proccess colors eg. #ffffff
-            t = new ColorType(s);
-            return t;
-        }
-        int bckInd=s.indexOf("(");
-        if(bckInd>=0){// proccess functions eg. calc(20px + 30px), var(--uhh)
-            Triple<String, Integer, Integer> func=readTillTarget(s,0,"(","","","");
-            switch(func.getFirst()){
-                case "calc":
-
-
-                    break;
-                case "rgba":
-
-
-                    break;
-            }
-        }
-        return new TypeList(s);// generate list typeProvider eg. block, inline
-    };
     
     //<editor-fold defaultstate="collapsed" desc="Scalar">
-    class Scalar implements TypeProvider{
+    public static class PropScalar implements TypeProvider{
         private boolean detirmanant=true;
         private double value=0;
-        private int order=0;
-        public Scalar(double l){
-            value=l;
-        }
-        private Scalar(double l,int ord){
+        public PropScalar(double l){
             value=l;
         }
         @Override
@@ -83,7 +46,7 @@ public interface TypeProvider{
         @Override
         public void set(TypeProvider p) {
             if(p==null)return;
-            if(!(p instanceof Scalar))throw new TypeMismatchException("Type "+p.getClass()+" does not match type "+this.getClass());
+            if(!(p instanceof PropScalar))throw new TypeMismatchException("Type "+p.getClass()+" does not match type "+this.getClass());
             value=(double) p.get();
         }
         @Override
@@ -93,60 +56,150 @@ public interface TypeProvider{
         @Override
         public TypeProvider add(TypeProvider p) {
             if(p==null)return null;
-            if(p instanceof Scalar){
-                return new Scalar(this.value+(double)p.get());
+            if(p instanceof PropScalar){
+                return new PropScalar(this.value+(double)p.get());
             }
             throw new TypeMismatchException("Type "+p.getClass()+" does not match type "+this.getClass());
         }
         @Override
         public TypeProvider sub(TypeProvider p) {
             if(p==null)return null;
-            if(p instanceof Scalar){
-                return new Scalar(this.value-(double)p.get());
+            if(p instanceof PropScalar){
+                return new PropScalar(this.value-(double)p.get());
             }
             throw new TypeMismatchException("Type "+p.getClass()+" does not match type "+this.getClass());
         }
         @Override
         public TypeProvider negate() {
-            return new Scalar(-this.value);
+            return new PropScalar(-this.value);
         }
         @Override
         public TypeProvider div(TypeProvider p) {
             if(p==null)return null;
-            if(p instanceof Scalar){
-                return new Scalar(this.value/(double)p.get());
+            if(p instanceof PropScalar){
+                return new PropScalar(this.value/(double)p.get());
             }
             return p.inverse().mul(this);
         }
         @Override
         public TypeProvider mul(TypeProvider p) {
             if(p==null)return null;
-            if(p instanceof Scalar){
-                return new Scalar(this.value*(double)p.get());
+            if(p instanceof PropScalar){
+                return new PropScalar(this.value*(double)p.get());
             }
             return p.mul(this);
         }
         @Override
         public TypeProvider inverse() {
-            return new Scalar(1/this.value);
+            return new PropScalar(1/this.value);
         }
         @Override
         public String toString(){
             return ""+value;
         }
 
+        @Override
+        public TypeProvider copy() {
+            return new PropScalar(value);
+        }
+        
+    }
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="PropTime">
+    public static class PropTime implements TypeProvider{
+        private boolean detirmanant=true;
+        private double value=0;
+        private int order=0;
+        public PropTime(double l){
+            value=l;
+        }
+        @Override
+        public boolean detirmanant() {
+            return detirmanant;
+        }
+        @Override
+        public Object get() {
+            return value;
+        }
+        @Override
+        public int order() {
+            return 0;
+        }
+        @Override
+        public void set(TypeProvider p) {
+            if(p==null)return;
+            if(!(p instanceof PropTime))throw new TypeMismatchException("Type "+p.getClass()+" does not match type "+this.getClass());
+            value=(double) p.get();
+        }
+        @Override
+        public void set(Object value,int order) {
+            this.value=(double) value;
+        }
+        @Override
+        public TypeProvider add(TypeProvider p) {
+            if(p==null)return null;
+            if(p instanceof PropTime){
+                return new PropTime(this.value+(double)p.get());
+            }
+            throw new TypeMismatchException("Type "+p.getClass()+" does not match type "+this.getClass());
+        }
+        @Override
+        public TypeProvider sub(TypeProvider p) {
+            if(p==null)return null;
+            if(p instanceof PropTime){
+                return new PropTime(this.value-(double)p.get());
+            }
+            throw new TypeMismatchException("Type "+p.getClass()+" does not match type "+this.getClass());
+        }
+        @Override
+        public TypeProvider negate() {
+            return new PropTime(-this.value);
+        }
+        @Override
+        public TypeProvider div(TypeProvider p) {
+            if(p==null)return null;
+            if(p instanceof PropTime){
+                return new PropTime(this.value/(double)p.get());
+            }
+            return p.inverse().mul(this);
+        }
+        @Override
+        public TypeProvider mul(TypeProvider p) {
+            if(p==null)return null;
+            if(p instanceof PropTime){
+                return new PropTime(this.value*(double)p.get());
+            }
+            return p.mul(this);
+        }
+        @Override
+        public TypeProvider inverse() {
+            return new PropTime(1/this.value);
+        }
+        @Override
+        public String toString(){
+            if(order==1)
+                return ""+value+"s";
+            return ""+value+"s^"+order;
+        }
+        @Override
+        public TypeProvider copy() {
+            return new PropTime(value);
+        }
+
     }
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Length">
-    class Length implements TypeProvider{
+    public static class PropLength implements TypeProvider{
         private boolean detirmanant=true;
         private double value=0;
+        private String type;
         private int order=1;
 
-        public Length(double l){
+        public PropLength(double l, String t){
             value=l;
+            type=t;
         }
-        private Length(double l,int ord){
+        private PropLength(double l,int ord){
             value=l;
             order=ord;
         }
@@ -165,7 +218,7 @@ public interface TypeProvider{
         @Override
         public void set(TypeProvider p) {
             if(p==null)return;
-            if(!(p instanceof Length))throw new TypeMismatchException("Type "+p.getClass()+" does not match type "+this.getClass());
+            if(!(p instanceof PropLength))throw new TypeMismatchException("Type "+p.getClass()+" does not match type "+this.getClass());
             value=(double) p.get();
         }
         @Override
@@ -178,9 +231,9 @@ public interface TypeProvider{
         @Override
         public TypeProvider add(TypeProvider p) {
             if(p==null)return null;
-            if(p instanceof Length){
+            if(p instanceof PropLength){
                 if(this.order!=p.order())throw new TypeMismatchException("Order "+p.order()+" does not match order "+this.order);
-                return new Length(this.value+(double)p.get(),this.order);
+                return new PropLength(this.value+(double)p.get(),this.order);
             }
 
             throw new TypeMismatchException("Type "+p.getClass()+" does not match type "+this.getClass());
@@ -188,9 +241,9 @@ public interface TypeProvider{
         @Override
         public TypeProvider sub(TypeProvider p) {
             if(p==null)return null;
-            if(p instanceof Length){
+            if(p instanceof PropLength){
                 if(this.order!=p.order())throw new TypeMismatchException("Order "+p.order()+" does not match order "+this.order);
-                return new Length(this.value-(double)p.get(),this.order);
+                return new PropLength(this.value-(double)p.get(),this.order);
             }
 
             throw new TypeMismatchException("Type "+p.getClass()+" does not match type "+this.getClass());
@@ -198,15 +251,15 @@ public interface TypeProvider{
 
         @Override
         public TypeProvider negate() {
-            return new Length(-this.value,this.order);
+            return new PropLength(-this.value,this.order);
         }
         @Override
         public TypeProvider mul(TypeProvider p) {
             if(p==null)return null;
-            if(p instanceof Length){
+            if(p instanceof PropLength){
                 int ord=this.order+p.order();
-                if(ord==0)return new Scalar(this.value/(double)p.get(),0);
-                return new Length(this.value*(double)p.get(),ord);
+                if(ord==0)return new PropScalar(this.value/(double)p.get());
+                return new PropLength(this.value*(double)p.get(),ord);
             }
 
 
@@ -216,10 +269,10 @@ public interface TypeProvider{
         @Override
         public TypeProvider div(TypeProvider p) {
             if(p==null)return null;
-            if(p instanceof Length){
+            if(p instanceof PropLength){
                 int ord=this.order-p.order();
-                if(ord==0)return new Scalar(this.value/(double)p.get(),0);
-                return new Length(this.value/(double)p.get(),ord);
+                if(ord==0)return new PropScalar(this.value/(double)p.get());
+                return new PropLength(this.value/(double)p.get(),ord);
             }
 
 
@@ -228,28 +281,32 @@ public interface TypeProvider{
 
         @Override
         public TypeProvider inverse() {
-            return new Length(1/this.value,-this.order);
+            return new PropLength(1/this.value,-this.order);
         }
         @Override
         public String toString(){
             if(order==1)
-                return ""+value+"px";
-            return ""+value+"px^"+order;
+                return ""+value+type;
+            return ""+value+type+"^"+order;
+        }
+        @Override
+        public TypeProvider copy() {
+            return new PropLength(value, order);
         }
     }
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Color">
-    class ColorType implements TypeProvider{
+    public static class PropColor implements TypeProvider{
         private boolean detirmanant=true;
         private Color value;
         private int order=0;
-        public ColorType(int l){
+        public PropColor(int l){
             value=Color(l);
         }
-        public ColorType(String s){
+        public PropColor(String s){
             value=Color(s);
         }
-        public ColorType(Color c){
+        public PropColor(Color c){
             value=c;
         }
         @Override
@@ -306,14 +363,92 @@ public interface TypeProvider{
         public TypeProvider inverse() {
             return null;
         }
+        @Override
+        public TypeProvider copy() {
+            return new PropColor(value);
+        }
+        public String toString(){
+            return ""+value;
+        }
+    }
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="Uri">
+    public static class PropUri implements TypeProvider{
+        private boolean detirmanant=true;
+        private URI value;
+        private int order=0;
+        public PropUri(URI s){
+            value=s;
+        }
+        @Override
+        public boolean detirmanant() {
+            return true;
+        }
+
+        @Override
+        public Object get() {
+            return value;
+        }
+
+        @Override
+        public int order() {
+            return 0;
+        }
+
+        @Override
+        public void set(TypeProvider p) {
+            value=(URI) p.get();
+        }
+
+        @Override
+        public void set(Object value, int order) {
+            this.value=(URI) value;
+        }
+
+        @Override
+        public TypeProvider add(TypeProvider p) {
+            return null;
+        }
+
+        @Override
+        public TypeProvider sub(TypeProvider p) {
+            return null;
+        }
+
+        @Override
+        public TypeProvider negate() {
+            return null;
+        }
+
+        @Override
+        public TypeProvider mul(TypeProvider p) {
+            return null;
+        }
+
+        @Override
+        public TypeProvider div(TypeProvider p) {
+            return null;
+        }
+
+        @Override
+        public TypeProvider inverse() {
+            return null;
+        }
+        @Override
+        public TypeProvider copy() {
+            return new PropUri(value);
+        }
+        public String toString(){
+            return ""+value;
+        }
     }
     //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="List">
-    class TypeList implements TypeProvider{
+    public static class PropList implements TypeProvider{
         private boolean detirmanant=true;
         private String value;
         private int order=0;
-        public TypeList(String s){
+        public PropList(String s){
             value=s;
         }
         @Override
@@ -370,6 +505,13 @@ public interface TypeProvider{
         public TypeProvider inverse() {
             return null;
         }
+        @Override
+        public TypeProvider copy() {
+            return new PropList(value);
+        }
+        public String toString(){
+            return value;
+        }
     }
     //</editor-fold>
 
@@ -395,14 +537,14 @@ public interface TypeProvider{
         TypeProvider t = null;
         switch(sfx.length()){
             case 0:
-                t = new Scalar(val);
+                t = new PropScalar(val);
                 break;
             case 2:
                 switch(sfx){
                     case "px":case"vh":
                         // change scales to call getType on TP with a scale and a calc eg. 
                         // 10vh -> calc(10/100 * var(viewport-height[in px])), 25px -> calc(25px * var(scale[numeric eg. 1, 1.2]))
-                        t = new Length(val*scales.get(sfx));
+                        t = new PropLength(val*scales.get(sfx),sfx);
                         break;
                 }
 
