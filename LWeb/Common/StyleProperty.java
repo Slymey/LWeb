@@ -13,9 +13,9 @@ public class StyleProperty {
     //statics 
     private static Class<?>[] allTypes = TypeProvider.class.getDeclaredClasses();
     //for a property instantiate one of this
-    final String name;
+    public final String name;
     final TypeProvider type;
-    final HashMap<TypeProvider[],BiFunction<TypeProvider[],Integer,Property[]>> reCasts;//mapings for eg, border: 10px solid red -> border-width:10px, ...
+    final BiFunction<TypeProvider[],Integer,Property[]> cast;//mapings for eg, border: 10px solid red -> border-width:10px, ...
     
     
     
@@ -26,10 +26,10 @@ public class StyleProperty {
      * border, width, ...
      *
      */
-    public <T> StyleProperty(String name, TypeProvider type, HashMap<TypeProvider[],BiFunction<TypeProvider[],Integer,Property[]>> reCasts){
+    public <T> StyleProperty(String name, TypeProvider type, BiFunction<TypeProvider[],Integer,Property[]> reCasts){
         this.name=name;
         this.type=type;
-        this.reCasts=reCasts;
+        this.cast=reCasts;
     }
     
     //do somethin for multi inputs
@@ -51,22 +51,25 @@ public class StyleProperty {
      * eg. border: 10px solid red -> border-width:10px, ...
      */
     private Property[] getProperty1(TypeProvider[] value, int priority){
-        if(value.length==0)return null;
-        if(reCasts==null)return new Property[]{new Property(value[0], priority, this)};
-        //&&!value[0].getClass().equals(this.type.getClass())
+        if(value.length==0)return new Property[]{};
+        if(cast==null)return new Property[]{new Property(value[0], priority, this)};
+        Property out[] = cast.apply(value, priority);
         
-        
-        return null;
+        return out;
     }
-    public class Property {
+    public static class Property {
         final TypeProvider data;
-        final StyleProperty from;
+        public final StyleProperty from;
         int priority=0;
         
         private Property(TypeProvider data, int priority, StyleProperty from){
+            if(from.type.getClass()!=data.getClass())data=from.type.copy();
             this.data=data;
             this.priority=priority;
             this.from=from;
+        }
+        public String toString(){
+            return from.name+":"+data+((priority==0)?"":" !p:"+priority);
         }
     }
 }
