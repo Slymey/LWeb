@@ -17,7 +17,10 @@ public class Root {
                 ()->Header.getInst(o, i),      //4
                 ()->ResourceInst.getInst(o, i),      //5
                 ()->Filter.getInst(o, i),      //6
-                ()->StackFull.getInst(o, i)      //7
+                ()->StackFull.getInst(o, i),      //7
+                ()->Wait.getInst(o, i),      //8
+                ()->OutToFile.getInst(o, i),      //9
+                ()->OutToScreen.getInst(o, i),      //10
             }, inst);
         
         
