@@ -3,7 +3,17 @@ package LWeb.Compiler;
 
 import static LWeb.Common.Common.*;
 import LWeb.Common.*;
+import static LWeb.Common.Attribute.newAttribute;
 import static LWeb.Common.Pair.Pair;
+import LWeb.Common.StyleProperty.Property;
+import LWeb.Compiler.Parser.TokenType;
+import static LWeb.Compiler.Parser.TokenType.DQ_STRING;
+import static LWeb.Compiler.Parser.TokenType.ML_COMMENT;
+import static LWeb.Compiler.Parser.TokenType.RX_STRING;
+import static LWeb.Compiler.Parser.TokenType.SL_COMMENT;
+import static LWeb.Compiler.Parser.TokenType.SQ_STRING;
+import static LWeb.Compiler.Parser.buildTree;
+import static LWeb.Compiler.Parser.css;
 import static LWeb.Compiler.Parser.ell;
 import static LWeb.Compiler.Parser.group;
 import static LWeb.Compiler.Parser.tokenize;
@@ -14,6 +24,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Stack;
@@ -23,7 +35,7 @@ import java.util.logging.Logger;
 
 
 public class Main {
-    public static void main(String args[]) {
+    public static void main(String args[]){
         System.out.println("Start");
         
         File f1 = new File("e.html");
@@ -33,34 +45,44 @@ public class Main {
         String s2=fileToString(f2);
 
 //        String st=fileToString("large_test.html");
-//        Pair<String[], Parser.TokenType[]> ttk = group(tokenize(st));
+//        Pair<String[], Parser.TokenType[]> ttk = group(tokenize(st),DQ_STRING,SQ_STRING, SL_COMMENT, ML_COMMENT);
 //        ArrayList<ElementTag> doc = ell(ttk);
-//        System.out.println(doc);
+//        //System.out.println(doc);
+//        Tree<ElementTag> tree = buildTree(doc);
+//        System.out.println(tree.root.getSize());
+//        String stree= ""+tree;
+//        System.out.println(stree.length());
+//        System.out.println(stree);
         //System.out.println(ats(ttk.getFirst()));
+        //if(3<5)throw new Exception("etb");
+        String st=fileToString("large_test.css");
+        Pair<String[], TokenType[]> ttk = group(tokenize(st),DQ_STRING,SQ_STRING, RX_STRING,SL_COMMENT, ML_COMMENT);
+        //System.out.println(ats(ttk.getFirst())+"\n\n"+ats(ttk.getSecond()));
+        ArrayList<Pair<ArrayList<Selector>, LinkedHashSet<Property>>> css = css(ttk);
+        System.out.println(css);
 
 
-
-        Pair<String[], Parser.TokenType[]> etk = group(tokenize(s1));
-        System.out.println(ats(etk.getFirst()));
-        Pair<String[], Parser.TokenType[]> ctk = group(tokenize(s2));
-        System.out.println(ats(ctk.getFirst()));
+//        Pair<String[], Parser.TokenType[]> etk = group(tokenize(s1),DQ_STRING,SQ_STRING, SL_COMMENT, ML_COMMENT);
+//        System.out.println(ats(etk.getFirst()));
+//        Pair<String[], Parser.TokenType[]> ctk = group(tokenize(s2),DQ_STRING,SQ_STRING, SL_COMMENT, ML_COMMENT);
+//        System.out.println(ats(ctk.getFirst()));
         //System.out.println(ats(ctk.getSecond()));
 
 
         //
-        s1=readTillTarget(readTillTarget(s1,0,"","","//","\n","","","\n").getFirst(),0,"","","/*","*/").getFirst();
-        s2=readTillTarget(readTillTarget(s2,0,"","","//","\n","","","\n").getFirst(),0,"","","/*","*/").getFirst();
-
-        //new ElementNode("::root",false)
-        ArrayList<ElementTag> document = new ArrayList<>();
-        createElList(document,s1,0);
-        sopl(document.toString());
-
-        ArrayList<Pair<ArrayList<String>,HashMap<String,Pair<String,Integer>>>> styleSheet = new ArrayList<>();
-        String scss=removeChars(removeChars(reduceChars(s2,' '),'\n'),'\t');
-        sopl("\n"+scss);
-        createCssList(styleSheet,scss,0);
-        sopl(styleSheet.toString());
+//        s1=readTillTarget(readTillTarget(s1,0,"","","//","\n","","","\n").getFirst(),0,"","","/*","*/").getFirst();
+//        s2=readTillTarget(readTillTarget(s2,0,"","","//","\n","","","\n").getFirst(),0,"","","/*","*/").getFirst();
+//
+//        //new ElementNode("::root",false)
+//        ArrayList<ElementTag> document = new ArrayList<>();
+//        createElList(document,s1,0);
+//        //sopl(document.toString());
+//
+//        ArrayList<Pair<ArrayList<String>,HashMap<String,Pair<String,Integer>>>> styleSheet = new ArrayList<>();
+//        String scss=removeChars(removeChars(reduceChars(s2,' '),'\n'),'\t');
+//        sopl("\n"+scss);
+//        createCssList(styleSheet,scss,0);
+//        sopl(styleSheet.toString());
             
     }
     //fix split with coments to proprely treat nested eg "ff(buvr"gh) -> ??
@@ -193,7 +215,7 @@ public class Main {
                 }
                 //sopl("  a:"+j+"  "+av);
                 j+=av.getSecond();
-                node.addAtribute(at, av.getFirst());
+                node.addAtribute(at, newAttribute(at,av.getFirst()));
             }
             //return with closing tag
             list.add(node);
@@ -208,6 +230,8 @@ public class Main {
     
     
     
+    
+    // <editor-fold defaultstate="collapsed" desc="prev stuf">
     
     public static ArrayList d1(ArrayList<String> in){
         ArrayList<Pair<String,HashMap<String,String>>> data=new ArrayList<>();
@@ -263,7 +287,6 @@ public class Main {
         return data;
     }
     
-    // <editor-fold defaultstate="collapsed" desc="prev stuf">
     public static void t1(BufferedReader br) throws IOException{
         String inLine="";
         ArrayList<Pair<String,HashMap<String,String>>> data=new ArrayList<>();
