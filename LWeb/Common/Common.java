@@ -28,8 +28,36 @@ public class Common {
     public static final Range rangeA_Z = new Range('A','Z');
     public static final Range rangea_z = new Range('a','z');
     public static final Range range0_9 = new Range('0','9');
+    private static Object[] terminatorState=null;
+    private static int terminatorCount=0;
+    private static int terminatorMax=1000;
+    public enum Troolean{False,None,True}
     
     //+ColorMixersNoAlpha +ColorMixersAlphaMultiply +ColorMixersComposite
+    public static String lognm(){
+        StackTraceElement ste = Thread.currentThread().getStackTrace()[2];
+        return ""+ste;
+    }
+    public static String lognm(String dc, String fl, String mn, int ln){
+        StackTraceElement ste = new StackTraceElement(dc,fl,mn,ln);
+        return ""+ste;
+    }
+    
+    public static void setTMax(int tmx){terminatorMax=tmx;}
+    public static void terminator(Object... o){
+        if(terminatorState==null){
+            terminatorState=o;
+            return;
+        }
+        if(arrEq(terminatorState,o)){
+            terminatorCount++;
+        }else{
+            terminatorCount=0;
+        }
+        if(terminatorMax<terminatorCount){
+            throw new RuntimeException("State remained identical for too long ("+terminatorMax+"): "+ats(o));
+        }
+    }
     
     public static int clamp(int a, int min, int max){
         return Math.min(max, Math.max(min, a));
@@ -50,6 +78,28 @@ public class Common {
                 (ba[1]& 0xff)<<(2*8)|
                 (ba[2]& 0xff)<<(1*8)|
                 (ba[3]& 0xff)<<(0*8);
+    }
+    public static long byteToLong(byte[] ba){
+        return  ((long)ba[0]& 0xff)<<(7*8)|
+                ((long)ba[1]& 0xff)<<(6*8)|
+                ((long)ba[2]& 0xff)<<(5*8)|
+                ((long)ba[3]& 0xff)<<(4*8)|
+                ((long)ba[4]& 0xff)<<(3*8)|
+                ((long)ba[5]& 0xff)<<(2*8)|
+                ((long)ba[6]& 0xff)<<(1*8)|
+                ((long)ba[7]& 0xff)<<(0*8);
+    }
+    public static byte[] longToByte(long in){
+        return new byte[]{
+                    (byte)(in>>>(7*8)&0xff),
+                    (byte)(in>>>(6*8)&0xff),
+                    (byte)(in>>>(5*8)&0xff),
+                    (byte)(in>>>(4*8)&0xff),
+                    (byte)(in>>>(3*8)&0xff),
+                    (byte)(in>>>(2*8)&0xff),
+                    (byte)(in>>>(1*8)&0xff),
+                    (byte)(in>>>(0*8)&0xff)
+                };
     }
     public static byte[] intToByte(int in){
         return new byte[]{
@@ -520,6 +570,9 @@ public class Common {
         return Pair(Double.valueOf(sa),i-offset);
     }
     
+    public static int parseIntOr(String s, int i){try{return Integer.parseInt(s);}catch(NumberFormatException e){return i;}}
+    public static float parseFloatOr(String s, float i){try{return Float.parseFloat(s);}catch(NumberFormatException e){return i;}}
+    
     //<editor-fold defaultstate="collapsed" desc="inList">
     public static <T,V> int inList(V e, List<T> l, Function<T,V> getr, Comparator<V> comp){
         int c=0;
@@ -788,7 +841,7 @@ public class Common {
         return -1;
     }
     public static <T> int inList(T e, List<T> l, int s, int f){
-        for(int i=s;i<Math.min(l.size(),f);i++) {
+        for(int i=s;i>=0&&i<Math.min(l.size(),f);i++) {
             if(l.get(i).equals(e)){
                 return i;
             }
@@ -796,7 +849,7 @@ public class Common {
         return -1;
     }
     public static int inList(char e, List<Character> l, int s, int f){
-        for(int i=s;i<Math.min(l.size(),f);i++) {
+        for(int i=s;i>=0&&i<Math.min(l.size(),f);i++) {
             if(l.get(i)==e){
                 return i;
             }
@@ -804,7 +857,7 @@ public class Common {
         return -1;
     }
     public static int inList(boolean e, List<Boolean> l, int s, int f){
-        for(int i=s;i<Math.min(l.size(),f);i++) {
+        for(int i=s;i>=0&&i<Math.min(l.size(),f);i++) {
             if(l.get(i)==e){
                 return i;
             }
@@ -812,7 +865,7 @@ public class Common {
         return -1;
     }
     public static int inList(int e, List<Integer> l, int s, int f){
-        for(int i=s;i<Math.min(l.size(),f);i++) {
+        for(int i=s;i>=0&&i<Math.min(l.size(),f);i++) {
             if(l.get(i)==e){
                 return i;
             }
@@ -820,7 +873,7 @@ public class Common {
         return -1;
     }
     public static int inList(long e, List<Long> l, int s, int f){
-        for(int i=s;i<Math.min(l.size(),f);i++) {
+        for(int i=s;i>=0&&i<Math.min(l.size(),f);i++) {
             if(l.get(i)==e){
                 return i;
             }
@@ -828,7 +881,7 @@ public class Common {
         return -1;
     }
     public static int inList(short e, List<Short> l, int s, int f){
-        for(int i=s;i<Math.min(l.size(),f);i++) {
+        for(int i=s;i>=0&&i<Math.min(l.size(),f);i++) {
             if(l.get(i)==e){
                 return i;
             }
@@ -836,7 +889,7 @@ public class Common {
         return -1;
     }
     public static int inList(byte e, List<Byte> l, int s, int f){
-        for(int i=s;i<Math.min(l.size(),f);i++) {
+        for(int i=s;i>=0&&i<Math.min(l.size(),f);i++) {
             if(l.get(i)==e){
                 return i;
             }
@@ -844,7 +897,7 @@ public class Common {
         return -1;
     }
     public static int inList(float e, List<Float> l, int s, int f){
-        for(int i=s;i<Math.min(l.size(),f);i++) {
+        for(int i=s;i>=0&&i<Math.min(l.size(),f);i++) {
             if(l.get(i)==e){
                 return i;
             }
@@ -852,7 +905,7 @@ public class Common {
         return -1;
     }
     public static int inList(double e, List<Double> l, int s, int f){
-        for(int i=s;i<Math.min(l.size(),f);i++) {
+        for(int i=s;i>=0&&i<Math.min(l.size(),f);i++) {
             if(l.get(i)==e){
                 return i;
             }
@@ -861,7 +914,7 @@ public class Common {
     }
     ////
     public static <T,V> int inList(V e, T[] l, Function<T,V> getr, Comparator<V> comp, int s, int f){
-        for(int i=s;i<Math.min(l.length,f);i++) {
+        for(int i=s;i>=0&&i<Math.min(l.length,f);i++) {
             if(comp.compare(getr.apply(l[i]),e)==0){
                 return i;
             }
@@ -869,7 +922,7 @@ public class Common {
         return -1;
     }
     public static <T,V> int inList(V e, T[] l, Function<T,V> comp, int s, int f){
-        for(int i=s;i<Math.min(l.length,f);i++) {
+        for(int i=s;i>=0&&i<Math.min(l.length,f);i++) {
             if(comp.apply(l[i]).equals(e)){
                 return i;
             }
@@ -877,7 +930,7 @@ public class Common {
         return -1;
     }
     public static <T> int inList(T e, T[] l, Comparator<T> comp, int s, int f){
-        for(int i=s;i<Math.min(l.length,f);i++) {
+        for(int i=s;i>=0&&i<Math.min(l.length,f);i++) {
             if(comp.compare(l[i], e)==0){
                 return i;
             }
@@ -885,7 +938,7 @@ public class Common {
         return -1;
     }
     public static <T> int inList(T e, T[] l, int s, int f){
-        for(int i=s;i<Math.min(l.length,f);i++) {
+        for(int i=s;i>=0&&i<Math.min(l.length,f);i++) {
             if(l[i].equals(e)){
                 return i;
             }
@@ -893,7 +946,7 @@ public class Common {
         return -1;
     }
     public static int inList(char e, char[] l, int s, int f){
-        for(int i=s;i<Math.min(l.length,f);i++) {
+        for(int i=s;i>=0&&i<Math.min(l.length,f);i++) {
             if(l[i]==e){
                 return i;
             }
@@ -901,7 +954,7 @@ public class Common {
         return -1;
     }
     public static int inList(boolean e, boolean[] l, int s, int f){
-        for(int i=s;i<Math.min(l.length,f);i++) {
+        for(int i=s;i>=0&&i<Math.min(l.length,f);i++) {
             if(l[i]==e){
                 return i;
             }
@@ -909,7 +962,7 @@ public class Common {
         return -1;
     }
     public static int inList(int e, int[] l, int s, int f){
-        for(int i=s;i<Math.min(l.length,f);i++) {
+        for(int i=s;i>=0&&i<Math.min(l.length,f);i++) {
             if(l[i]==e){
                 return i;
             }
@@ -917,7 +970,7 @@ public class Common {
         return -1;
     }
     public static int inList(long e, long[] l, int s, int f){
-        for(int i=s;i<Math.min(l.length,f);i++) {
+        for(int i=s;i>=0&&i<Math.min(l.length,f);i++) {
             if(l[i]==e){
                 return i;
             }
@@ -925,7 +978,7 @@ public class Common {
         return -1;
     }
     public static int inList(short e, short[] l, int s, int f){
-        for(int i=s;i<Math.min(l.length,f);i++) {
+        for(int i=s;i>=0&&i<Math.min(l.length,f);i++) {
             if(l[i]==e){
                 return i;
             }
@@ -933,7 +986,7 @@ public class Common {
         return -1;
     }
     public static int inList(byte e, byte[] l, int s, int f){
-        for(int i=s;i<Math.min(l.length,f);i++) {
+        for(int i=s;i>=0&&i<Math.min(l.length,f);i++) {
             if(l[i]==e){
                 return i;
             }
@@ -941,7 +994,7 @@ public class Common {
         return -1;
     }
     public static int inList(float e, float[] l, int s, int f){
-        for(int i=s;i<Math.min(l.length,f);i++) {
+        for(int i=s;i>=0&&i<Math.min(l.length,f);i++) {
             if(l[i]==e){
                 return i;
             }
@@ -949,7 +1002,7 @@ public class Common {
         return -1;
     }
     public static int inList(double e, double[] l, int s, int f){
-        for(int i=s;i<Math.min(l.length,f);i++) {
+        for(int i=s;i>=0&&i<Math.min(l.length,f);i++) {
             if(l[i]==e){
                 return i;
             }
@@ -958,7 +1011,7 @@ public class Common {
     }
     ////
     public static <T,V> int inList(V e, List<T> l, Function<T,V> getr, Comparator<V> comp, int s, int f, int reverse){
-        for(int i=Math.min(l.size(),f)-1;i>=s;i--) {
+        for(int i=Math.min(l.size(),f)-1;i>=0&&i>=s;i--) {
             if(comp.compare(getr.apply(l.get(i)),e)==0){
                 return i;
             }
@@ -966,7 +1019,7 @@ public class Common {
         return -1;
     }
     public static <T,V> int inList(V e, List<T> l, Function<T,V> comp, int s, int f, int reverse){
-        for(int i=Math.min(l.size(),f)-1;i>=s;i--) {
+        for(int i=Math.min(l.size(),f)-1;i>=0&&i>=s;i--) {
             if(comp.apply(l.get(i)).equals(e)){
                 return i;
             }
@@ -974,7 +1027,7 @@ public class Common {
         return -1;
     }
     public static <T> int inList(T e, List<T> l, Comparator<T> comp, int s, int f, int reverse){
-        for(int i=Math.min(l.size(),f)-1;i>=s;i--) {
+        for(int i=Math.min(l.size(),f)-1;i>=0&&i>=s;i--) {
             if(comp.compare(l.get(i), e)==0){
                 return i;
             }
@@ -982,7 +1035,7 @@ public class Common {
         return -1;
     }
     public static <T> int inList(T e, List<T> l, int s, int f, int reverse){
-        for(int i=Math.min(l.size(),f)-1;i>=s;i--) {
+        for(int i=Math.min(l.size(),f)-1;i>=0&&i>=s;i--) {
             if(l.get(i).equals(e)){
                 return i;
             }
@@ -990,7 +1043,7 @@ public class Common {
         return -1;
     }
     public static int inList(char e, List<Character> l, int s, int f, int reverse){
-        for(int i=Math.min(l.size(),f)-1;i>=s;i--) {
+        for(int i=Math.min(l.size(),f)-1;i>=0&&i>=s;i--) {
             if(l.get(i)==e){
                 return i;
             }
@@ -998,7 +1051,7 @@ public class Common {
         return -1;
     }
     public static int inList(boolean e, List<Boolean> l, int s, int f, int reverse){
-        for(int i=Math.min(l.size(),f)-1;i>=s;i--) {
+        for(int i=Math.min(l.size(),f)-1;i>=0&&i>=s;i--) {
             if(l.get(i)==e){
                 return i;
             }
@@ -1006,7 +1059,7 @@ public class Common {
         return -1;
     }
     public static int inList(int e, List<Integer> l, int s, int f, int reverse){
-        for(int i=Math.min(l.size(),f)-1;i>=s;i--) {
+        for(int i=Math.min(l.size(),f)-1;i>=0&&i>=s;i--) {
             if(l.get(i)==e){
                 return i;
             }
@@ -1014,7 +1067,7 @@ public class Common {
         return -1;
     }
     public static int inList(long e, List<Long> l, int s, int f, int reverse){
-        for(int i=Math.min(l.size(),f)-1;i>=s;i--) {
+        for(int i=Math.min(l.size(),f)-1;i>=0&&i>=s;i--) {
             if(l.get(i)==e){
                 return i;
             }
@@ -1022,7 +1075,7 @@ public class Common {
         return -1;
     }
     public static int inList(short e, List<Short> l, int s, int f, int reverse){
-        for(int i=Math.min(l.size(),f)-1;i>=s;i--) {
+        for(int i=Math.min(l.size(),f)-1;i>=0&&i>=s;i--) {
             if(l.get(i)==e){
                 return i;
             }
@@ -1030,7 +1083,7 @@ public class Common {
         return -1;
     }
     public static int inList(byte e, List<Byte> l, int s, int f, int reverse){
-        for(int i=Math.min(l.size(),f)-1;i>=s;i--) {
+        for(int i=Math.min(l.size(),f)-1;i>=0&&i>=s;i--) {
             if(l.get(i)==e){
                 return i;
             }
@@ -1038,7 +1091,7 @@ public class Common {
         return -1;
     }
     public static int inList(float e, List<Float> l, int s, int f, int reverse){
-        for(int i=Math.min(l.size(),f)-1;i>=s;i--) {
+        for(int i=Math.min(l.size(),f)-1;i>=0&&i>=s;i--) {
             if(l.get(i)==e){
                 return i;
             }
@@ -1046,7 +1099,7 @@ public class Common {
         return -1;
     }
     public static int inList(double e, List<Double> l, int s, int f, int reverse){
-        for(int i=Math.min(l.size(),f)-1;i>=s;i--) {
+        for(int i=Math.min(l.size(),f)-1;i>=0&&i>=s;i--) {
             if(l.get(i)==e){
                 return i;
             }
@@ -1055,7 +1108,7 @@ public class Common {
     }
     ////
     public static <T,V> int inList(V e, T[] l, Function<T,V> getr, Comparator<V> comp, int s, int f, int reverse){
-        for(int i=Math.min(l.length,f)-1;i>=s;i--) {
+        for(int i=Math.min(l.length,f)-1;i>=0&&i>=s;i--) {
             if(comp.compare(getr.apply(l[i]),e)==0){
                 return i;
             }
@@ -1063,7 +1116,7 @@ public class Common {
         return -1;
     }
     public static <T,V> int inList(V e, T[] l, Function<T,V> comp, int s, int f, int reverse){
-        for(int i=Math.min(l.length,f)-1;i>=s;i--) {
+        for(int i=Math.min(l.length,f)-1;i>=0&&i>=s;i--) {
             if(comp.apply(l[i]).equals(e)){
                 return i;
             }
@@ -1071,7 +1124,7 @@ public class Common {
         return -1;
     }
     public static <T> int inList(T e, T[] l, Comparator<T> comp, int s, int f, int reverse){
-        for(int i=Math.min(l.length,f)-1;i>=s;i--) {
+        for(int i=Math.min(l.length,f)-1;i>=0&&i>=s;i--) {
             if(comp.compare(l[i], e)==0){
                 return i;
             }
@@ -1079,7 +1132,7 @@ public class Common {
         return -1;
     }
     public static <T> int inList(T e, T[] l, int s, int f, int reverse){
-        for(int i=Math.min(l.length,f)-1;i>=s;i--) {
+        for(int i=Math.min(l.length,f)-1;i>=0&&i>=s;i--) {
             if(l[i].equals(e)){
                 return i;
             }
@@ -1087,7 +1140,7 @@ public class Common {
         return -1;
     }
     public static int inList(char e, char[] l, int s, int f, int reverse){
-        for(int i=Math.min(l.length,f)-1;i>=s;i--) {
+        for(int i=Math.min(l.length,f)-1;i>=0&&i>=s;i--) {
             if(l[i]==e){
                 return i;
             }
@@ -1095,7 +1148,7 @@ public class Common {
         return -1;
     }
     public static int inList(boolean e, boolean[] l, int s, int f, int reverse){
-        for(int i=Math.min(l.length,f)-1;i>=s;i--) {
+        for(int i=Math.min(l.length,f)-1;i>=0&&i>=s;i--) {
             if(l[i]==e){
                 return i;
             }
@@ -1103,7 +1156,7 @@ public class Common {
         return -1;
     }
     public static int inList(int e, int[] l, int s, int f, int reverse){
-        for(int i=Math.min(l.length,f)-1;i>=s;i--) {
+        for(int i=Math.min(l.length,f)-1;i>=0&&i>=s;i--) {
             if(l[i]==e){
                 return i;
             }
@@ -1111,7 +1164,7 @@ public class Common {
         return -1;
     }
     public static int inList(long e, long[] l, int s, int f, int reverse){
-        for(int i=Math.min(l.length,f)-1;i>=s;i--) {
+        for(int i=Math.min(l.length,f)-1;i>=0&&i>=s;i--) {
             if(l[i]==e){
                 return i;
             }
@@ -1119,7 +1172,7 @@ public class Common {
         return -1;
     }
     public static int inList(short e, short[] l, int s, int f, int reverse){
-        for(int i=Math.min(l.length,f)-1;i>=s;i--) {
+        for(int i=Math.min(l.length,f)-1;i>=0&&i>=s;i--) {
             if(l[i]==e){
                 return i;
             }
@@ -1127,7 +1180,7 @@ public class Common {
         return -1;
     }
     public static int inList(byte e, byte[] l, int s, int f, int reverse){
-        for(int i=Math.min(l.length,f)-1;i>=s;i--) {
+        for(int i=Math.min(l.length,f)-1;i>=0&&i>=s;i--) {
             if(l[i]==e){
                 return i;
             }
@@ -1135,7 +1188,7 @@ public class Common {
         return -1;
     }
     public static int inList(float e, float[] l, int s, int f, int reverse){
-        for(int i=Math.min(l.length,f)-1;i>=s;i--) {
+        for(int i=Math.min(l.length,f)-1;i>=0&&i>=s;i--) {
             if(l[i]==e){
                 return i;
             }
@@ -1143,7 +1196,7 @@ public class Common {
         return -1;
     }
     public static int inList(double e, double[] l, int s, int f, int reverse){
-        for(int i=Math.min(l.length,f)-1;i>=s;i--) {
+        for(int i=Math.min(l.length,f)-1;i>=0&&i>=s;i--) {
             if(l[i]==e){
                 return i;
             }
@@ -1188,6 +1241,11 @@ public class Common {
     }
     //</editor-fold>
     
+    //<editor-fold defaultstate="collapsed" desc="arrEq">
+    public static boolean arrEq(Object[] a1, Object[] a2){
+        return Arrays.equals(a2, a2);
+    }
+    //</editor-fold>
     
     public static String[] splitWithComents(String s, int offset, IndexedPredicate<String> target,IndexedPredicate<String> comStart, IndexedPredicate<String> comEnd){
         return splitWithComents(s,offset,target,comStart,comEnd,(Triple<Boolean,String,Integer> p)->{
@@ -1311,6 +1369,18 @@ public class Common {
         return func[ind].get();//static generator 
     }
 
+    //<editor-fold defaultstate="collapsed" desc="byi">
+    public static <T> T[] byi(T[] t){
+        return (T[]) new Object[]{t[0]};
+    }
+    public static <T> T[] byi(T[] t, int i){
+        return (T[]) new Object[]{t[Math.min(t.length-1, i<0?0:i)]};
+    }
+    public static <T> T[] byi(T[] t, int s, int e){
+        return Arrays.copyOfRange(t, s, e);
+    }
+    //</editor-fold>
+    
     public static String fileToString(String f){
         BufferedReader br1 = null;
         String s1="";
@@ -1358,7 +1428,7 @@ public class Common {
     }
     
     public static <T,R> R map(T[] t, R[] r, T in, R n){
-        if(t.length!=r.length)return null;
+        if(t.length!=r.length)return n;
         int i=inList(in,t);
         if(i==-1)return n;
         return r[i];
