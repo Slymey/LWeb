@@ -20,7 +20,7 @@ public class Core {
     public static DynArray<Exception> errors = new DynArray<>();
     public static long newError=-1;
     
-    public static Runnable[] byteToDraw(byte o[], Counter i) throws Exception{
+    public static Runnable[] byteToDraw(byte o[], Counter i){
         ArrayList<Runnable> rn=new ArrayList<Runnable>();        
         while(!i.ended){
             rn.add(Root.getInst(o, i));
