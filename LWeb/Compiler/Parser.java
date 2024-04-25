@@ -8,6 +8,12 @@ import LWeb.Common.Attribute.CheckType;
 import static LWeb.Common.Attribute.CheckType.*;
 import static LWeb.Common.Attribute.attr;
 import static LWeb.Common.Attribute.newAttribute;
+import LWeb.Common.Calculate;
+import LWeb.Common.Calculate.Operation;
+import static LWeb.Common.Calculate.Operation.ADD;
+import static LWeb.Common.Calculate.Operation.DIV;
+import static LWeb.Common.Calculate.Operation.MUL;
+import static LWeb.Common.Calculate.Operation.SUB;
 import LWeb.Common.Color;
 import static LWeb.Common.Color.Color;
 import LWeb.Common.Common;
@@ -110,7 +116,7 @@ public class Parser {
         
         String s=" div[atr|=/etn/][hnt=\"rzn\"] {height: 12px !priority:-2;"
                 + "width: 23em !priority:-12;}"
-                + "h1, p{"
+                + "h1, p:has( > p[ere].cls:eff:not(.zib,.bun)){"
                 + " --var:izbn;"
                 + "}";
         
@@ -118,7 +124,7 @@ public class Parser {
         Pair<String[], TokenType[]> t = tokenize(s);
 //        sopl(ats(t.getFirst()));
 //        sopl(ats(t.getSecond()));
-        t=group(t,DQ_STRING,SQ_STRING, RX_STRING,SL_COMMENT, ML_COMMENT);
+        t=group(t,DQ_STRING,SQ_STRING, /*RX_STRING,  handle later*/SL_COMMENT, ML_COMMENT);
         sopl(ats(t.getFirst()));
         sopl(ats(t.getSecond()));
         sopl(css(t));
@@ -545,7 +551,9 @@ public class Parser {
         int tal = n.getSecond().length;
         PairedIter pi= new PairedIter(sa,ta,0,tal);
         while(pi.has()){
-            out.add(readSelAttrPair(pi));
+            Pair<ArrayList<Selector>, LinkedHashSet<Property>> par = readSelAttrPair(pi);
+            if(par!=null)
+                out.add(par);
         }
         
         return out;
@@ -638,6 +646,7 @@ class ParseTools{
         primarySel=readGroup(pi);
         LinkedHashSet<Property> attr=new LinkedHashSet<>();
         attr = readAttributes(pi);
+        if(attr.isEmpty()||primarySel.isEmpty()){return null;}
         return Pair(primarySel,attr);
     }
     
@@ -721,77 +730,194 @@ class ParseTools{
         Property[] out = null;
         ArrayList<TypeProvider> al = new ArrayList<>();
         while(pi.has()&&pi.peekT()!=EKMARK&&pi.peekT()!=SEMICOLON){
-            pi.ifT(WHITESPACE);
-            System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
-            if(pi.peekT()==TEXT&&pi.peekT(1)==OPEN_BRACKET){
-                al.add(readBracFunc(pi,name,p,smc));
-                //continue;
-            }else if(pi.peekT()==NUMBER){
-                float a = parseFloatOr(pi.nextS(),0);
-                if(pi.peekT()==TEXT){
-                    al.add(new PropLength(a,pi.nextS()));
-                }else{
-                    al.add(new PropScalar(a));
-                }
-            }else if(pi.ifT(HASH)){
-                String s="#";
-                while(pi.has()&&(pi.peekT()==NUMBER||pi.peekT()==TEXT)&&s.length()<10){
-                    s+=pi.nextS();
-                }
-                al.add(new PropColor(Color(s)));
-            }else if(pi.peekT()==TEXT){
-                al.add(new PropList(pi.nextS()));
-            }
-            
+            TypeProvider tp = readValue(pi, smc);
+            if(tp!=null)al.add(tp);
             
             
             if(!pi.ifT(WHITESPACE))break;
         }
-        
+        pi.ifT(CLOSE_BRACKET);
         //stop at ! or ;
+            System.out.println(lognm()+"Ie: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
         return getByName(name, al.toArray(new TypeProvider[0]),p);
     }
-    public static TypeProvider readBracFunc(PairedIter pi, String name, int p, int smc){
+    
+    public static TypeProvider readBracFunc(PairedIter pi, int smc){
         TypeProvider tp = null;
         ArrayList<TypeProvider> al = new ArrayList<>();
         String s = pi.nextS(); pi.inc();
         int cbc = inList(CLOSE_BRACKET, pi.t, smc, pi.max);
+        System.out.println(lognm()+"I-b: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
         switch (s) {
             case "url":{
                 try {tp=new PropUri(new URI(flatten(byi(pi.s, pi.i, cbc))));
                 } catch (URISyntaxException ex) {}
                 break;
             }
-            case "rgba":{
+            case "rgba":case "rgb":{
                 int a=0,r=0,g=0,b=0;
+                System.out.println(lognm()+"I-ro: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                 while(pi.has()&&pi.peekT()!=CLOSE_BRACKET){
+                    System.out.println(lognm()+"I-ri: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                     pi.ifT(WHITESPACE);
+                    System.out.println(lognm()+"I-r1: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                     if(pi.peekT()==NUMBER)
                         r = parseIntOr(pi.nextS(),0); 
+                    System.out.println(lognm()+"I-r2: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                     pi.ifT(WHITESPACE, COMMA);
+                    System.out.println(lognm()+"I-r3: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                     if(pi.peekT()==NUMBER)
                         g = parseIntOr(pi.nextS(),0); 
+                    System.out.println(lognm()+"I-r4: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                     pi.ifT(WHITESPACE, COMMA);
+                    System.out.println(lognm()+"I-r5: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                     if(pi.peekT()==NUMBER)
                         b = parseIntOr(pi.nextS(),0); 
+                    System.out.println(lognm()+"I-r6: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                     pi.ifT(WHITESPACE);
+                    System.out.println(lognm()+"I-r7: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                     if(pi.peekT()==NUMBER){
+                    System.out.println(lognm()+"I-r8: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                         a = (int)(parseFloatOr(pi.nextS(),0)*255); 
                     }else if(pi.ifT(FWDSLASH)){
+                    System.out.println(lognm()+"I-r9: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                         pi.ifT(WHITESPACE);
-                        if(pi.peekT()==NUMBER&&pi.peekT(1)==PERCENT)
-                            a = (int)(parseFloatOr(pi.nextS(),0)*2.55); 
+                    System.out.println(lognm()+"I-r10: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+                        if(pi.peekT()==NUMBER&&pi.peekT(1)==PERCENT){
+                            a = (int)(parseFloatOr(pi.nextS(),0)*2.55);
+                            pi.inc();
+                        }
+                    System.out.println(lognm()+"I-r11: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                     }
                 }
                 tp = new PropColor(new Color(a,r,g,b));
                 break;
             }
-            default:
-                throw new AssertionError();
+            case "calc":{//read on loop -> calc(50% - 24px/2 - 4px/2);   olso handle RX_STRING
+                tp = new PropCalc(readCalc(pi, smc));
+                break;
+            }
+            default:{
+                int bcc=0;
+                ArrayList<TokenType> tt = new ArrayList<>();
+                ArrayList<String> ss = new ArrayList<>();
+                while(pi.has()){
+                    System.out.println(lognm()+"I-u: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+                    if(pi.peekT()==OPEN_BRACKET)bcc++;
+                    if(pi.peekT()==CLOSE_BRACKET)bcc--;
+                    if(bcc<0)break;
+                    tt.add(pi.peekT());
+                    ss.add(pi.nextS());
+                }
+                tp = new PropUnknown(Pair(tt.toArray(na(pi.t,0)), ss.toArray(na(pi.s,0))));
+                //throw new AssertionError(s);
+                break;
+            }
         }
         
         return tp;
     }
+    
+    public static TypeProvider readValue(PairedIter pi, int smc){
+        TypeProvider tp = null;
+        pi.ifT(WHITESPACE);
+        System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+        if(pi.peekT()==TEXT&&pi.peekT(1)==OPEN_BRACKET){
+        System.out.println(lognm()+"Ib: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+            tp = readBracFunc(pi, smc);
+            //continue;
+        }else if(pi.peekT()==NUMBER){
+            tp = readNumber(pi);
+        System.out.println(lognm()+"In: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+        }else if(pi.ifT(HASH)){
+            String s="#";
+            while(pi.has()&&(pi.peekT()==NUMBER||pi.peekT()==TEXT)&&s.length()<10){
+                s+=pi.nextS();
+            }
+            tp = new PropColor(Color(s));
+        }else if(pi.peekT()==TEXT){
+            tp = new PropList(pi.nextS());
+        }
+        return tp;
+    }
+    
+    public static TypeProvider readNumber(PairedIter pi){
+        TypeProvider tp;
+        float a = parseFloatOr(pi.nextS(),0);
+        if(pi.peekT()==TEXT){
+            tp = new PropLength(a,pi.nextS());
+        }else if(pi.ifT(PERCENT)){
+            tp = new PropPercent(a/100);
+        }else{
+            tp = new PropScalar(a);
+        }
+        return tp;
+    }
+    
+    public static Calculate readCalc(PairedIter pi, int smc){
+        System.out.println(lognm()+"I-c1: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+        pi.ifT(WHITESPACE);
+        Calculate out=null;
+        Calculate tmp1=null;
+        Calculate tmp2=null;
+        if(pi.ifT(OPEN_BRACKET)){
+            out = readCalc(pi, smc);
+        }else{
+            out = new Calculate(readValue(pi,smc));
+        }
+        while(pi.has()&&!pi.ifT(CLOSE_BRACKET)){
+            Operation op = readOp(pi, smc);
+            if(pi.ifT(OPEN_BRACKET)){
+                tmp2 = readCalc(pi, smc);
+            }else{
+                tmp2 = new Calculate(readValue(pi,smc));
+            }
+            if(op==MUL||op==DIV){
+                if(tmp1==null){
+                    out = new Calculate(out, op, tmp2);
+                    tmp2 = null;
+                }else{
+                    tmp1 = new Calculate(tmp1, op, tmp2);
+                    tmp2 = null;
+                }
+            }else if(op==ADD||op==SUB){
+                if(tmp1==null){
+                    tmp1 = tmp2;
+                    tmp2 = null;
+                }else{
+                    out = new Calculate(out, op, tmp1);
+                    tmp1 = tmp2;
+                    tmp2 = null;
+                }
+            }
+        }
+        return out;
+    }
+    public static Operation readOp(PairedIter pi, int smc){
+        Operation op;
+        if(pi.peekT()==WHITESPACE&&(pi.peekT(1)==PLUS||pi.peekT(1)==DASH)&&pi.peekT(2)==WHITESPACE){
+            pi.inc();
+            if(pi.ifT(PLUS)){
+                op=ADD;
+            }else{
+                op=SUB;
+            }
+            pi.inc();
+        }else{
+            pi.ifT(WHITESPACE);
+            if(pi.ifT(FWDSLASH)){
+                op=DIV;
+            }else if(pi.ifT(STAR)){
+                op=MUL;
+            }else{
+                op=Operation.NONE;
+            }
+        }
+        pi.ifT(WHITESPACE);
+        return op;
+    }
+    
+    
     
     
     
@@ -800,11 +926,13 @@ class ParseTools{
         ArrayList<Selector> out=new ArrayList<>();
         while(pi.has()){
             out.add(readChain(pi));
+            System.out.println(lognm()+"I--: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
             System.out.println(pi.i);
             pi.ifT(WHITESPACE);
             if(!pi.ifT(COMMA))break;
             pi.ifT(WHITESPACE);
         }
+        while(pi.has()&&pi.peekT()!=OPEN_CURLY)pi.inc();
         return out;
     }
     
@@ -813,16 +941,25 @@ class ParseTools{
         ArrayList<ArrayList<Conditions>> tg=new ArrayList<>();
         pi.ifT(CLOSE_CURLY);
         while(pi.has()){
+            System.out.println(lognm()+"I-1: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
             pi.ifT(WHITESPACE);
             System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
 //            if(pi.peekT()==OPEN_BRACKET){
 //                sel.addCondition(Pair(DESCENDANT, readBracketTarget(pi)));
 //            }
             TokenType tt= pi.peekT();
-            if(inList(tt, new TokenType[]{STAR,HAT,PLUS,TILDAE,TEXT,COLON,PERIOD,HASH,OPEN_ANGLE})==-1)break;
-            sel.addCondition(Pair(
-                    map(new TokenType[]{CLOSE_ANGLE, PLUS, TILDAE},new Combinators[]{CHILD, NEXT, SUBSEQUENT}, tt, DESCENDANT), 
-                    readTarget(pi)));
+            System.out.println(lognm()+"I2: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+            if(inList(tt, new TokenType[]{STAR,HAT,PLUS,TILDAE,TEXT,COLON,PERIOD,HASH,CLOSE_ANGLE})==-1)break;
+            System.out.println(lognm()+"I3: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+            Combinators ct=map(new TokenType[]{CLOSE_ANGLE, PLUS, TILDAE},new Combinators[]{CHILD, NEXT, SUBSEQUENT}, tt, DESCENDANT);
+            System.out.println(lognm()+"I4: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+            if(ct!=DESCENDANT)pi.inc();
+            System.out.println(lognm()+"I5: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+            pi.ifT(WHITESPACE);
+            System.out.println(lognm()+"I6: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+            sel.addCondition(Pair( ct, readTarget(pi)));
+            System.out.println(lognm()+"I7: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+            System.out.println(lognm()+"I--2: "+pi.i+" "+pi.peekT()+" "+pi.peekS()+" "+tt);
         }
         return sel;
     }
@@ -847,7 +984,7 @@ class ParseTools{
         ArrayList<Conditions> out = new ArrayList<>();
         boolean txt=false;
         while(pi.has()){
-            System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+            System.out.println(lognm()+"I-3: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
             if(!txt&&pi.peekT()==TEXT){
                 txt=true;
                 out.add(new CondTag(pi.nextS()));
@@ -861,6 +998,8 @@ class ParseTools{
                 }else{
                     System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                     out.add(readColonCond(pi));
+                    pi.ifT(CLOSE_BRACKET);
+            System.out.println(lognm()+"I-3i1: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                 }
                 continue;
             }
@@ -885,8 +1024,10 @@ class ParseTools{
                 out.add(readAttrCond(pi));
                 continue;
             }
+            System.out.println(lognm()+"I-3i: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
             break;
         }
+            System.out.println(lognm()+"I-3e: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
         
         
         return out;
@@ -957,7 +1098,7 @@ class ParseTools{
     public static Conditions readColonCond(PairedIter pi){
         Conditions out=Selector.CondTrue;
         while(pi.has()){
-            System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+            System.out.println(lognm()+"I-c1: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
             if(pi.peekT()==TEXT){
                 String s = pi.nextS();
                 if(pi.has()&&pi.ifT(OPEN_BRACKET)){
@@ -978,7 +1119,8 @@ class ParseTools{
                             ArrayList<Selector> sel=new ArrayList<>();
                             while(pi.has()){
                                 sel.add(readChain(pi));
-                                while(pi.has()&&!pi.ifT(COMMA))pi.inc();
+                                if(!pi.ifT(COMMA))break;
+                                //while(pi.has()&&!pi.ifT(COMMA))pi.inc();
                             }
                             return new CondHas(sel);
                         }
@@ -986,7 +1128,8 @@ class ParseTools{
                             ArrayList<Selector> sel=new ArrayList<>();
                             while(pi.has()){
                                 sel.add(readChain(pi));
-                                while(pi.has()&&!pi.ifT(COMMA))pi.inc();
+                                if(!pi.ifT(COMMA))break;
+                                //while(pi.has()&&!pi.ifT(COMMA))pi.inc();
                             }
                             return new CondQualify(sel);
                         }
@@ -997,8 +1140,11 @@ class ParseTools{
                             ArrayList<Selector> sel=new ArrayList<>();
                             while(pi.has()){
                                 sel.add(readChain(pi));
-                                while(pi.has()&&!pi.ifT(COMMA))pi.inc();
+                                pi.ifT(WHITESPACE);
+                                if(!pi.ifT(COMMA))break;
+                                //while(pi.has()&&!pi.ifT(COMMA))pi.inc();
                             }
+            System.out.println(lognm()+"I-ce: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                             return new CondNot(sel);
                         }
                         case "contains":{

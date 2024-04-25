@@ -3,6 +3,7 @@ package LWeb.Common;
 
 import static LWeb.Common.Color.Color;
 import static LWeb.Common.Common.*;
+import LWeb.Compiler.Parser.TokenType;
 import java.net.URI;
 import java.util.HashMap;
 
@@ -24,6 +25,87 @@ public interface TypeProvider{
     String toString();
 
     
+    //<editor-fold defaultstate="collapsed" desc="Calc">
+    public static class PropCalc implements TypeProvider{
+        private boolean detirmanant=true;
+        private Calculate value;
+        public PropCalc(Calculate c){
+            value=c;
+        }
+        @Override
+        public boolean detirmanant() {
+            return detirmanant;
+        }
+        @Override
+        public Object get() {
+            return value;
+        }
+        @Override
+        public int order() {
+            return 0;
+        }
+        @Override
+        public void set(TypeProvider p) {
+            if(p==null)return;
+            if(!(p instanceof PropCalc))throw new TypeMismatchException("Type "+p.getClass()+" does not match type "+this.getClass());
+            value = (Calculate) p.get();
+        }
+        @Override
+        public void set(Object value,int order) {
+            this.value= (Calculate) value;
+        }
+        @Override
+        public TypeProvider add(TypeProvider p) {
+            if(p==null)return null;
+            if(p instanceof PropCalc){
+                return this.value.get().add((TypeProvider) p.get());
+            }
+            throw new TypeMismatchException("Type "+p.getClass()+" does not match type "+this.getClass());
+        }
+        @Override
+        public TypeProvider sub(TypeProvider p) {
+            if(p==null)return null;
+            if(p instanceof PropCalc){
+                return this.value.get().sub((TypeProvider) p.get());
+            }
+            throw new TypeMismatchException("Type "+p.getClass()+" does not match type "+this.getClass());
+        }
+        @Override
+        public TypeProvider negate() {
+            return this.value.get().negate();
+        }
+        @Override
+        public TypeProvider div(TypeProvider p) {
+            if(p==null)return null;
+            if(p instanceof PropScalar){
+                return this.value.get().div((TypeProvider) p.get());
+            }
+            return p.inverse().mul(this);
+        }
+        @Override
+        public TypeProvider mul(TypeProvider p) {
+            if(p==null)return null;
+            if(p instanceof PropScalar){
+                return this.value.get().mul((TypeProvider) p.get());
+            }
+            return p.mul(this);
+        }
+        @Override
+        public TypeProvider inverse() {
+            return this.value.get().inverse();
+        }
+        @Override
+        public String toString(){
+            return ""+value;
+        }
+
+        @Override
+        public TypeProvider copy() {
+            return new PropCalc(value);
+        }
+        
+    }
+    //</editor-fold>
     //<editor-fold defaultstate="collapsed" desc="Scalar">
     public static class PropScalar implements TypeProvider{
         private boolean detirmanant=true;
@@ -101,6 +183,87 @@ public interface TypeProvider{
         @Override
         public TypeProvider copy() {
             return new PropScalar(value);
+        }
+        
+    }
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="Percent">
+    public static class PropPercent implements TypeProvider{
+        private boolean detirmanant=true;
+        private double value=0;
+        public PropPercent(double l){
+            value=l;
+        }
+        @Override
+        public boolean detirmanant() {
+            return detirmanant;
+        }
+        @Override
+        public Object get() {
+            return value;
+        }
+        @Override
+        public int order() {
+            return 0;
+        }
+        @Override
+        public void set(TypeProvider p) {
+            if(p==null)return;
+            if(!(p instanceof PropPercent))throw new TypeMismatchException("Type "+p.getClass()+" does not match type "+this.getClass());
+            value=(double) p.get();
+        }
+        @Override
+        public void set(Object value,int order) {
+            this.value=(double) value;
+        }
+        @Override
+        public TypeProvider add(TypeProvider p) {
+            if(p==null)return null;
+            if(p instanceof PropPercent){
+                return new PropPercent(this.value+(double)p.get());
+            }
+            throw new TypeMismatchException("Type "+p.getClass()+" does not match type "+this.getClass());
+        }
+        @Override
+        public TypeProvider sub(TypeProvider p) {
+            if(p==null)return null;
+            if(p instanceof PropPercent){
+                return new PropPercent(this.value-(double)p.get());
+            }
+            throw new TypeMismatchException("Type "+p.getClass()+" does not match type "+this.getClass());
+        }
+        @Override
+        public TypeProvider negate() {
+            return new PropPercent(-this.value);
+        }
+        @Override
+        public TypeProvider div(TypeProvider p) {
+            if(p==null)return null;
+            if(p instanceof PropPercent){
+                return new PropPercent(this.value/(double)p.get());
+            }
+            return p.inverse().mul(this);
+        }
+        @Override
+        public TypeProvider mul(TypeProvider p) {
+            if(p==null)return null;
+            if(p instanceof PropPercent){
+                return new PropPercent(this.value*(double)p.get());
+            }
+            return p.mul(this);
+        }
+        @Override
+        public TypeProvider inverse() {
+            return new PropPercent(1/this.value);
+        }
+        @Override
+        public String toString(){
+            return ""+value;
+        }
+
+        @Override
+        public TypeProvider copy() {
+            return new PropPercent(value);
         }
         
     }
@@ -511,6 +674,77 @@ public interface TypeProvider{
         }
         public String toString(){
             return value;
+        }
+    }
+    //</editor-fold>
+    //<editor-fold defaultstate="collapsed" desc="Unknown">
+    public static class PropUnknown implements TypeProvider{
+        private boolean detirmanant=true;
+        private Pair<TokenType[], String[]> value;
+        private int order=0;
+        public PropUnknown(Pair<TokenType[], String[]> s){
+            value=s;
+        }
+        @Override
+        public boolean detirmanant() {
+            return true;
+        }
+
+        @Override
+        public Object get() {
+            return value;
+        }
+
+        @Override
+        public int order() {
+            return 0;
+        }
+
+        @Override
+        public void set(TypeProvider p) {
+            value=(Pair<TokenType[], String[]>) p.get();
+        }
+
+        @Override
+        public void set(Object value, int order) {
+            this.value=(Pair<TokenType[], String[]>) value;
+        }
+
+        @Override
+        public TypeProvider add(TypeProvider p) {
+            return null;
+        }
+
+        @Override
+        public TypeProvider sub(TypeProvider p) {
+            return null;
+        }
+
+        @Override
+        public TypeProvider negate() {
+            return null;
+        }
+
+        @Override
+        public TypeProvider mul(TypeProvider p) {
+            return null;
+        }
+
+        @Override
+        public TypeProvider div(TypeProvider p) {
+            return null;
+        }
+
+        @Override
+        public TypeProvider inverse() {
+            return null;
+        }
+        @Override
+        public TypeProvider copy() {
+            return new PropUnknown(value);
+        }
+        public String toString(){
+            return ""+value;
         }
     }
     //</editor-fold>

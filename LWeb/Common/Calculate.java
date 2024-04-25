@@ -10,8 +10,15 @@ public class Calculate {
     Operation op;
     private boolean cache=false;
     
-    Calculate(Calculate c1,Operation op,Calculate c2){c1.par=this;c2.par=this;val1=c1;this.op=op;val2=c2;}
-    Calculate(TypeProvider tv){value=tv;this.op=Operation.NONE;}
+    public Calculate(Calculate c1,Operation op,Calculate c2){c1.par=this;c2.par=this;val1=c1;this.op=op;val2=c2;}
+    public Calculate(TypeProvider c1,Operation op,TypeProvider c2){
+        val1=new Calculate(c1);
+        this.op=op;
+        val2=new Calculate(c1);
+        val1.par=this;
+        val2.par=this;
+    }
+    public Calculate(TypeProvider tv){value=tv;this.op=Operation.NONE;}
     public TypeProvider get(){
         if(cache)return value;
         value = get1();

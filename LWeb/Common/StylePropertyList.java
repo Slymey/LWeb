@@ -19,6 +19,8 @@ public class StylePropertyList {
         al.add(new StyleProperty("margin", new PropLength(0,"px"), sg(()->{
             //<editor-fold defaultstate="collapsed" desc="cast">
             BiFunction<TypeProvider[],Integer,Property[]> cast = (TypeProvider[] t, Integer p) -> {
+                        System.out.println(lognm()+"?? "+t);
+                        System.out.println(lognm()+"??2 "+byi(t));
                 if(t.length==0)
                     return null;
                 if(t.length==1)

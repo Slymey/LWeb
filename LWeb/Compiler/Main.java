@@ -56,8 +56,8 @@ public class Main {
         //System.out.println(ats(ttk.getFirst()));
         //if(3<5)throw new Exception("etb");
         String st=fileToString("large_test.css");
-        Pair<String[], TokenType[]> ttk = group(tokenize(st),DQ_STRING,SQ_STRING, RX_STRING,SL_COMMENT, ML_COMMENT);
-        //System.out.println(ats(ttk.getFirst())+"\n\n"+ats(ttk.getSecond()));
+        Pair<String[], TokenType[]> ttk = group(tokenize(st),DQ_STRING,SQ_STRING, /*RX_STRING, handle later*/SL_COMMENT, ML_COMMENT);
+        System.out.println(ats(ttk.getFirst())+"\n\n"+ats(ttk.getSecond()));
         ArrayList<Pair<ArrayList<Selector>, LinkedHashSet<Property>>> css = css(ttk);
         System.out.println(css);
 

@@ -134,6 +134,12 @@ public class test {
         System.out.println(a);
         PropScalar ps = new PropScalar(35);
         System.out.println(lognm()+ps);
+        
+        String sa[][]={{"ubrvn","ibnjm"},{"izvbun","tuvzbn"},{"tuvbnj"}};
+        String s2[] =flatten(sa);
+        System.out.println(lognm()+""+s2);
+        
+
 /*
         sopl(parseDouble("\n45px"));
         TypeProvider tp1=new Length(0);
@@ -206,14 +212,106 @@ public class test {
     
 
     
+    private static String formatInput(String input) {
+        StringBuilder formatted = new StringBuilder();
+        int indentLevel = 0;
+
+        int inBrackets = 0;
+        boolean isNewLine = true;
+
+        for (char c : input.toCharArray()) {
+            switch (c) {
+                case '[':
+                        indentLevel++;
+                        inBrackets++;
+                    if (inBrackets==0) {
+                    }
+                    formatted.append(c);
+                    break;
+
+                case ']':
+                    formatted.append(c);
+                    indentLevel--;
+                    if (inBrackets!=0) {
+                        inBrackets--;
+                        formatted.append("\n");
+                        isNewLine = true;
+                    }
+                    break;
+
+                case ',':
+                    formatted.append(c);
+                    formatted.append("\n");
+                    isNewLine = true;
+                    break;
+
+                default:
+                    if (isNewLine) {
+                        for (int i = 0; i < indentLevel; i++) {
+                            formatted.append("  "); // 4 spaces for indentation
+                        }
+                        isNewLine = false;
+                    }
+                    formatted.append(c);
+                    break;
+            }
+        }
+
+        return formatted.toString();
+    }
     
     
     
     
     
     
+    public static String formatText(String input) {
+        // To build the formatted string
+        StringBuilder formattedText = new StringBuilder();
+        // To keep track of the current indentation level
+        int indentLevel = 0;
+        // To control the indentation step (number of spaces)
+        int indentStep = 2;
+
+        for (int i = 0; i < input.length(); i++) {
+            char currentChar = input.charAt(i);
+
+            switch (currentChar) {
+                case '[':
+                    // New line and indent after opening bracket
+                    indentLevel++;
+                    formattedText.append(currentChar);
+                    formattedText.append("\n");
+                    formattedText.append(repeat(" ", indentLevel * indentStep));
+                    // Increase indent level
+                    break;
+
+                case ']':
+                    // Decrease indent level and new line before closing bracket
+                    indentLevel--;
+                    formattedText.append(currentChar);
+                    formattedText.append("\n");
+                    formattedText.append(repeat(" ", (indentLevel-1) * indentStep));
+                    break;
+
+                default:
+                    // Regular characters
+                    formattedText.append(currentChar);
+                    break;
+            }
+        }
+
+        return formattedText.toString();
+    }
     
-    
+    public static String repeat(String str, int times) {
+        StringBuilder repeated = new StringBuilder();
+        for (int i = 0; i < times; i++) {
+            repeated.append(str);
+        }
+        return repeated.toString();
+    }
+
     
     
     

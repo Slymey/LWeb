@@ -43,6 +43,21 @@ public class Common {
         return ""+ste;
     }
     
+    
+    public static class LoopTerminationException extends RuntimeException{
+        public LoopTerminationException() {
+            super();
+        }
+        public LoopTerminationException(String s) {
+            super(s);
+        }
+        public LoopTerminationException(String message, Throwable cause) {
+            super(message, cause);
+        }
+        public LoopTerminationException(Throwable cause) {
+            super(cause);
+        }
+    }
     public static void setTMax(int tmx){terminatorMax=tmx;}
     public static void terminator(Object... o){
         if(terminatorState==null){
@@ -55,7 +70,7 @@ public class Common {
             terminatorCount=0;
         }
         if(terminatorMax<terminatorCount){
-            throw new RuntimeException("State remained identical for too long ("+terminatorMax+"): "+ats(o));
+            throw new LoopTerminationException("State remained identical for too long ("+terminatorMax+"): "+ats(o));
         }
     }
     
@@ -1371,10 +1386,16 @@ public class Common {
 
     //<editor-fold defaultstate="collapsed" desc="byi">
     public static <T> T[] byi(T[] t){
-        return (T[]) new Object[]{t[0]};
+        System.out.println(lognm()+""+t);
+        T [] a =na(t, 1);
+        System.out.println(lognm()+""+a);
+        a[0]=t[0];
+        return a;
     }
     public static <T> T[] byi(T[] t, int i){
-        return (T[]) new Object[]{t[Math.min(t.length-1, i<0?0:i)]};
+        T [] a =na(t,1);
+        a[0]=t[Math.min(t.length-1, i<0?0:i)];
+        return a;
     }
     public static <T> T[] byi(T[] t, int s, int e){
         return Arrays.copyOfRange(t, s, e);
@@ -1427,6 +1448,19 @@ public class Common {
         return s1;
     }
     
+    public static <T> T[] na(T[][][] t, int size){
+        return (T[]) java.lang.reflect.Array.newInstance(t.getClass().getComponentType().getComponentType().getComponentType(), size);
+    }
+    public static <T> T[] na(T[][] t, int size){
+        return (T[]) java.lang.reflect.Array.newInstance(t.getClass().getComponentType().getComponentType(), size);
+    }
+    public static <T> T[] na(T[] t, int size){
+        return (T[]) java.lang.reflect.Array.newInstance(t.getClass().getComponentType(), size);
+    }
+    public static <T> T[] na(T t, int size){
+        return (T[]) java.lang.reflect.Array.newInstance(t.getClass(), size);
+    }
+    
     public static <T,R> R map(T[] t, R[] r, T in, R n){
         if(t.length!=r.length)return n;
         int i=inList(in,t);
@@ -1442,7 +1476,7 @@ public class Common {
         for(T[] b:a){
             len+=b.length;
         }
-        T[] r = (T[]) new Object[len];
+        T[] r = na(a,len);
         int i=0;
         for(T[] b:a){
             for(T c:b){

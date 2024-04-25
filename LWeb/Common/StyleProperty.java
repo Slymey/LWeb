@@ -3,6 +3,7 @@
 package LWeb.Common;
 
 import static LWeb.Common.Common.inList;
+import static LWeb.Common.Common.lognm;
 import java.util.HashMap;
 import java.util.function.BiFunction;
 import java.util.logging.Level;
@@ -43,6 +44,7 @@ public class StyleProperty {
         return getProperty1(value,0);
     }
     public Property[] getProperties(TypeProvider[] value, int priority){
+        System.out.println(lognm()+"?? "+value);
         return getProperty1(value, priority);
     }
     
