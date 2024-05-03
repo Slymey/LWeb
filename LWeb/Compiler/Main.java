@@ -1,11 +1,13 @@
 package LWeb.Compiler;
 
 
+import LWeb.Compiler.Components.ElementTag;
+import LWeb.Compiler.Components.Selector;
 import static LWeb.Common.Common.*;
 import LWeb.Common.*;
-import static LWeb.Common.Attribute.newAttribute;
+import static LWeb.Compiler.Components.Attribute.newAttribute;
 import static LWeb.Common.Pair.Pair;
-import LWeb.Common.StyleProperty.Property;
+import LWeb.Compiler.Components.StyleProperty.Property;
 import LWeb.Compiler.Parser.TokenType;
 import static LWeb.Compiler.Parser.TokenType.DQ_STRING;
 import static LWeb.Compiler.Parser.TokenType.ML_COMMENT;
@@ -58,6 +60,7 @@ public class Main {
         String st=fileToString("large_test.css");
         Pair<String[], TokenType[]> ttk = group(tokenize(st),DQ_STRING,SQ_STRING, /*RX_STRING, handle later*/SL_COMMENT, ML_COMMENT);
         System.out.println(ats(ttk.getFirst())+"\n\n"+ats(ttk.getSecond()));
+        //TODO: sorted list using specificity
         ArrayList<Pair<ArrayList<Selector>, LinkedHashSet<Property>>> css = css(ttk);
         System.out.println(css);
 
@@ -85,6 +88,9 @@ public class Main {
 //        sopl(styleSheet.toString());
             
     }
+    
+    
+    
     //fix split with coments to proprely treat nested eg "ff(buvr"gh) -> ??
     public static int createCssList(ArrayList<Pair<ArrayList<String>,HashMap<String,Pair<String,Integer>>>> list, String s, int offset){
         int i = offset;

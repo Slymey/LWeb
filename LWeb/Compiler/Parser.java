@@ -1,19 +1,19 @@
 package LWeb.Compiler;
 
-import LWeb.Common.Attribute;
-import LWeb.Common.Attribute.AttributeExists;
-import LWeb.Common.Attribute.AttributeText;
-import LWeb.Common.Attribute.AttributeTextMatch;
-import LWeb.Common.Attribute.CheckType;
-import static LWeb.Common.Attribute.CheckType.*;
-import static LWeb.Common.Attribute.attr;
-import static LWeb.Common.Attribute.newAttribute;
-import LWeb.Common.Calculate;
-import LWeb.Common.Calculate.Operation;
-import static LWeb.Common.Calculate.Operation.ADD;
-import static LWeb.Common.Calculate.Operation.DIV;
-import static LWeb.Common.Calculate.Operation.MUL;
-import static LWeb.Common.Calculate.Operation.SUB;
+import LWeb.Compiler.Components.Attribute;
+import LWeb.Compiler.Components.Attribute.AttributeExists;
+import LWeb.Compiler.Components.Attribute.AttributeText;
+import LWeb.Compiler.Components.Attribute.AttributeTextMatch;
+import LWeb.Compiler.Components.Attribute.CheckType;
+import static LWeb.Compiler.Components.Attribute.CheckType.*;
+import static LWeb.Compiler.Components.Attribute.attr;
+import static LWeb.Compiler.Components.Attribute.newAttribute;
+import LWeb.Compiler.Components.Calculate;
+import LWeb.Compiler.Components.Calculate.Operation;
+import static LWeb.Compiler.Components.Calculate.Operation.ADD;
+import static LWeb.Compiler.Components.Calculate.Operation.DIV;
+import static LWeb.Compiler.Components.Calculate.Operation.MUL;
+import static LWeb.Compiler.Components.Calculate.Operation.SUB;
 import LWeb.Common.Color;
 import static LWeb.Common.Color.Color;
 import LWeb.Common.Common;
@@ -21,33 +21,32 @@ import static LWeb.Common.Common.*;
 import static LWeb.Common.Common.Troolean.False;
 import static LWeb.Common.Common.Troolean.None;
 import static LWeb.Common.Common.Troolean.True;
-import LWeb.Common.ElementTag;
-import LWeb.Common.EllClass;
-import static LWeb.Common.EllClass.Activity.DISABLED;
-import static LWeb.Common.EllClass.Activity.ENABLED;
-import static LWeb.Common.EllClass.Activity.STATIC;
+import LWeb.Compiler.Components.ElementTag;
+import static LWeb.Compiler.Components.ClassList.Activity.*;
 import LWeb.Common.Pair;
 import static LWeb.Common.Pair.Pair;
 import LWeb.Common.Tree;
 import static LWeb.Compiler.Parser.TokenType.*;
 import LWeb.Common.Range.Range;
-import LWeb.Common.Selector;
-import LWeb.Common.Selector.Combinators;
-import static LWeb.Common.Selector.Combinators.*;
-import LWeb.Common.Selector.*;
-import LWeb.Common.Selector.CondTrue;
-import LWeb.Common.Selector.Conditions;
-import LWeb.Common.StyleProperty.Property;
-import static LWeb.Common.StylePropertyList.getByName;
+import LWeb.Compiler.Components.Selector;
+import LWeb.Compiler.Components.Selector.Combinators;
+import static LWeb.Compiler.Components.Selector.Combinators.*;
+import LWeb.Compiler.Components.Selector.*;
+import LWeb.Compiler.Components.Selector.CondTrue;
+import LWeb.Compiler.Components.Selector.Conditions;
+import LWeb.Compiler.Components.StyleProperty.Property;
+import static LWeb.Compiler.Components.StylePropertyList.getByName;
 import LWeb.Common.Tree.Node;
-import LWeb.Common.TypeProvider;
-import LWeb.Common.TypeProvider.*;
+import LWeb.Compiler.Components.TypeProvider;
+import LWeb.Compiler.Components.TypeProvider.*;
 import LWeb.Compiler.Parser.TokenType;
 import static LWeb.Compiler.ParseTools.*;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -76,59 +75,63 @@ public class Parser {
     public static boolean nextNum(char c){return range0_9.equals(c)||c=='.';}
     
     public static void main(String[] args) {//test
-//        String s="<body>\n" +
-//"    <div id=\"title\" ><h1 class=\"trs\" trtxt=\"$title$\">The Bricks</h1></div>\n" +
-//"    <div id=\"main\">\n" +
-//"        \n" +
-//"        <div id=\"left\">\n" +
-//"            <div id=\"tocke-box\">\n" +
-//"                <p>Toèke: </p>\n" +
-//"                <mark id=\"tocke\" ib=\"uno\">0</mark>\n" +
-//"            </div>\n" +
-//"            <div id=\"brick-box\">\n" +
-//"                <canvas id=\"canvas\" width=\"800\" height=\"800\"></canvas>\n" +
-//"            </div>\n" +
-//"        </div>\n" +
-//"        <div id=\"right\">\n" +
-//"                <button id=\"play\" class=\"trs\" trtxt=\"$play$\">Play</button>\n" +
-//"               \n" +
-//"                \n" +
-//"        </div>\n" +
-//"    </div>\n" +
-//"    \n" +
-//"    \n" +
-//"</body>";
-//        //s="ubn &ion %oh %uohj oh ouhjm &onm &onmkl uonmkk";
-//        //s="ubn &ion %oh %uohj oh ouhjm &onm &onmkl & uonmkk";
-//        //s=" uiun=oino ounm ljn= \"ibu\" onm = 'tz tzm' nim ==imk";
-//        //s="<zib  j.ubnm ibn.ob=oubn.in.khb.ib. ubn>";
-//        Pair<String[], TokenType[]> t = tokenize(s);
-////        sopl(ats(t.getFirst()));
-////        sopl(ats(t.getSecond()));
-//        t=group(t);
-////        sopl(ats(t.getFirst()));
-////        sopl(ats(t.getSecond()));
-//        ArrayList<ElementTag> doc = ell(t);
-//        //sopl(doc);
-//        Tree<ElementTag> tree = buildTree(doc);
-//        sopl(tree);
-        //sopl(tree.root.findFirstNode((ElementTag e1)->{return "right".equals(e1.id)?0:-1;}, 0, 0));
-        
-        String s=" div[atr|=/etn/][hnt=\"rzn\"] {height: 12px !priority:-2;"
-                + "width: 23em !priority:-12;}"
-                + "h1, p:has( > p[ere].cls:eff:not(.zib,.bun)){"
-                + " --var:izbn;"
-                + "}";
-        
-        
+        String s="<body>\n" +
+                "    <div id=\"title\" ><h1 class=\"trs\" trtxt=\"$title$\">The Bricks</h1></div>\n" +
+                "    <div id=\"main\">\n" +
+                "        \n" +
+                "        <div id=\"left\">\n" +
+                "            <div id=\"tocke-box\">\n" +
+                "                <p>Toèke: </p>\n" +
+                "                <mark id=\"tocke\" ib=\"uno\">0</mark>\n" +
+                "            </div>\n" +
+                "            <div id=\"brick-box\">\n" +
+                "                <canvas id=\"canvas\" width=\"800\" height=\"800\"></canvas>\n" +
+                "            </div>\n" +
+                "        </div>\n" +
+                "        <div id=\"right\">\n" +
+                "                <button id=\"play\" class=\"trs\" trtxt=\"$play$\">Play</button>\n" +
+                "               \n" +
+                "                \n" +
+                "        </div>\n" +
+                "    </div>\n" +
+                "    \n" +
+                "    \n" +
+                "</body>";
+        //s="ubn &ion %oh %uohj oh ouhjm &onm &onmkl uonmkk";
+        //s="ubn &ion %oh %uohj oh ouhjm &onm &onmkl & uonmkk";
+        //s=" uiun=oino ounm ljn= \"ibu\" onm = 'tz tzm' nim ==imk";
+        //s="<zib  j.ubnm ibn.ob=oubn.in.khb.ib. ubn>";
         Pair<String[], TokenType[]> t = tokenize(s);
 //        sopl(ats(t.getFirst()));
 //        sopl(ats(t.getSecond()));
-        t=group(t,DQ_STRING,SQ_STRING, /*RX_STRING,  handle later*/SL_COMMENT, ML_COMMENT);
-        sopl(ats(t.getFirst()));
-        sopl(ats(t.getSecond()));
-        sopl(css(t));
+        t=group(t,DQ_STRING,SQ_STRING, SL_COMMENT, ML_COMMENT);
+//        sopl(ats(t.getFirst()));
+//        sopl(ats(t.getSecond()));
+        ArrayList<ElementTag> doc = ell(t);
+        //sopl(doc);
+        Tree<ElementTag> tree = buildTree(doc);
+        //sopl(tree);
+        //sopl(tree.root.findFirstNode((ElementTag e1)->{return "right".equals(e1.id)?0:-1;}, 0, 0));
         
+        String sc=" #title{height:12px !priority:-2;"
+                + "width: 23em !priority:-12;}"
+                + "div:not(:has(#tocke)){"
+                + " --var:izbn;"
+                + " adf:rgba(24, 24, 24 / 50%);"
+                + "}";
+//        
+//        setTMax(10);
+        Pair<String[], TokenType[]> tc = tokenize(sc);
+//        sopl(ats(t.getFirst()));
+//        sopl(ats(t.getSecond()));
+        tc=group(tc,DQ_STRING,SQ_STRING, /*RX_STRING,  handle later*/SL_COMMENT, ML_COMMENT);
+//        sopl(ats(tc.getFirst()));
+//        sopl(ats(tc.getSecond()));
+        ArrayList<Pair<ArrayList<Selector>, LinkedHashSet<Property>>> css = css(tc);
+        sopl(css);
+        
+        tree = mergeTreeCss(tree, css);
+        sopl(tree);
         //conver group to be with Pi
         
 //        String s="<no<f> - . <!-- \"  gg\"\n" +
@@ -143,12 +146,12 @@ public class Parser {
 //        sopl(flatten(t.first).length());
 //        sopl(ats(t.getSecond()));
 //        //t=group(t);
-//        t=group(t,DQ_STRING,SQ_STRING, SL_COMMENT,RX_STRING, ML_COMMENT);
+//        t=group(t,DQ_STRING,SQ_STRING, SL_COMMENT, ML_COMMENT);
 //        sopl(ats(t.getFirst()));
 //        sopl(flatten(t.first).length());
 //        sopl(ats(t.getSecond()));
         
-        Main.main(null);
+        //Main.main(null);
         
         
         
@@ -360,6 +363,20 @@ public class Parser {
         if(mlComm!=0)gt.add(ML_COMMENT);
         return Pair(gr.toArray(new String[0]), gt.toArray(new TokenType[0]));
     }
+    
+    public static Pair<String[], TokenType[]> filter(Pair<String[], TokenType[]> p, TokenType... skips){
+        ArrayList<String> sa = new ArrayList<>();
+        ArrayList<TokenType> ta = new ArrayList<>();
+        String[] s= p.first; TokenType[] t = p.second;
+        int mx = Math.min(s.length, t.length);
+        for (int i = 0; i < mx; i++) {
+            if(inList(t[i], skips)!=-1){
+                sa.add(s[i]);
+                ta.add(t[i]);
+            }
+        }
+        return Pair(sa.toArray(new String[0]), ta.toArray(new TokenType[0]));
+    }
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="document">
@@ -529,7 +546,7 @@ public class Parser {
         }
         return tree;
     }
-    //</editor-fold>
+//</editor-fold>
     
     //insert comment skips --------------------------------------------------------------------------------
     
@@ -550,22 +567,47 @@ public class Parser {
         TokenType ta[] = n.getSecond();
         int tal = n.getSecond().length;
         PairedIter pi= new PairedIter(sa,ta,0,tal);
-        while(pi.has()){
+        while(pi.has()){terminator(pi.i);
             Pair<ArrayList<Selector>, LinkedHashSet<Property>> par = readSelAttrPair(pi);
             if(par!=null)
                 out.add(par);
         }
+//        System.out.println(lognm()+"huh");
         
         return out;
     }
     
     //</editor-fold>
+
+    //<editor-fold defaultstate="collapsed" desc="merging">
+    public static Tree<ElementTag> mergeTreeCss(Tree<ElementTag> tree, ArrayList<Pair<ArrayList<Selector>,LinkedHashSet<Property>>> css){
+        for(Node<ElementTag> el:tree){
+            //System.out.println(lognm()+""+el);
+            for(Pair<ArrayList<Selector>, LinkedHashSet<Property>> i:css){
+                ArrayList<Selector> sel = i.first;
+                boolean b=false;
+                for(Selector sl:sel){
+                    if(!el.data.textOnly)System.out.println(lognm()+""+sl+"  "+b+ " "+el);
+                    if(sl.validate(el,true)){b=true;break;}
+                }
+                if(b){
+                    if(!el.data.textOnly)System.out.println(lognm()+"  "+b);
+                    el.data.style.add(Pair(null, i.second));
+                }
+            }
+            if(!el.data.textOnly)System.out.println(lognm()+""+el);
+        }
+        return tree;
+    }
+//</editor-fold>
+
 }
 
 //<editor-fold defaultstate="collapsed" desc="pi">
 class PairedIter{
     String s[];
     TokenType t[];
+    static TokenType skips[] = {SL_COMMENT, ML_COMMENT};
     int i=0;
     int max;
     public PairedIter(String s[], TokenType t[],int i, int max){
@@ -577,9 +619,15 @@ class PairedIter{
     public boolean has(){
         return i<max;
     }
+    
+    //<editor-fold defaultstate="collapsed" desc="getters">
     public TokenType nextT(){
-        //if(i>=max)return ERR;
+        if(i>=max)return ERR;
         return t[i++];
+    }
+    public String nextS(){
+        if(i>=max)return null;
+        return s[i++];
     }
     public TokenType lastT(){
         if(i-1<0)return ERR;
@@ -594,12 +642,8 @@ class PairedIter{
         return t[i];
     }
     public TokenType peekT(int n){
-        if(i>=max)return ERR;
+        if(i+n>=max)return ERR;
         return t[i+n];
-    }
-    public String nextS(){
-        if(i>=max)return null;
-        return s[i++];
     }
     public String lastS(){
         if(i-1<0)return "";
@@ -614,7 +658,7 @@ class PairedIter{
         return s[i];
     }
     public String peekS(int n){
-        if(i>=max)return null;
+        if(i+n>=max)return null;
         return s[i+n];
     }
     public boolean ifT(TokenType... t){
@@ -631,6 +675,7 @@ class PairedIter{
         }
         return false;
     }
+    //</editor-fold>
     
     public void inc(){
         i++;
@@ -650,12 +695,13 @@ class ParseTools{
         return Pair(primarySel,attr);
     }
     
+    //<editor-fold defaultstate="collapsed" desc="attributes">
     public static LinkedHashSet<Property> readAttributes(PairedIter pi){
         LinkedHashSet<Property> out = new LinkedHashSet<>();
         pi.ifT(OPEN_CURLY);
-        while(pi.has()){
+        while(pi.has()){terminator(pi.i);
             pi.ifT(WHITESPACE);
-            System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//            System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
             Property[] atrr = readAttribute(pi);
             if(atrr!=null){
                 for(Property atr:atrr){
@@ -664,8 +710,8 @@ class ParseTools{
                     }
                 }
             }
-            System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
-            System.out.println(pi.i);
+//            System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//            System.out.println(pi.i);
             pi.ifT(WHITESPACE);
             if(pi.peekT()==CLOSE_CURLY)break;
         }
@@ -680,7 +726,7 @@ class ParseTools{
         pi.ifT(SEMICOLON);
         if(pi.peekT()==DASH&&pi.peekT(1)==DASH){pi.inc();pi.inc();custom=true;}
         if(pi.peekT()==TEXT){
-            System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//            System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
             s = pi.nextS();
             pi.ifT(WHITESPACE);
             if(pi.ifT(COLON)){
@@ -688,7 +734,7 @@ class ParseTools{
             }
             int smc= inList(SEMICOLON, pi.t, pi.i, pi.max);
             int pri= inList(EKMARK, pi.t, pi.i, smc, 0);
-            System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS()+" "+smc+" "+pri);
+//            System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS()+" "+smc+" "+pri);
             if(pri!=-1){
                 pri=pri-pi.i;
                 if(pi.peekT(pri)==EKMARK&&pi.peekT(pri+1)==TEXT&&"priority".equals(pi.peekS(pri+1))&&pi.peekT(pri+2)==COLON&&pi.peekT(pri+3)==NUMBER){
@@ -699,7 +745,7 @@ class ParseTools{
             }
             pr = readProperty(pi, (custom?"--":"")+s, priority, smc);
             pi.ifT(WHITESPACE);
-            if(pri!=-1)pi.i+=4;
+            if(smc!=-1)pi.i=smc;
 //            if(pi.ifT(EKMARK)&&pi.peekT()==TEXT&&"priority".equals(pi.nextS())&&pi.ifT(COLON)&&pi.peekT()==NUMBER){
 //                try{    priority = Integer.parseInt(pi.nextS());        }catch(NumberFormatException e){
 //                    try{priority = (int)Double.parseDouble(pi.nextS()); }catch(NumberFormatException e2){}
@@ -729,7 +775,7 @@ class ParseTools{
     public static Property[] readProperty(PairedIter pi, String name, int p, int smc){
         Property[] out = null;
         ArrayList<TypeProvider> al = new ArrayList<>();
-        while(pi.has()&&pi.peekT()!=EKMARK&&pi.peekT()!=SEMICOLON){
+        while(pi.has()&&pi.peekT()!=EKMARK&&pi.peekT()!=SEMICOLON){terminator(pi.i);
             TypeProvider tp = readValue(pi, smc);
             if(tp!=null)al.add(tp);
             
@@ -738,7 +784,7 @@ class ParseTools{
         }
         pi.ifT(CLOSE_BRACKET);
         //stop at ! or ;
-            System.out.println(lognm()+"Ie: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//            System.out.println(lognm()+"Ie: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
         return getByName(name, al.toArray(new TypeProvider[0]),p);
     }
     
@@ -747,7 +793,7 @@ class ParseTools{
         ArrayList<TypeProvider> al = new ArrayList<>();
         String s = pi.nextS(); pi.inc();
         int cbc = inList(CLOSE_BRACKET, pi.t, smc, pi.max);
-        System.out.println(lognm()+"I-b: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//        System.out.println(lognm()+"I-b: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
         switch (s) {
             case "url":{
                 try {tp=new PropUri(new URI(flatten(byi(pi.s, pi.i, cbc))));
@@ -756,40 +802,47 @@ class ParseTools{
             }
             case "rgba":case "rgb":{
                 int a=0,r=0,g=0,b=0;
-                System.out.println(lognm()+"I-ro: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
-                while(pi.has()&&pi.peekT()!=CLOSE_BRACKET){
-                    System.out.println(lognm()+"I-ri: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//                System.out.println(lognm()+"I-ro: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+                while(pi.has()&&pi.peekT()!=CLOSE_BRACKET){terminator(pi.i);
+//                    System.out.println(lognm()+"I-ri: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                     pi.ifT(WHITESPACE);
-                    System.out.println(lognm()+"I-r1: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//                    System.out.println(lognm()+"I-r1: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                     if(pi.peekT()==NUMBER)
                         r = parseIntOr(pi.nextS(),0); 
-                    System.out.println(lognm()+"I-r2: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//                    System.out.println(lognm()+"I-r2: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                     pi.ifT(WHITESPACE, COMMA);
-                    System.out.println(lognm()+"I-r3: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+                    pi.ifT(WHITESPACE, COMMA);
+//                    System.out.println(lognm()+"I-r3: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                     if(pi.peekT()==NUMBER)
                         g = parseIntOr(pi.nextS(),0); 
-                    System.out.println(lognm()+"I-r4: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//                    System.out.println(lognm()+"I-r4: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                     pi.ifT(WHITESPACE, COMMA);
-                    System.out.println(lognm()+"I-r5: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+                    pi.ifT(WHITESPACE, COMMA);
+//                    System.out.println(lognm()+"I-r5: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                     if(pi.peekT()==NUMBER)
                         b = parseIntOr(pi.nextS(),0); 
-                    System.out.println(lognm()+"I-r6: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//                    System.out.println(lognm()+"I-r6: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                     pi.ifT(WHITESPACE);
-                    System.out.println(lognm()+"I-r7: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
-                    if(pi.peekT()==NUMBER){
-                    System.out.println(lognm()+"I-r8: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
-                        a = (int)(parseFloatOr(pi.nextS(),0)*255); 
-                    }else if(pi.ifT(FWDSLASH)){
-                    System.out.println(lognm()+"I-r9: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//                    System.out.println(lognm()+"I-r7: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+                    if(pi.ifT(COMMA)){
                         pi.ifT(WHITESPACE);
-                    System.out.println(lognm()+"I-r10: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+                        if(pi.peekT()==NUMBER){
+//                    System.out.println(lognm()+"I-r8: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+                            a = (int)(parseFloatOr(pi.nextS(),0)*255); 
+                        }
+                    }else if(pi.ifT(FWDSLASH)){
+//                    System.out.println(lognm()+"I-r9: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+                        pi.ifT(WHITESPACE);
+//                    System.out.println(lognm()+"I-r10: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                         if(pi.peekT()==NUMBER&&pi.peekT(1)==PERCENT){
                             a = (int)(parseFloatOr(pi.nextS(),0)*2.55);
                             pi.inc();
                         }
-                    System.out.println(lognm()+"I-r11: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//                    System.out.println(lognm()+"I-r11: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                     }
+                    pi.inc();
                 }
+//                    System.out.println(lognm()+"I-r11: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                 tp = new PropColor(new Color(a,r,g,b));
                 break;
             }
@@ -801,8 +854,8 @@ class ParseTools{
                 int bcc=0;
                 ArrayList<TokenType> tt = new ArrayList<>();
                 ArrayList<String> ss = new ArrayList<>();
-                while(pi.has()){
-                    System.out.println(lognm()+"I-u: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+                while(pi.has()){terminator(pi.i);
+//                    System.out.println(lognm()+"I-u: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                     if(pi.peekT()==OPEN_BRACKET)bcc++;
                     if(pi.peekT()==CLOSE_BRACKET)bcc--;
                     if(bcc<0)break;
@@ -821,17 +874,17 @@ class ParseTools{
     public static TypeProvider readValue(PairedIter pi, int smc){
         TypeProvider tp = null;
         pi.ifT(WHITESPACE);
-        System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//        System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
         if(pi.peekT()==TEXT&&pi.peekT(1)==OPEN_BRACKET){
         System.out.println(lognm()+"Ib: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
             tp = readBracFunc(pi, smc);
             //continue;
         }else if(pi.peekT()==NUMBER){
             tp = readNumber(pi);
-        System.out.println(lognm()+"In: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//        System.out.println(lognm()+"In: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
         }else if(pi.ifT(HASH)){
             String s="#";
-            while(pi.has()&&(pi.peekT()==NUMBER||pi.peekT()==TEXT)&&s.length()<10){
+            while(pi.has()&&(pi.peekT()==NUMBER||pi.peekT()==TEXT)&&s.length()<10){terminator(pi.i);
                 s+=pi.nextS();
             }
             tp = new PropColor(Color(s));
@@ -855,7 +908,7 @@ class ParseTools{
     }
     
     public static Calculate readCalc(PairedIter pi, int smc){
-        System.out.println(lognm()+"I-c1: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//        System.out.println(lognm()+"I-c1: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
         pi.ifT(WHITESPACE);
         Calculate out=null;
         Calculate tmp1=null;
@@ -865,7 +918,7 @@ class ParseTools{
         }else{
             out = new Calculate(readValue(pi,smc));
         }
-        while(pi.has()&&!pi.ifT(CLOSE_BRACKET)){
+        while(pi.has()&&!pi.ifT(CLOSE_BRACKET)){terminator(pi.i);
             Operation op = readOp(pi, smc);
             if(pi.ifT(OPEN_BRACKET)){
                 tmp2 = readCalc(pi, smc);
@@ -916,7 +969,7 @@ class ParseTools{
         pi.ifT(WHITESPACE);
         return op;
     }
-    
+    //</editor-fold>
     
     
     
@@ -924,9 +977,9 @@ class ParseTools{
     //<editor-fold defaultstate="collapsed" desc="Selector stuff">
     public static ArrayList<Selector> readGroup(PairedIter pi){
         ArrayList<Selector> out=new ArrayList<>();
-        while(pi.has()){
-            out.add(readChain(pi));
-            System.out.println(lognm()+"I--: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+        while(pi.has()){terminator(pi.i);
+            out.add(readChain(pi, true));
+//            System.out.println(lognm()+"I--: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
             System.out.println(pi.i);
             pi.ifT(WHITESPACE);
             if(!pi.ifT(COMMA))break;
@@ -936,40 +989,35 @@ class ParseTools{
         return out;
     }
     
-    public static Selector readChain(PairedIter pi){
+    public static Selector readChain(PairedIter pi, boolean fi){
         Selector sel = new Selector();
         ArrayList<ArrayList<Conditions>> tg=new ArrayList<>();
         pi.ifT(CLOSE_CURLY);
-        while(pi.has()){
-            System.out.println(lognm()+"I-1: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+        boolean first=true;
+        while(pi.has()){terminator(pi.i);
+//            System.out.println(lognm()+"I-1: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
             pi.ifT(WHITESPACE);
-            System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
 //            if(pi.peekT()==OPEN_BRACKET){
 //                sel.addCondition(Pair(DESCENDANT, readBracketTarget(pi)));
 //            }
             TokenType tt= pi.peekT();
-            System.out.println(lognm()+"I2: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
             if(inList(tt, new TokenType[]{STAR,HAT,PLUS,TILDAE,TEXT,COLON,PERIOD,HASH,CLOSE_ANGLE})==-1)break;
-            System.out.println(lognm()+"I3: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
             Combinators ct=map(new TokenType[]{CLOSE_ANGLE, PLUS, TILDAE},new Combinators[]{CHILD, NEXT, SUBSEQUENT}, tt, DESCENDANT);
-            System.out.println(lognm()+"I4: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
             if(ct!=DESCENDANT)pi.inc();
-            System.out.println(lognm()+"I5: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+            if(first&&fi)ct=SELF;
+            first=false;
             pi.ifT(WHITESPACE);
-            System.out.println(lognm()+"I6: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
             sel.addCondition(Pair( ct, readTarget(pi)));
-            System.out.println(lognm()+"I7: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
-            System.out.println(lognm()+"I--2: "+pi.i+" "+pi.peekT()+" "+pi.peekS()+" "+tt);
         }
         return sel;
     }
     
     public static ArrayList<ArrayList<Conditions>> readBracketTarget(PairedIter pi){//:is, :nth
         ArrayList<ArrayList<Conditions>> out=new ArrayList<>();
-        main:while(pi.has()){
-            System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+        main:while(pi.has()){terminator(pi.i);
+//            System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
             out.add(readTarget(pi));
-            while(pi.has()&&pi.peekT()!=COMMA){
+            while(pi.has()&&pi.peekT()!=COMMA){terminator(pi.i);
                 if(pi.ifT(CLOSE_BRACKET)){
                     break main;
                 }
@@ -983,8 +1031,8 @@ class ParseTools{
     public static ArrayList<Conditions> readTarget(PairedIter pi){
         ArrayList<Conditions> out = new ArrayList<>();
         boolean txt=false;
-        while(pi.has()){
-            System.out.println(lognm()+"I-3: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+        while(pi.has()){terminator(pi.i);
+//            System.out.println(lognm()+"I-3: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
             if(!txt&&pi.peekT()==TEXT){
                 txt=true;
                 out.add(new CondTag(pi.nextS()));
@@ -996,10 +1044,10 @@ class ParseTools{
                         out.add(new CondPEll(pi.nextS()));
                     }
                 }else{
-                    System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//                    System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                     out.add(readColonCond(pi));
                     pi.ifT(CLOSE_BRACKET);
-            System.out.println(lognm()+"I-3i1: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//            System.out.println(lognm()+"I-3i1: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                 }
                 continue;
             }
@@ -1020,14 +1068,14 @@ class ParseTools{
                 continue;
             }
             if(pi.ifT(OPEN_SQUARE)){
-                System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//                System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                 out.add(readAttrCond(pi));
                 continue;
             }
-            System.out.println(lognm()+"I-3i: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//            System.out.println(lognm()+"I-3i: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
             break;
         }
-            System.out.println(lognm()+"I-3e: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//            System.out.println(lognm()+"I-3e: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
         
         
         return out;
@@ -1043,7 +1091,7 @@ class ParseTools{
         boolean fi=false;
         while(pi.has()){
             pi.ifT(WHITESPACE);
-                System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//                System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
             if(pi.ifT(CLOSE_SQUARE)){
                 return new CondAttribute(newAttribute(s,d,t,r));
             }
@@ -1061,13 +1109,13 @@ class ParseTools{
                 }else{
                     pi.inc();
                 }
-                System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS()+" "+s);
+//                System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS()+" "+s);
                 pi.ifT(EQUALS);
                 if(pi.peekT()==SQ_STRING||pi.peekT()==DQ_STRING||pi.peekT()==RX_STRING){
                     if(pi.peekT()==RX_STRING)t=REGEX;
                     d=pi.nextS();
                     d=d.substring(1, d.length()-1);
-                    System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS()+" "+d);
+//                    System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS()+" "+d);
                     pi.ifT(WHITESPACE);
                     if(pi.peekT()==TEXT){
                         if(pi.peekS().equalsIgnoreCase("i")){
@@ -1097,8 +1145,8 @@ class ParseTools{
     }
     public static Conditions readColonCond(PairedIter pi){
         Conditions out=Selector.CondTrue;
-        while(pi.has()){
-            System.out.println(lognm()+"I-c1: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+        while(pi.has()){terminator(pi.i);
+//            System.out.println(lognm()+"I-c1: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
             if(pi.peekT()==TEXT){
                 String s = pi.nextS();
                 if(pi.has()&&pi.ifT(OPEN_BRACKET)){
@@ -1117,8 +1165,8 @@ class ParseTools{
                         }
                         case "has":{
                             ArrayList<Selector> sel=new ArrayList<>();
-                            while(pi.has()){
-                                sel.add(readChain(pi));
+                            while(pi.has()){terminator(pi.i);
+                                sel.add(readChain(pi, false));
                                 if(!pi.ifT(COMMA))break;
                                 //while(pi.has()&&!pi.ifT(COMMA))pi.inc();
                             }
@@ -1126,8 +1174,8 @@ class ParseTools{
                         }
                         case "qualify":{
                             ArrayList<Selector> sel=new ArrayList<>();
-                            while(pi.has()){
-                                sel.add(readChain(pi));
+                            while(pi.has()){terminator(pi.i);
+                                sel.add(readChain(pi, false));
                                 if(!pi.ifT(COMMA))break;
                                 //while(pi.has()&&!pi.ifT(COMMA))pi.inc();
                             }
@@ -1138,8 +1186,8 @@ class ParseTools{
                         }
                         case "not":{
                             ArrayList<Selector> sel=new ArrayList<>();
-                            while(pi.has()){
-                                sel.add(readChain(pi));
+                            while(pi.has()){terminator(pi.i);
+                                sel.add(readChain(pi, true));
                                 pi.ifT(WHITESPACE);
                                 if(!pi.ifT(COMMA))break;
                                 //while(pi.has()&&!pi.ifT(COMMA))pi.inc();
@@ -1185,7 +1233,7 @@ class ParseTools{
         int a=0;
         int b=0;
         boolean nums=false;
-        while(pi.has()){
+        while(pi.has()){terminator(pi.i);
             pi.ifT(WHITESPACE);
             //<editor-fold defaultstate="collapsed" desc="nums">
             if(pi.has()&&pi.peekT()==TEXT){
