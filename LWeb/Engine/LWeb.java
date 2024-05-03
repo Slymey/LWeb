@@ -4,15 +4,8 @@ import static LWeb.Common.Common.byteToLong;
 import LWeb.Common.Counter;
 import static LWeb.Engine.Core.byteToDraw;
 import static LWeb.Engine.Core.resources;
-import LWeb.Engine.Instr.RootP.ResourceP.Resource;
-import LWeb.Engine.Util.SimpleRemoteThread;
 import LWeb.Engine.Util.Window;
-import static LWeb.Engine.main2.f;
-import static LWeb.Engine.main2.r;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 
 public class LWeb {
@@ -45,7 +38,7 @@ public class LWeb {
     
     private void start1(){
         Window w=new Window(r);
-        resources.set(0xff0000, new Resource(SimpleRemoteThread.class, w.tr));
+        resources.set(0xff0000,  w.tr);
         Executors.newSingleThreadExecutor().execute(w);
         
     }
