@@ -1,6 +1,8 @@
 package LWeb.Common;
 
 import static LWeb.Common.Common.flatten;
+import static LWeb.Common.Common.lognm;
+import static LWeb.Common.Common.sopl;
 import static LWeb.Common.Pair.Pair;
 import LWeb.Common.Tree.Node;
 import java.util.ArrayList;
@@ -9,6 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Stack;
 
 public class Tree<T> implements Iterable<Node<T>>{
     private final static Tree sttree = new Tree(null,false);
@@ -63,24 +66,30 @@ public class Tree<T> implements Iterable<Node<T>>{
     //<editor-fold defaultstate="collapsed" desc="TreeIteratorDepth">
     public class TreeIteratorDepth implements Iterator<Node<T>>, Iterable<Node<T>>{
         Node<T> current;
-        Iterator<Node<T>> nodeItr=null;//all subtrees
-        Iterator<Node<T>> curItr=null;//the subtree
+        Iterator<Node<T>> nodeItr=null;//all subtrees/children
+        Iterator<Node<T>> curItr;//the subtree
         public TreeIteratorDepth(Node<T> root) {
             current=root;
             nodeItr=root.iterator();
+            if(nodeItr.hasNext()){
+                curItr = new TreeIteratorDepth(nodeItr.next());
+            }
         }
         @Override
         public boolean hasNext() {
             if(nodeItr==null)return false;
+            
+            if(curItr!=null&&curItr.hasNext())return true;
             if(!nodeItr.hasNext()){
                 nodeItr=null;
                 return true;
             }
-            if(curItr==null||!curItr.hasNext()){
-                curItr=new TreeIteratorDepth(nodeItr.next());
+            if(nodeItr.hasNext()){
+                curItr = new TreeIteratorDepth(nodeItr.next());
             }
+            if(curItr.hasNext())return true;
             
-            return true;
+            return false;
         }
         @Override
         public Node<T> next() {
@@ -91,6 +100,7 @@ public class Tree<T> implements Iterable<Node<T>>{
         public Iterator<Node<T>> iterator() {
             return this;
         }
+        public String toString(){return "##---##";}
     }
     //</editor-fold>
     
@@ -202,7 +212,7 @@ public class Tree<T> implements Iterable<Node<T>>{
 
         @Override
         public Iterator<Node<T>> iterator() {
-            return (Iterator<Node<T>>) children;
+            return children.iterator();
         }
     }
     //</editor-fold>
@@ -225,5 +235,31 @@ public class Tree<T> implements Iterable<Node<T>>{
     }
     public static <T> Iterable<Node<T>> iterate(Node<T> nd, Comparable<Node<T>> c) {
         return sttree.new TreeConditionalIteratorDepth(nd, c);
+    }
+    
+    
+    
+    
+    
+    public static void main(String[] args) {
+        Tree<String> tr = new Tree<>("_1", false);
+        Node<String> a1 = tr.root.addNode("a1");
+        Node<String> b1 = a1.addNode("b1");
+        Node<String> b2 = a1.addNode("b2");
+        Node<String> b3 = a1.addNode("b3");
+        Node<String> a2 = tr.root.addNode("a2");
+        Node<String> b1_1 = a2.addNode("b1_1");
+        Node<String> c1 = b1_1.addNode("c1");
+//        Node<String> b1_2 = a2.addNode("b1_2");
+//        Node<String> c1_1 = b1_1.addNode("c1_1");
+        Node<String> a3 = tr.root.addNode("a3");
+        // b1 b2 b3 a1 c1 b1_1 a2 a3 _1
+        sopl(tr);
+        String s="";
+        for(Iterator<Node<String>> i=tr.iterator();i.hasNext();){
+            s=i.next().data ;
+            Common.sopl(""+s);
+        }
+        //rSystem.out.println(lognm()+""+current.data+" "+current.children+" "+curItr+" "+nodeItr);
     }
 }
