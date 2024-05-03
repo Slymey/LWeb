@@ -101,15 +101,15 @@ public class Parser {
         //s="ubn &ion %oh %uohj oh ouhjm &onm &onmkl & uonmkk";
         //s=" uiun=oino ounm ljn= \"ibu\" onm = 'tz tzm' nim ==imk";
         //s="<zib  j.ubnm ibn.ob=oubn.in.khb.ib. ubn>";
-        Pair<String[], TokenType[]> t = tokenize(s);
+//        Pair<String[], TokenType[]> t = tokenize(s);
 //        sopl(ats(t.getFirst()));
 //        sopl(ats(t.getSecond()));
-        t=group(t,DQ_STRING,SQ_STRING, SL_COMMENT, ML_COMMENT);
+//        t=group(t,DQ_STRING,SQ_STRING, SL_COMMENT, ML_COMMENT);
 //        sopl(ats(t.getFirst()));
 //        sopl(ats(t.getSecond()));
-        ArrayList<ElementTag> doc = ell(t);
+//        ArrayList<ElementTag> doc = ell(t);
         //sopl(doc);
-        Tree<ElementTag> tree = buildTree(doc);
+//        Tree<ElementTag> tree = buildTree(doc);
         //sopl(tree);
         //sopl(tree.root.findFirstNode((ElementTag e1)->{return "right".equals(e1.id)?0:-1;}, 0, 0));
         
@@ -121,16 +121,16 @@ public class Parser {
                 + "}";
 //        
 //        setTMax(10);
-        Pair<String[], TokenType[]> tc = tokenize(sc);
+//        Pair<String[], TokenType[]> tc = tokenize(sc);
 //        sopl(ats(t.getFirst()));
 //        sopl(ats(t.getSecond()));
-        tc=group(tc,DQ_STRING,SQ_STRING, /*RX_STRING,  handle later*/SL_COMMENT, ML_COMMENT);
+//        tc=group(tc,DQ_STRING,SQ_STRING, /*RX_STRING,  handle later*/SL_COMMENT, ML_COMMENT);
 //        sopl(ats(tc.getFirst()));
 //        sopl(ats(tc.getSecond()));
-        ArrayList<Pair<ArrayList<Selector>, LinkedHashSet<Property>>> css = css(tc);
-        sopl(css);
+//        ArrayList<Pair<ArrayList<Selector>, LinkedHashSet<Property>>> css = css(tc);
+//        sopl(css);
         
-        tree = mergeTreeCss(tree, css);
+        Tree<ElementTag> tree = fullyParse(s, sc);
         sopl(tree);
         //conver group to be with Pi
         
@@ -156,6 +156,19 @@ public class Parser {
         
         
     }
+    
+    
+    public static Tree<ElementTag> fullyParse(String html, String css){
+        return mergeTreeCss(fullyParseHtml(html), fullyParseCss(css));
+    }
+    public static ArrayList<Pair<ArrayList<Selector>, LinkedHashSet<Property>>> fullyParseCss(String s){
+        return css(group(tokenize(s),DQ_STRING,SQ_STRING, /*RX_STRING,  handle later*/SL_COMMENT, ML_COMMENT));
+    }
+    public static Tree<ElementTag> fullyParseHtml(String s){
+        return buildTree(ell(group(tokenize(s),DQ_STRING,SQ_STRING, SL_COMMENT, ML_COMMENT)));
+    }
+    
+    
     
     
     //<editor-fold defaultstate="collapsed" desc="generic">
@@ -401,13 +414,15 @@ public class Parser {
                     break;
                 }
                 et = new ElementTag(flatten(Arrays.copyOfRange(sa, i,tal)),true);
-                doc.add(et);
+                if(!onlyWhitespace(et.tag)){
+                    doc.add(et);
+                }
                 break;
             }
             int coa=inList(OPEN_ANGLE, ta, i,fca);
             if(coa+3<tal&&ta[coa+1]==EKMARK&&ta[coa+2]==DASH&&ta[coa+3]==DASH){
                 int eci=findSubList(ta, new TokenType[]{DASH,DASH,CLOSE_ANGLE},coa+3,tal);
-                System.out.println(eci);
+//                System.out.println(eci);
                 et = new ElementTag("!--",false);
                 et.addAtribute("comment", newAttribute("comment", flatten(Arrays.copyOfRange(sa, coa+3,eci==-1?tal:eci))));
                 doc.add(et);
@@ -417,8 +432,9 @@ public class Parser {
             
             
             et = new ElementTag(flatten(Arrays.copyOfRange(sa, i,foa==-1?tal:foa)),true);
-            doc.add(et);
-            
+            if(!onlyWhitespace(et.tag)){
+                doc.add(et);
+            }
             int tni=inList(TEXT, ta,foa,fca);
             et = new ElementTag(sa[tni],false);
             boolean cl=inList(FWDSLASH, ta,foa+1,tni)!=-1;
@@ -582,20 +598,21 @@ public class Parser {
     //<editor-fold defaultstate="collapsed" desc="merging">
     public static Tree<ElementTag> mergeTreeCss(Tree<ElementTag> tree, ArrayList<Pair<ArrayList<Selector>,LinkedHashSet<Property>>> css){
         for(Node<ElementTag> el:tree){
+            if(el.data.textOnly||el.data.atributes.containsKey("comment"))continue;
             //System.out.println(lognm()+""+el);
             for(Pair<ArrayList<Selector>, LinkedHashSet<Property>> i:css){
                 ArrayList<Selector> sel = i.first;
                 boolean b=false;
                 for(Selector sl:sel){
-                    if(!el.data.textOnly)System.out.println(lognm()+""+sl+"  "+b+ " "+el);
+//                    if(!el.data.textOnly)System.out.println(lognm()+""+sl+"  "+b+ " "+el);
                     if(sl.validate(el,true)){b=true;break;}
                 }
                 if(b){
-                    if(!el.data.textOnly)System.out.println(lognm()+"  "+b);
+                    //if(!el.data.textOnly)System.out.println(lognm()+"  "+b);
                     el.data.style.add(Pair(null, i.second));
                 }
             }
-            if(!el.data.textOnly)System.out.println(lognm()+""+el);
+            //if(!el.data.textOnly)System.out.println(lognm()+""+el);
         }
         return tree;
     }
@@ -876,7 +893,7 @@ class ParseTools{
         pi.ifT(WHITESPACE);
 //        System.out.println(lognm()+"I: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
         if(pi.peekT()==TEXT&&pi.peekT(1)==OPEN_BRACKET){
-        System.out.println(lognm()+"Ib: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//        System.out.println(lognm()+"Ib: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
             tp = readBracFunc(pi, smc);
             //continue;
         }else if(pi.peekT()==NUMBER){
@@ -980,7 +997,7 @@ class ParseTools{
         while(pi.has()){terminator(pi.i);
             out.add(readChain(pi, true));
 //            System.out.println(lognm()+"I--: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
-            System.out.println(pi.i);
+//            System.out.println(pi.i);
             pi.ifT(WHITESPACE);
             if(!pi.ifT(COMMA))break;
             pi.ifT(WHITESPACE);
@@ -1134,7 +1151,7 @@ class ParseTools{
                     }else{
                         t=NONE;
                     }
-                    System.err.println(lognm()+"--"+pi.i);
+//                    System.err.println(lognm()+"--"+pi.i);
                     fi=true;
                     continue;
                     //return new CondAttribute(newAttribute(s,d,t,r));
@@ -1192,7 +1209,7 @@ class ParseTools{
                                 if(!pi.ifT(COMMA))break;
                                 //while(pi.has()&&!pi.ifT(COMMA))pi.inc();
                             }
-            System.out.println(lognm()+"I-ce: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
+//            System.out.println(lognm()+"I-ce: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
                             return new CondNot(sel);
                         }
                         case "contains":{

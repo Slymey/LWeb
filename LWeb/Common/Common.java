@@ -91,6 +91,22 @@ public class Common {
             throw new LoopTerminationException("State remained identical for too long ("+terminatorMax+"): "+ats(o));
         }
     }
+    public static void terminator(String msg, Object... o){
+        if(terminatorState==null){
+            terminatorState=o;
+            return;
+        }
+        if(arrEq(terminatorState,o)){
+            terminatorCount++;
+        }else{
+            terminatorState=o;
+            terminatorCount=0;
+        }
+        if(terminatorMax<terminatorCount){
+            terminatorCount=0;
+            throw new LoopTerminationException("State remained identical for too long ("+terminatorMax+"): "+ats(o)+"\n Message: "+msg);
+        }
+    }
     
         
     public static int clamp(int a, int min, int max){
@@ -1511,6 +1527,14 @@ public class Common {
     public static String ats(byte[] arr){return Arrays.toString(arr);}
     public static String ats(float[] arr){return Arrays.toString(arr);}
     public static String ats(double[] arr){return Arrays.toString(arr);}
+    
+    public static boolean onlyWhitespace(String s){
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
+            if(!(c==' '||c=='\t'||c=='\n'||c=='\r'))return false;
+        }
+        return true;
+    }
     
     //<editor-fold defaultstate="collapsed" desc="veriadic to array">
     public static <T> T[] vp(T... t){

@@ -59,18 +59,20 @@ public class Selector {
         }
     }
     private boolean subValCap(Node<ElementTag> ell, int index){//doa in reverse
-        if(!ell.data.textOnly)System.out.println(lognm()+"bg: "+ell);
+//        System.out.println(lognm()+"bg: "+ell);
         if(index==0&&conditions.get(0).first!=SELF){
             System.out.println(lognm()+"er");
             return false;
         }
-        if(index==0){
-            ArrayList<Conditions> ac = conditions.get(index).second;
-            if( conditions.get(index).first==SELF){
-                boolean parv=true;
-                for (int j = 0; j < ac.size()&&parv; j++) {parv = ac.get(j).validate(ell);}
-            System.out.println(lognm()+"er "+parv);
-                return parv;
+        if(index<1){
+            if(index==0){
+                ArrayList<Conditions> ac = conditions.get(index).second;
+                if( conditions.get(index).first==SELF){
+                    boolean parv=true;
+                    for (int j = 0; j < ac.size()&&parv; j++) {parv = ac.get(j).validate(ell);}
+//                System.out.println(lognm()+"er "+parv);
+                    return parv;
+                }
             }
             return true;
         }
@@ -78,17 +80,18 @@ public class Selector {
         ArrayList<Conditions> ac = conditions.get(index-1).second;
         switch(cm){
             case DESCENDANT:
-                System.out.println(lognm()+"d");
-                Node<ElementTag> nop=null;
+//                System.out.println(lognm()+"d");
+                Node<ElementTag> nop=ell.getParent();
                 boolean parv=true;
                 do{
-                    nop=ell.getParent();
+//                System.out.println(lognm()+"d "+nop);
                     if(nop==null)return false;
                     for (int j = 0; j < ac.size()&&parv; j++) {parv = ac.get(j).validate(nop);}
                     if(parv){
                         parv=subValCap(nop, index-1);
                         if(parv)return true;
                     }
+                    nop=nop.getParent();
                 }while(!parv);
                 return false;
             case CHILD:
@@ -99,6 +102,7 @@ public class Selector {
                 if(itr)itr = subValCap(nd, index-1);
                 return itr;
             case NEXT:
+                if(ell.getParent()==null)return false;
                 Node<ElementTag> node_nx = ell.getParent().getNode(ell.getParentIndex()-1);
                 if(node_nx==null){return false;}
                 boolean nxb=true;
@@ -107,6 +111,7 @@ public class Selector {
                 return nxb;
             case SUBSEQUENT:
                 Node<ElementTag> node_sq=null;
+                if(ell.getParent()==null)return false;
                 Node<ElementTag> parent_sq=ell.getParent();
                 int j=ell.getParentIndex();
                 boolean acc_sq=true;
@@ -123,19 +128,20 @@ public class Selector {
     }
     
     private boolean subVal(Node<ElementTag> ell, int index){//non capturing
+//        System.out.println(lognm()+"bg: "+ell);
         if(index>=conditions.size())return true;
         Combinators cm = conditions.get(index).first;
         ArrayList<Conditions> ac = conditions.get(index).second;
         switch(cm){
             case SELF:{
                 boolean itr=true;
-                System.out.println(lognm()+"ep "+ac);
+//                System.out.println(lognm()+"ep "+ac);
                 for (int j = 0; j < ac.size()&&itr; j++) {itr = ac.get(j).validate(ell);}
                 if(itr){
                     itr=subVal(ell, index+1);
                     if(itr)return true;
                 }
-                System.out.println(lognm()+"ep "+itr);
+//                System.out.println(lognm()+"ep "+itr);
                 return false;
             }
             case DESCENDANT:
@@ -169,6 +175,7 @@ public class Selector {
                 }
                 return false;
             case NEXT:
+                if(ell.getParent()==null)return false;
                 Node<ElementTag> node_nx = ell.getParent().getNode(ell.getParentIndex()+1);
                 if(node_nx==null){return false;}
                 boolean nxb=true;
@@ -177,6 +184,7 @@ public class Selector {
                 return nxb;
             case SUBSEQUENT:
                 Node<ElementTag> node_sq=null;
+                if(ell.getParent()==null)return false;
                 Node<ElementTag> parent_sq=ell.getParent();
                 int j=ell.getParentIndex();
                 boolean acc_sq=true;
