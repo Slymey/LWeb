@@ -19,8 +19,8 @@ public class Stack {
         int x = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
         int y = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
         return () -> {
-            BufferedImage bis = Core.buffers.get(source);
-            BufferedImage bit = Core.buffers.get(target);
+            BufferedImage bis = Core.getResource(source, BufferedImage.class);
+            BufferedImage bit = Core.getResource(target, BufferedImage.class);
             int[] rgbArray=null;
             
             rgbArray = bis.getRGB(0, 0, bis.getWidth(), bis.getHeight(), rgbArray, 0, bis.getWidth());

@@ -2,30 +2,25 @@ package LWeb.Engine.Instr.RootP.ResourceP;
 
 import static LWeb.Common.Common.byteToInt;
 import LWeb.Common.Counter;
-import LWeb.Common.Pair;
-import static LWeb.Common.Pair.Pair;
-import static LWeb.Engine.Core.buffers;
-import static LWeb.Engine.Core.resources;
+import LWeb.Engine.Core;
+import java.awt.image.BufferedImage;
 import java.net.URI;
 
 public class ColorSource {
-    public static Pair<Class, Object> getRsc(byte[] o, Counter i){
-        Class cls = LWeb.Common.ColorSource.class;
-        Object resource = null;
+    public static Object getRsc(byte[] o, Counter i){
         LWeb.Common.ColorSource cs=null;
         switch(o[i.inc()]){
             case 0://flat color
                 cs=new LWeb.Common.ColorSource(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
                 break;
             case 4:// image from URI
-                URI uri = (URI)resources.get(byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]})).get();
+                URI uri = Core.getResource(byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]}), URI.class);
                 cs = new LWeb.Common.ColorSource(uri);
                 break;
             case 5://existing buffer
-                cs = new LWeb.Common.ColorSource(buffers.get(byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]})));
+                cs = new LWeb.Common.ColorSource(Core.getResource(byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]}), BufferedImage.class));
                 break;
         }
-        resource = cs;
-        return Pair(cls, resource);
+        return cs;
     }
 }

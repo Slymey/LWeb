@@ -12,8 +12,8 @@ public class Image {
         int id = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
         int image = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
         return () -> {
-            BufferedImage bi = Core.buffers.get(id);
-            BufferedImage img = ((ColorSource)Core.resources.get(image).get()).getBuffer();
+            BufferedImage bi = Core.getResource(id, BufferedImage.class);
+            BufferedImage img = (Core.getResource(image, ColorSource.class)).getBuffer();
             for(int xp:new Range(0,bi.getWidth()-1)){
                 for(int yp:new Range(0,bi.getHeight()-1)){
                     bi.setRGB(xp, yp, img.getRGB(xp, yp));

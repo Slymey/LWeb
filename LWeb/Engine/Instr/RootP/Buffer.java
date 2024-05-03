@@ -24,7 +24,7 @@ public class Buffer {
                     bi.setRGB(bw, bh, baseColor);
                 }
             }
-            Core.buffers.set(id, bi);
+            Core.putResource(id, bi);
         };
     }
 }

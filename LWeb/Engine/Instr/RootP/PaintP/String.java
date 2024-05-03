@@ -17,12 +17,12 @@ public class String {
         int y = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
         return ()->{
             sopl(" t:"+id+" tx:"+text+" f:"+font+" x:"+x+" y:"+y);
-            BufferedImage bi=Core.buffers.get(id);
+            BufferedImage bi=Core.getResource(id, BufferedImage.class);
             Graphics g = bi.getGraphics();
             g.setPaintMode();
             g.setColor(new java.awt.Color(0xff000000));
-            g.setFont((Font)Core.resources.get(font).get());
-            g.drawString((java.lang.String)Core.resources.get(text).get(), x, y);
+            g.setFont(Core.getResource(font, Font.class));
+            g.drawString(Core.getResource(text, java.lang.String.class), x, y);
         };
     }
 }

@@ -13,7 +13,7 @@ public class ResourceInst {
     public static Runnable getInst(byte o[], Counter i){
         int type = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
         int ind = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-        Pair<Class, Object> rsc = sg((Supplier<Pair<Class, Object>>[])new Supplier[]{
+        Object rsc = sg((Supplier<Pair<Class, Object>>[])new Supplier[]{
                 ()->None.getRsc(o, i),              //0
                 ()->PlainText.getRsc(o, i),         //1
                 ()->FontFace.getRsc(o, i),          //2
@@ -22,7 +22,7 @@ public class ResourceInst {
                 ()->URLRelative.getRsc(o, i),       //5
                 ()->ColorSource.getRsc(o, i)        //6
             }, type);
-        Core.resources.set(ind, new Resource(rsc.getFirst(), rsc.getSecond()));
+        Core.putResource(ind, rsc);
         return ()->{};
         
         

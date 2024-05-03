@@ -10,8 +10,7 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 
 public class URLAbsolute {
-    public static Pair<Class, Object> getRsc(byte[] o, Counter i){
-        Class cls = URI.class;
+    public static Object getRsc(byte[] o, Counter i){
         int len = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
         int pos = i.c;
         URI url;
@@ -22,7 +21,6 @@ public class URLAbsolute {
             newError=pos;
             url=null;
         }
-        Object resource = url;
-        return Pair(cls, resource);
+        return url;
     }
 }

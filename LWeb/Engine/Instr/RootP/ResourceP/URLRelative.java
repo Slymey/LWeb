@@ -11,8 +11,7 @@ import java.nio.file.FileSystems;
 import java.util.Arrays;
 
 public class URLRelative {
-    public static Pair<Class, Object> getRsc(byte[] o, Counter i){
-        Class cls = URI.class;
+    public static Object getRsc(byte[] o, Counter i){
         int len = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
         int pos = i.c;
         URI url;
@@ -24,7 +23,6 @@ public class URLRelative {
             newError=pos;
             url=null;
         }
-        Object resource = url;
-        return Pair(cls, resource);
+        return url;
     }
 }

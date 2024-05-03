@@ -7,7 +7,6 @@ import LWeb.Common.Pair;
 import LWeb.Engine.Core;
 import LWeb.Common.Range.Range;
 import java.awt.image.BufferedImage;
-import java.util.AbstractMap;
 import java.util.Arrays;
 
 public class PaletteSwap {
@@ -16,8 +15,8 @@ public class PaletteSwap {
         int index = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
         return () -> {
             Color cc = new Color();
-            Pair<Integer, Integer> pair[]=(Pair<Integer, Integer>[]) Core.resources.get(index).get();
-            BufferedImage bi=Core.buffers.get(id);
+            Pair<Integer, Integer> pair[]= Core.getResource(index, Pair[].class);
+            BufferedImage bi=Core.getResource(id, BufferedImage.class);
             int prev = bi.getRGB(0, 0);
             final int prev_f=prev;
             int prevc = Arrays.binarySearch(pair, null, 

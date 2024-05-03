@@ -6,8 +6,7 @@ import static LWeb.Common.Pair.Pair;
 
 
 public class None {
-    public static Pair<Class, Object> getRsc(byte[] o, Counter i){
-        return Pair(null, null);
-        
+    public static Object getRsc(byte[] o, Counter i){
+        return null;
     }
 }
