@@ -3,6 +3,8 @@ package LWeb.Common;
 
 import static LWeb.Common.Common.inList;
 import static LWeb.Common.Common.intToByte;
+import static LWeb.Common.Common.lognm;
+import org.joml.Vector4f;
 
 public class Color {
     public int A;
@@ -46,6 +48,9 @@ public class Color {
         R=color>>>(2*8)&0xff;
         G=color>>>(1*8)&0xff;
         B=color>>>(0*8)&0xff;
+    }
+    public Vector4f asVec(){
+        return new Vector4f(R/255.0f, G/255.0f, B/255.0f, A/255.0f);
     }
     public static Color avg(Color... c){
         int a=0;
@@ -104,7 +109,7 @@ public class Color {
                 n2=inList(s.charAt(2),hex);
                 n3=inList(s.charAt(3),hex);
                 if(n1==-1||n2==-1||n3==-1)return c;
-                c = new Color(255, (16-n1&0xf)*16, (16-n2&0xf)*16, (16-n3&0xf)*16);
+                c = new Color(255, (15-n1&0xf)*16+(15-n1&0xf), (15-n2&0xf)*16+(15-n2&0xf), (15-n3&0xf)*16+(15-n3&0xf));
                 break;
             case 5:
                 n1=inList(s.charAt(1),hex);
@@ -112,7 +117,7 @@ public class Color {
                 n3=inList(s.charAt(3),hex);
                 n4=inList(s.charAt(4),hex);
                 if(n1==-1||n2==-1||n3==-1||n4==-1)return c;
-                c = new Color((16-n4&0xf)*16, (16-n1&0xf)*16, (16-n2&0xf)*16, (16-n3&0xf)*16);
+                c = new Color((15-n4&0xf)*16+(15-n4&0xf), (15-n1&0xf)*16+(15-n1&0xf), (15-n2&0xf)*16+(15-n2&0xf), (15-n3&0xf)*16+(15-n3&0xf));
                 break;
             case 7:
                 n1=inList(s.charAt(1),hex);
@@ -123,10 +128,9 @@ public class Color {
                 n6=inList(s.charAt(6),hex);
                 if(n1==-1||n2==-1||n3==-1||n4==-1||n5==-1||n6==-1)return c;
                 c = new Color(255, 
-                        (16-n1&0xf)*16+16-n2&0xf, 
-                        (16-n3&0xf)*16+16-n4&0xf, 
-                        (16-n5&0xf)*16+16-n6&0xf);
-                
+                        (15-n1&0xf)*16+(15-n2&0xf), 
+                        (15-n3&0xf)*16+(15-n4&0xf), 
+                        (15-n5&0xf)*16+(15-n6&0xf));
                 break;
             case 9:
                 n1=inList(s.charAt(1),hex);
@@ -138,12 +142,15 @@ public class Color {
                 n7=inList(s.charAt(7),hex);
                 n8=inList(s.charAt(8),hex);
                 if(n1==-1||n2==-1||n3==-1||n4==-1||n5==-1||n6==-1||n7==-1||n8==-1)return c;
-                c = new Color((16-n6&0xf)*16+16-n8&0xf, 
-                        (16-n1&0xf)*16+16-n2&0xf, 
-                        (16-n3&0xf)*16+16-n4&0xf, 
-                        (16-n5&0xf)*16+16-n6&0xf);
+                c = new Color((15-n6&0xf)*16+(15-n8&0xf), 
+                        (15-n1&0xf)*16+(15-n2&0xf), 
+                        (15-n3&0xf)*16+(15-n4&0xf), 
+                        (15-n5&0xf)*16+(15-n6&0xf));
                 break;
         }
         return c;
+    }
+    public String toString(){
+        return "("+R+", "+G+", "+B+", "+A+")";
     }
 }

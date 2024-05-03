@@ -5,17 +5,25 @@ import static LWeb.Common.Pair.Pair;
 import static LWeb.Common.Triple.*;
 import LWeb.Compiler.Main.*;
 import LWeb.Common.Range.Range;
+import LWeb.Engine.LWeb;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
@@ -28,14 +36,22 @@ public class Common {
     public static final Range rangeA_Z = new Range('A','Z');
     public static final Range rangea_z = new Range('a','z');
     public static final Range range0_9 = new Range('0','9');
+    private static final int OBJECT_HEADER_SIZE = 16; // Typical for 64-bit JVM
+    private static final int OBJECT_REF_SIZE = 8;
     private static Object[] terminatorState=null;
+    private static ScheduledExecutorService safetyNet=null;
+    private static Thread safetyNetSource=null;
     private static int terminatorCount=0;
     private static int terminatorMax=1000;
     public enum Troolean{False,None,True}
     
     //+ColorMixersNoAlpha +ColorMixersAlphaMultiply +ColorMixersComposite
     public static String lognm(){
-        StackTraceElement ste = Thread.currentThread().getStackTrace()[2];
+        return lognm(1);
+    }
+    public static String lognm(int off){
+        StackTraceElement stea[] = Thread.currentThread().getStackTrace();
+        StackTraceElement ste = stea[Math.min(2+off, stea.length-1)];
         return ""+ste;
     }
     public static String lognm(String dc, String fl, String mn, int ln){
@@ -67,13 +83,16 @@ public class Common {
         if(arrEq(terminatorState,o)){
             terminatorCount++;
         }else{
+            terminatorState=o;
             terminatorCount=0;
         }
         if(terminatorMax<terminatorCount){
+            terminatorCount=0;
             throw new LoopTerminationException("State remained identical for too long ("+terminatorMax+"): "+ats(o));
         }
     }
     
+        
     public static int clamp(int a, int min, int max){
         return Math.min(max, Math.max(min, a));
     }
@@ -93,6 +112,17 @@ public class Common {
                 (ba[1]& 0xff)<<(2*8)|
                 (ba[2]& 0xff)<<(1*8)|
                 (ba[3]& 0xff)<<(0*8);
+    }
+    public static int[] mixIntBytes(int[] ba, int [] mix){
+        int len= ba.length;
+        int out[] = new int[len];
+        for (int i = 0; i < len; i++) {
+            out[i]=((ba[i]>>>(3*8)&0xff)<<((mix[3])*8))|
+                   ((ba[i]>>>(2*8)&0xff)<<((mix[2])*8))|
+                   ((ba[i]>>>(1*8)&0xff)<<((mix[1])*8))|
+                   ((ba[i]>>>(0*8)&0xff)<<((mix[0])*8));
+        }
+        return out;
     }
     public static long byteToLong(byte[] ba){
         return  ((long)ba[0]& 0xff)<<(7*8)|
@@ -182,6 +212,105 @@ public class Common {
             }
             return anisotropic(out,lvlx-1,lvly);
         }
+    }
+    
+    public static int sizeof(Object obj) {
+        if (obj == null) {
+            return 0;
+        }
+        Class<?> clazz = obj.getClass();
+        if (clazz.isArray()) {
+            return sizeofArray(obj);
+        } else if (clazz.isPrimitive()) {
+            return sizeofPrimitive(clazz);
+        } else {
+            return sizeofObject(clazz, obj);
+        }
+    }
+    public static int sizeof(Class<?> clazz, int... size){
+        return sizeof(clazz,0, size);
+    }
+    private static int sizeof(Class<?> clazz, int offs, int... size){
+        if (clazz == null||size.length<=offs) {
+            return 0;
+        }
+        if (clazz.isArray()) {
+            return sizeof(clazz.getComponentType(), offs+1, size)*size[offs];
+        } else if (clazz.isPrimitive()) {
+            return sizeofPrimitive(clazz);
+        } else {
+            return sizeofObject(clazz);
+        }
+    }
+    public static int sizeof(Class<?> clazz){
+        if (clazz == null) {
+            return 0;
+        }
+        if (clazz.isArray()) {
+            return sizeofPrimitive(clazz.getComponentType());
+        } else if (clazz.isPrimitive()) {
+            return sizeofPrimitive(clazz);
+        } else {
+            return sizeofObject(clazz);
+        }
+    }
+    private static int sizeofPrimitive(Class<?> clazz) {
+        if (clazz == byte.class || clazz == boolean.class) {
+            return 1;
+        } else if (clazz == short.class || clazz == char.class) {
+            return 2;
+        } else if (clazz == int.class || clazz == float.class) {
+            return 4;
+        } else if (clazz == long.class || clazz == double.class) {
+            return 8;
+        }
+        return 0; // Default if not a recognized primitive
+    }
+    private static int sizeofArray(Object array) {
+        int totalSize = 0;//OBJECT_HEADER_SIZE; // Base object overhead
+        int length = Array.getLength(array);
+        Class<?> componentType = array.getClass().getComponentType();
+
+        if (componentType.isPrimitive()) {
+            totalSize += length * sizeofPrimitive(componentType);
+        } else {
+            for (int i = 0; i < length; i++) {
+                totalSize += 0;//OBJECT_REF_SIZE; // Add reference size
+                Object element = Array.get(array, i);
+                totalSize += sizeof(element); // Recursively calculate element sizes
+            }
+        }
+        return totalSize;
+    }
+    private static int sizeofObject(Class<?> clazz) {
+        int size = 0;
+        for (Field field : clazz.getDeclaredFields()) {
+            Class<?> fieldType = field.getType();
+            if (fieldType.isPrimitive()) {
+                sizeofPrimitive(fieldType);
+            } else {
+                size += 8; // this can vary based on JVM and system architecture
+            }
+        }
+        return size;
+    }
+    private static int sizeofObject(Class<?> clazz, Object obj) {
+        int totalSize = 0;//OBJECT_HEADER_SIZE;
+
+        for (Field field : clazz.getDeclaredFields()) {
+            field.setAccessible(true);
+            if(field.getType().isPrimitive()){
+                totalSize += sizeof(field.getType());
+            }else{
+                try {
+                    Object fieldValue = field.get(obj);
+                    totalSize += sizeof(fieldValue);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return totalSize;
     }
     
     public static Class[] getClassTree(Class c){
@@ -1257,10 +1386,15 @@ public class Common {
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="arrEq">
-    public static boolean arrEq(Object[] a1, Object[] a2){
-        return Arrays.equals(a2, a2);
+    public static boolean arrEq(Object[] a, Object[] b){
+        if (a.length != b.length) return false;
+        for (int i = 0; i < a.length; i++) {
+            if (!a[i].equals(b[i])) return false;
+        }
+        return true;
     }
     //</editor-fold>
+    
     
     public static String[] splitWithComents(String s, int offset, IndexedPredicate<String> target,IndexedPredicate<String> comStart, IndexedPredicate<String> comEnd){
         return splitWithComents(s,offset,target,comStart,comEnd,(Triple<Boolean,String,Integer> p)->{
@@ -1369,6 +1503,44 @@ public class Common {
     }
     
     public static <T> String ats(T[] arr){return Arrays.toString(arr);}
+    public static String ats(char[] arr){return Arrays.toString(arr);}
+    public static String ats(boolean[] arr){return Arrays.toString(arr);}
+    public static String ats(int[] arr){return Arrays.toString(arr);}
+    public static String ats(long[] arr){return Arrays.toString(arr);}
+    public static String ats(short[] arr){return Arrays.toString(arr);}
+    public static String ats(byte[] arr){return Arrays.toString(arr);}
+    public static String ats(float[] arr){return Arrays.toString(arr);}
+    public static String ats(double[] arr){return Arrays.toString(arr);}
+    
+    //<editor-fold defaultstate="collapsed" desc="veriadic to array">
+    public static <T> T[] vp(T... t){
+        return t;
+    }
+    public static char[] vp(char... t){
+        return t;
+    }
+    public static boolean[] vp(boolean... t){
+        return t;
+    }
+    public static int[] vp(int... t){
+        return t;
+    }
+    public static long[] vp(long... t){
+        return t;
+    }
+    public static short[] vp(short... t){
+        return t;
+    }
+    public static byte[] vp(byte... t){
+        return t;
+    }
+    public static float[] vp(float... t){
+        return t;
+    }
+    public static double[] vp(double... t){
+        return t;
+    }
+    //</editor-fold>
     
     public static <T> T sg(Supplier<T> func){
         return func.get();//static generator 
@@ -1386,9 +1558,7 @@ public class Common {
 
     //<editor-fold defaultstate="collapsed" desc="byi">
     public static <T> T[] byi(T[] t){
-        System.out.println(lognm()+""+t);
         T [] a =na(t, 1);
-        System.out.println(lognm()+""+a);
         a[0]=t[0];
         return a;
     }
@@ -1647,4 +1817,30 @@ public class Common {
         }
         return f-fn;
     }
+
+    public static<T> T cast(Class<T> c, Object o ){
+        return (T)o;
+    } 
+    
+    
+    
+    //testing ground
+    public static void main(String[] args) {
+        class test{
+            float vertices[][] = {
+                {-0.5f, -0.5f, 0.0f},
+                {0.5f, -0.5f, 0.0f},
+                {0.0f,  0.5f, 0.0f}
+            };  
+            int otr=67;
+            long ss=7;
+        }
+        Pair<Integer, Integer> i = cast(Pair.class, Pair(42,24));
+        System.out.println(lognm()+""+byteToInt(new byte[]{-16, 0,0,3}));//268435453
+        
+        
+        
+    }
+
+
 }
