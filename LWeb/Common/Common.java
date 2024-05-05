@@ -33,6 +33,21 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static org.lwjgl.opengl.GL11.GL_DST_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_DST_COLOR;
+import static org.lwjgl.opengl.GL11.GL_ONE;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_DST_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_DST_COLOR;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_COLOR;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA;
+import static org.lwjgl.opengl.GL11.GL_SRC_ALPHA_SATURATE;
+import static org.lwjgl.opengl.GL11.GL_SRC_COLOR;
+import static org.lwjgl.opengl.GL11.GL_ZERO;
+import static org.lwjgl.opengl.GL14.GL_CONSTANT_ALPHA;
+import static org.lwjgl.opengl.GL14.GL_CONSTANT_COLOR;
+import static org.lwjgl.opengl.GL14.GL_ONE_MINUS_CONSTANT_ALPHA;
+import static org.lwjgl.opengl.GL14.GL_ONE_MINUS_CONSTANT_COLOR;
 
 
 public class Common {
@@ -1863,14 +1878,14 @@ public class Common {
     
     
     //testing ground
-    
+    static int map[] = {-1, GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA_SATURATE, GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR, GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA};
     public static void main(String[] args) {
         
         
-        Pair<Integer, Integer> i = cast(Pair.class, Pair(42,24));
-        System.out.println(lognm()+""+byteToInt(new byte[]{-16, 0,0,3}));//268435453
-        
-        
+        int i = 0x56;
+        int sa = map[(i&0xf)];
+        int dr = map[(i>>>4)];
+        System.out.println(lognm()+""+sa+" "+dr);
         
     }
 

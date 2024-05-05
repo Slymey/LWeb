@@ -72,7 +72,7 @@ public class Core {
         }
         resources.set(id, re);
     }
-    public void rawResource(int id, Object re){
+    public void putRawResource(int id, Object re){
         resources.set(id, re);
     }
     public UbFunction getCallable(String name){

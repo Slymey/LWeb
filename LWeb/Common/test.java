@@ -324,7 +324,7 @@ FrameBuffer main = new FrameBuffer()
             .setUniformI("text", 2))
         .setClearColor(1,1,1,1)
         .attachTargetTexture(GL_COLOR_ATTACHMENT0, new Texture()
-                    .setImage(new IntPos(viewBox.first, viewBox.second))
+                    .setImage(viewBox.first, viewBox.second)
                     .setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR)
                     .setParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 

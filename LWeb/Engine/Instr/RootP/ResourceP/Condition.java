@@ -1,6 +1,7 @@
 package LWeb.Engine.Instr.RootP.ResourceP;
 
 import static LWeb.Common.Common.byteToInt;
+import static LWeb.Common.Common.lognm;
 import LWeb.Common.Counter;
 import LWeb.Common.UbFunction;
 import LWeb.Engine.Core;
@@ -43,6 +44,7 @@ public abstract class Condition {
 
         @Override
         public boolean evaluate(){
+//            System.out.println(lognm()+"c.c e1");
             return (boolean)calb.call();
         }
     }

@@ -26,11 +26,12 @@ public class OutToScreen {
         int screen = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
         return () -> {
             FrameBuffer buff = c.getResource(id, FrameBuffer.class);
+            FrameBuffer scrn = c.getResource(screen, FrameBuffer.class);
             long window = c.getResource(win, long.class);
             
-            buff.finnish(buff, true);
-            
-            //c.getResource(screen, FrameBuffer.class).draw(texture);
+            //buff.finnish(scrn, true);
+            scrn.useWithClear();
+            scrn.draw(buff.getTex());
             
             glfwSwapBuffers(window);
         };

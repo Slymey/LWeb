@@ -39,7 +39,9 @@ public class ResourceInst {
                 ()->BlendMode.getRsc(o, i, c),       //20
             }, type);
         c.putResource(ind, rsc);
-        return ()->{};
+        return ()->{
+            c.putResource(ind, rsc);
+        };
         
         
     }

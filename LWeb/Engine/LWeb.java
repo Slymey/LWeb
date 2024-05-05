@@ -46,7 +46,7 @@ public class LWeb {
             glfwPollEvents();
             boolean b = glfwWindowShouldClose((long)o[0]);
             processInput((long)o[0]);
-//            System.out.println(lognm()+"evnt "+b+" "+(long)o[0]);
+            System.out.println(lognm()+"evnt "+b+" "+(long)o[0]);
             return b;
         });
         
