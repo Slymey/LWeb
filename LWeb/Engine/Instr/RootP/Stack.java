@@ -5,6 +5,7 @@ import static LWeb.Common.Color.color;
 import LWeb.Common.Common;
 import static LWeb.Common.Common.byteToInt;
 import static LWeb.Common.Common.clamp;
+import static LWeb.Common.Common.lognm;
 import LWeb.Common.Counter;
 import LWeb.Engine.Core;
 import LWeb.Engine.Util.ColorMixers;
@@ -12,6 +13,7 @@ import LWeb.Common.Range.Range;
 import LWeb.Engine.Constants;
 import LWeb.Engine.Instr.RootP.ResourceP.BlendMode;
 import LWeb.Engine.Instr.RootP.ResourceP.Box;
+import LWeb.Engine.Instr.RootP.ResourceP.Position;
 import LWeb.Engine.Util.GLEU.FrameBuffer;
 import LWeb.Engine.Util.GLEU.Shader;
 import LWeb.Engine.Util.GLEU.VertexArray;
@@ -28,8 +30,11 @@ public class Stack {
             FrameBuffer sfb = c.getResource(source, FrameBuffer.class);
             FrameBuffer tfb = c.getResource(target, FrameBuffer.class);
             Box locs = c.getResource(box, Box.class);
-            locs.p=tfb.getTex().p;
-            
+            Position p = tfb.getTex().p.resolve(Position.class);
+            System.out.println(lognm()+""+locs.xf()+" "+ locs.yf()+" "+ locs.zf()+" "+ locs.wf()+" "+locs.xi()+" "+ locs.yi()+" "+ locs.zi()+" "+ locs.wi());
+            System.out.println(lognm()+""+p.xf()+" "+p.yf()+" "+p.xi()+" "+p.yi());
+            locs.p=p;
+            System.out.println(lognm()+""+locs.xf()+" "+ locs.yf()+" "+ locs.zf()+" "+ locs.wf()+" "+locs.xi()+" "+ locs.yi()+" "+ locs.zi()+" "+ locs.wi());
             c.getResource(blm, BlendMode.class).setBlendMode();
             tfb.draw(sfb.getTex(),
                     c.getConstant(Constants.ConstTypes.BOX_SHADER, Shader.class)

@@ -4,6 +4,7 @@ import static LWeb.Common.Common.lognm;
 import static LWeb.Common.Common.mixIntBytes;
 import LWeb.Common.Triple;
 import LWeb.Engine.Instr.RootP.ResourceP.Position;
+import LWeb.Engine.Instr.RootP.ResourceP.ResourcePointer;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URI;
@@ -36,7 +37,7 @@ public class Texture {
     
     public final int numId;
     public final int TEX;
-    public Position p;
+    public ResourcePointer p;
     public Texture(){
         numId=idBase++;
         TEX = glGenTextures();
@@ -47,10 +48,15 @@ public class Texture {
         glTexParameteri(GL_TEXTURE_2D, pname, value);
         return this;
     }
-    public Texture setImage(Position p){
+    public Texture setImage(ResourcePointer p){
         bind();
         this.p=p;
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, p.xi(), p.yi(), 0, GL_RGBA, GL_UNSIGNED_BYTE, (float[])null);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, p.resolve(Position.class).xi(), p.resolve(Position.class).yi(), 0, GL_RGBA, GL_UNSIGNED_BYTE, (float[])null);
+        return this;
+    }
+    public Texture setImage(int w, int h){
+        bind();
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w,h, 0, GL_RGBA, GL_UNSIGNED_BYTE, (float[])null);
         return this;
     }
     public Texture loadImage(String imgFile, boolean shouldFlip, boolean alpha){
@@ -74,7 +80,7 @@ public class Texture {
             }
             width = w.get();
             height = h.get();
-            p= new Position.IntPos(width, height);
+            p.update(new Position.IntPos(width, height));
             //glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
             glTexImage2D(GL_TEXTURE_2D, 0, alpha?GL_RGBA:GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
@@ -106,7 +112,7 @@ public class Texture {
             }
             width = w.get();
             height = h.get();
-            p = new Position.IntPos(width, height);
+            p.update(new Position.IntPos(width, height));
             //glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
             glTexImage2D(GL_TEXTURE_2D, 0, alpha?GL_RGBA:GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
@@ -128,7 +134,7 @@ public class Texture {
             buffer = Common.imageToBuffer(imgBuff, new int[]{2,1,0,3}, shouldFlipH, shouldFlipV);
             width =imgBuff.getWidth();
             height = imgBuff.getHeight();
-            p= new Position.IntPos(width, height);
+            p.update(new Position.IntPos(width, height));
             //glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
             
             glTexImage2D(GL_TEXTURE_2D, 0, alpha?GL_RGBA:GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);

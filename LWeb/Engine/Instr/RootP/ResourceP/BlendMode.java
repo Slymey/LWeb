@@ -31,14 +31,14 @@ public class BlendMode {
         int a = o[i.inc()];
         int f = o[i.inc()];
         //glBlendFunc(0, GL_CONSTANT_COLOR);//0,1 300-308, 8001-8004   ->  1,2, 3-10, 11-14
-        int sr = map[(r&0x8)];
-        int sg = map[(g&0x8)];
-        int sb = map[(b&0x8)];
-        int sa = map[(a&0x8)];
-        int dr = map[(r>>>4)];
-        int dg = map[(g>>>4)];
-        int db = map[(b>>>4)];
-        int da = map[(a>>>4)];
+        int dr = map[(r&0xf)];
+        int dg = map[(g&0xf)];
+        int db = map[(b&0xf)];
+        int da = map[(a&0xf)];
+        int sr = map[(r>>>4)];
+        int sg = map[(g>>>4)];
+        int sb = map[(b>>>4)];
+        int sa = map[(a>>>4)];
         Color color=null;
         if(sr>0x8000||sg>0x8000||sb>0x8000||sa>0x8000||dr>0x8000||dg>0x8000||db>0x8000||da>0x8000){
             if((f&0x1)==1){

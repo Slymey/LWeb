@@ -5,6 +5,7 @@ import LWeb.Common.Counter;
 import LWeb.Engine.Core;
 import LWeb.Common.Range.Range;
 import LWeb.Engine.Instr.RootP.ResourceP.Position;
+import LWeb.Engine.Instr.RootP.ResourceP.ResourcePointer;
 import LWeb.Engine.Util.GLEU.FrameBuffer;
 import LWeb.Engine.Util.GLEU.Shader;
 import LWeb.Engine.Util.GLEU.Texture;
@@ -24,20 +25,23 @@ public class Buffer {
         int id = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
         int w = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
         int h = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+        int sizeRe = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
         
         return () -> {//add cashing (check if buffer exists)
             FrameBuffer fb = c.getResource(id, FrameBuffer.class);
+            c.putResource(sizeRe, new Position.IntPos(w, h));
             if(fb==null){
                 fb = new FrameBuffer()
                     .attachTargetTexture(GL_COLOR_ATTACHMENT0, new Texture()
-                            .setImage(new Position.IntPos(w, h))
+                            .setImage(new ResourcePointer(sizeRe, c))
                         .setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR)
                         .setParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR))
                     .attachVertexArray(FrameBuffer.deafaultLayout)
+                    .setClearColor(1,1,1,1)
                     .attachShader(new Shader()
                         .addVertShader("basic.vert")
                         .addFragShader("basic.frag")
-                        .initialize());
+                        .initialize()).useWithClear();
             }
             
             

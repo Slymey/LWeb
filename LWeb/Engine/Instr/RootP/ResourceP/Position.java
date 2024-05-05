@@ -49,8 +49,8 @@ public abstract class Position {
         }
         public int xi(){return x;}
         public int yi(){return y;}
-        public float xf(){if(p==null)return x*100.0f; return x*1.0f/p.xi();}
-        public float yf(){if(p==null)return y*100.0f; return y*1.0f/p.yi();}
+        public float xf(){if(p==null)return x/100.0f; return x*1.0f/p.xi();}
+        public float yf(){if(p==null)return y/100.0f; return y*1.0f/p.yi();}
     }
     
 }
