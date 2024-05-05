@@ -1,6 +1,7 @@
 package LWeb.Engine.Instr.RootP.FilterP;
 
 import LWeb.Common.Color;
+import LWeb.Common.Color.IntColor;
 import static LWeb.Common.Common.byteToInt;
 import LWeb.Common.Counter;
 import LWeb.Common.Pair;
@@ -10,13 +11,13 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
 public class PaletteSwap {
-    public static Runnable getInst(byte o[], Counter i){
+    public static Runnable getInst(byte o[], Counter i, Core cr){
         int id = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
         int index = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
         return () -> {
-            Color cc = new Color();
-            Pair<Integer, Integer> pair[]= Core.getResource(index, Pair[].class);
-            BufferedImage bi=Core.getResource(id, BufferedImage.class);
+            IntColor cc = new IntColor();
+            Pair<Integer, Integer> pair[]= cr.getResource(index, Pair[].class);
+            BufferedImage bi=cr.getResource(id, BufferedImage.class);
             int prev = bi.getRGB(0, 0);
             final int prev_f=prev;
             int prevc = Arrays.binarySearch(pair, null, 
@@ -50,7 +51,7 @@ public class PaletteSwap {
                         int c = bi.getRGB(bw, bh);
                         boolean in=false;//integrate prev
                         cc.set(c);
-                        int indp = (cc.R * 3 + cc.G * 5 + cc.B * 7 + cc.A * 11)&0x40;
+                        int indp = (cc.ri() * 3 + cc.gi() * 5 + cc.bi() * 7 + cc.ai() * 11)&0x40;
                         if(cache[indp]==null){in=true;}else if(cache[indp].getFirst()!=c){in=true;}
                         if(in){
                             int ind = Arrays.binarySearch(pair, null, 

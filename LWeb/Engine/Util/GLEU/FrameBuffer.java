@@ -20,7 +20,7 @@ import static org.lwjgl.opengl.GL30.glDeleteFramebuffers;
 import static org.lwjgl.opengl.GL30.glDeleteVertexArrays;
 import static org.lwjgl.opengl.GL30.glFramebufferTexture2D;
 import static org.lwjgl.opengl.GL30.glGenFramebuffers;
-import static org.lwjgl.opengl.GL30.glGenVertexArrays;
+import static org.lwjgl.opengl.GL30.*;
 
 
 public class FrameBuffer {
@@ -70,6 +70,9 @@ public class FrameBuffer {
         glCheckError();
         return this;
     }
+    public Texture getTex(){
+        return tex;
+    }
     
     public FrameBuffer draw(Texture tex){
         bind();
@@ -77,7 +80,30 @@ public class FrameBuffer {
         if(shader!=null)shader.use();
         if(tex!=null)tex.bind();
         preferedLayout.draw();
-        
+        return this;
+    }
+    public FrameBuffer draw(Texture tex, Shader shader){
+        bind();
+        preferedLayout.bind();
+        if(shader!=null)shader.use();
+        if(tex!=null)tex.bind();
+        preferedLayout.draw();
+        return this;
+    }
+    public FrameBuffer draw(Texture tex, Shader shader, VertexArray layout){
+        bind();
+        layout.bind();
+        if(shader!=null)shader.use();
+        if(tex!=null)tex.bind();
+        layout.draw();
+        return this;
+    }
+    public FrameBuffer draw(Texture tex, VertexArray layout){
+        bind();
+        layout.bind();
+        if(shader!=null)shader.use();
+        if(tex!=null)tex.bind();
+        layout.draw();
         return this;
     }
     
@@ -99,6 +125,16 @@ public class FrameBuffer {
     public FrameBuffer finnish(FrameBuffer target, VertexArray panel, boolean clearTarget){
         if(panel==null)return this;
         if(clearTarget){target.useWithClear();}else{target.use();}
+        panel.bind();
+        if(tex!=null)tex.bind();
+        panel.draw();
+        
+        return this;
+    }
+    public FrameBuffer finnish(FrameBuffer target, VertexArray panel, Shader shader,  boolean clearTarget){
+        if(panel==null)return this;
+        if(clearTarget){target.useWithClear();}else{target.use();}
+        shader.use();
         panel.bind();
         if(tex!=null)tex.bind();
         panel.draw();

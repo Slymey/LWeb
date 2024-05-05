@@ -15,7 +15,7 @@ import static LWeb.Compiler.Components.Calculate.Operation.DIV;
 import static LWeb.Compiler.Components.Calculate.Operation.MUL;
 import static LWeb.Compiler.Components.Calculate.Operation.SUB;
 import LWeb.Common.Color;
-import static LWeb.Common.Color.Color;
+import static LWeb.Common.Color.*;
 import LWeb.Common.Common;
 import static LWeb.Common.Common.*;
 import static LWeb.Common.Common.Troolean.False;
@@ -860,7 +860,7 @@ class ParseTools{
                     pi.inc();
                 }
 //                    System.out.println(lognm()+"I-r11: "+pi.i+" "+pi.peekT()+" "+pi.peekS());
-                tp = new PropColor(new Color(a,r,g,b));
+                tp = new PropColor(new IntColor(a,r,g,b));
                 break;
             }
             case "calc":{//read on loop -> calc(50% - 24px/2 - 4px/2);   olso handle RX_STRING

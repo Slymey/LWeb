@@ -1,11 +1,14 @@
 package LWeb.Engine;
 
+import static LWeb.Common.Common.ats;
 import static LWeb.Common.Common.byteToLong;
+import static LWeb.Common.Common.lognm;
 import LWeb.Common.Counter;
-import static LWeb.Engine.Core.byteToDraw;
-import static LWeb.Engine.Core.resources;
 import LWeb.Engine.Util.Window;
+import static LWeb.Engine.Util.Window.processInput;
 import java.util.concurrent.Executors;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 
 public class LWeb {
@@ -13,15 +16,17 @@ public class LWeb {
     private static final long MAGIC_BYTES=0x70724c5765620000l;// magic bytes + mayor/minor version (prLWebMm)
     
     private Exception readError=null;
+    private Core progCore;
     private Runnable r[];
     
     public LWeb(byte [] bytes){
-        
+        progCore = new Core();
         Counter i = new Counter(0);
+        
         long mb = byteToLong(bytes);
         i.inc(8);
         if(MAGIC_BYTES>>8==mb>>8   &&   (MAGIC_BYTES&0xff)<1){
-            r = byteToDraw(bytes, i);
+            r = progCore.byteToDraw(bytes, i);
         }else{
             readError=new VersionMismatch("Data identifier or version unsupported");
         }
@@ -37,10 +42,17 @@ public class LWeb {
     }
     
     private void start1(){
-        Window w=new Window(r);
-        resources.set(0xff0000,  w.tr);
-        Executors.newSingleThreadExecutor().execute(w);
+        progCore.putCallable("E", (Object... o)->{
+            glfwPollEvents();
+            boolean b = glfwWindowShouldClose((long)o[0]);
+            processInput((long)o[0]);
+//            System.out.println(lognm()+"evnt "+b+" "+(long)o[0]);
+            return b;
+        });
         
+        Window w=new Window(r, progCore);
+        progCore.progCounter=0;
+        Executors.newSingleThreadExecutor().execute(w);
     }
     
     

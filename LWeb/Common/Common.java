@@ -1,11 +1,14 @@
 package LWeb.Common;
 
 
+import LWeb.Common.Color.IntColor;
 import static LWeb.Common.Pair.Pair;
 import static LWeb.Common.Triple.*;
 import LWeb.Compiler.Main.*;
 import LWeb.Common.Range.Range;
+import LWeb.Engine.Constants;
 import LWeb.Engine.LWeb;
+import LWeb.Engine.Util.GLEU.Shader;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.File;
@@ -129,6 +132,17 @@ public class Common {
                 (ba[2]& 0xff)<<(1*8)|
                 (ba[3]& 0xff)<<(0*8);
     }
+    public static int[] bytesToInt(byte[] ba){
+        int len = ba.length/4;
+        int out[] = new int[len];
+        for (int i = 0; i < len; i++) {
+            out[i]=(ba[i*4+0]& 0xff)<<(3*8)|
+                (ba[i*4+1]& 0xff)<<(2*8)|
+                (ba[i*4+2]& 0xff)<<(1*8)|
+                (ba[i*4+3]& 0xff)<<(0*8);
+        }
+        return out;
+    }
     public static int[] mixIntBytes(int[] ba, int [] mix){
         int len= ba.length;
         int out[] = new int[len];
@@ -186,7 +200,7 @@ public class Common {
                 int c2=inp.getRGB(w*2+1, h*2);
                 int c3=inp.getRGB(w*2, h*2+1);
                 int c4=inp.getRGB(w*2+1, h*2+1);
-                out.setRGB(w,h,Color.avg(c1,c2,c3,c4).color());
+                out.setRGB(w,h,((IntColor)Color.avg(c1,c2,c3,c4)).color());
             }
         }
         if(lvl==0){
@@ -204,7 +218,7 @@ public class Common {
                     //sopl("  w:"+w+"  h:"+h+"  c:"+rgbArray[w+h*bis.getWidth()]);
                     int c1=inp.getRGB(w*2, h*2);
                     int c2=inp.getRGB(w*2, h*2+1);
-                    out.setRGB(w,h,Color.avg(c1,c2).color());
+                    out.setRGB(w,h,((IntColor)Color.avg(c1,c2)).color());
                 }
             }
             if(lvly==0)return out;
@@ -1849,16 +1863,10 @@ public class Common {
     
     
     //testing ground
+    
     public static void main(String[] args) {
-        class test{
-            float vertices[][] = {
-                {-0.5f, -0.5f, 0.0f},
-                {0.5f, -0.5f, 0.0f},
-                {0.0f,  0.5f, 0.0f}
-            };  
-            int otr=67;
-            long ss=7;
-        }
+        
+        
         Pair<Integer, Integer> i = cast(Pair.class, Pair(42,24));
         System.out.println(lognm()+""+byteToInt(new byte[]{-16, 0,0,3}));//268435453
         

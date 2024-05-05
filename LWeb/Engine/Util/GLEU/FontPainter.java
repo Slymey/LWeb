@@ -165,6 +165,9 @@ public class FontPainter {
         g.dispose();
         return Pair(image, bd);
     }
+    public String toString(){
+        return ""+font;
+    }
     
     public static class RenderedString{
         public final Texture tex;

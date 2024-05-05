@@ -16,6 +16,7 @@ import LWeb.Common.Range.Range.*;
 import LWeb.Engine.Instr.RootP.Filter;
 import LWeb.Engine.Instr.RootP.Header;
 import LWeb.Engine.Instr.RootP.Paint;
+import LWeb.Engine.Instr.RootP.ResourceP.Position.IntPos;
 import static LWeb.Engine.Util.GLEU.Common.*;
 import static LWeb.Engine.Util.GLEU.Shader.*;
 import LWeb.Engine.Util.GLEU.*;
@@ -323,15 +324,35 @@ FrameBuffer main = new FrameBuffer()
             .setUniformI("text", 2))
         .setClearColor(1,1,1,1)
         .attachTargetTexture(GL_COLOR_ATTACHMENT0, new Texture()
-                    .setImage(viewBox.first, viewBox.second)
+                    .setImage(new IntPos(viewBox.first, viewBox.second))
                     .setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR)
                     .setParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR));
 
-
+Shader grad= new Shader()
+                .addVertShader("color.vert")
+                .addFragShader("box.frag")
+                .addFragShader("colorc.frag")
+                .initialize()
+                .use()
+                .setUniformF("red", 0.5f, 0.5f, 1, 0)
+                .setUniformF("green", 0.5f, 0.5f, 1, 0.33333f)
+                .setUniformF("blue", 0.5f, 0.5f, 1, 0.66666f)
+                .setUniformF("alpha", 1, 0, 1, 0)
+                .setUniformF("pos", 0.25f, 0.25f, 0.75f, 0.75f);
+Shader grad2= new Shader()
+                .addVertShader("color.vert")
+                .addFragShader("square.frag")
+                .addFragShader("colorv.frag")
+                .initialize()
+                .use()
+                .setUniformF("offset", 0.5f, 0.5f, 0.5f, 0)
+                .setUniformF("amp", 0.5f, 0.5f, 0.5f, 0)
+                .setUniformF("freq", 1, 1, 1, 1)
+                .setUniformF("phase", 0, 0.3333f, 0.6666f, 0)
+                .setUniformF("pos", 0.25f, 0.25f, 0.75f, 0.75f);
 
 
 //</editor-fold>
-
 
 
 
@@ -342,6 +363,7 @@ FrameBuffer main = new FrameBuffer()
             
             //glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
 main.useWithClear();
+
             
 Matrix4f mx = new Matrix4f()
         .identity()
@@ -362,7 +384,24 @@ fp.draw(0, 0, Color("#138848").asVec());
 fp.draw("ubn", 300, 44);
 fp.draw("nllm", 100, 44);
 
+grad.use()
+    .setUniformF("red", 0.5f, 0.5f, 1, 0)
+    .setUniformF("green", 0.5f, 0.5f, 1, 0.33333f)
+    .setUniformF("blue", 0.5f, 0.5f, 1, 0.66666f)
+    .setUniformF("alpha", -1, -1000, 0.5f, 0.25f)
+    .setUniformF("pos", 0.25f, 0.25f, 0.75f, 0.75f);
+grad2.use()
+    .setUniformF("offset", 0.5f, 0.5f, 0.5f, 0.5f)
+    .setUniformF("amp", 0.5f, 0.5f, 0.5f, 0)
+    .setUniformF("freq", 1, 1, 1, 1)
+    .setUniformF("phase", 0, 0.3333f, 0.6666f, 0)
+    .setUniformF("pos", 0.25f, 0.25f, 0.75f, 0.75f);
 
+
+FrameBuffer.deafaultLayout.bind();//.enable(GL_BLEND).setGeneric2(GL11::glBlendFunc, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+grad2.use();
+
+FrameBuffer.deafaultLayout.draw();
 
 
 main.finnish(screen, true);

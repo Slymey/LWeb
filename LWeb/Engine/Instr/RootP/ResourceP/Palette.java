@@ -4,11 +4,12 @@ import static LWeb.Common.Common.byteToInt;
 import LWeb.Common.Counter;
 import LWeb.Common.Pair;
 import static LWeb.Common.Pair.Pair;
+import LWeb.Engine.Core;
 import java.util.AbstractMap;
 import java.util.Arrays;
 
 public class Palette {
-    public static Object getRsc(byte[] o, Counter i){
+    public static Object getRsc(byte[] o, Counter i, Core c){
         
         int len = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
         Pair<Integer, Integer> pairo[]= new Pair[len];

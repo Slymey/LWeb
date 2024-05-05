@@ -1,6 +1,7 @@
 
 package LWeb.Common;
 
+import LWeb.Common.Color.IntColor;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -11,15 +12,15 @@ import javax.imageio.ImageIO;
 
 public class ColorSource {
     int type=0;// 0=color 1=gradient 2=radial 3=conic 4=image 5=buffer
-    Color c= null;
+    IntColor c= null;
     BufferedImage img = null;
     int x=0;
     int y=0;
     public ColorSource(int c){
-        this.c=new Color(c);
+        this.c=new IntColor(c);
     }
     public ColorSource(byte[] c){
-        this.c=new Color(c);
+        this.c=new IntColor(c);
     }
     public ColorSource(URI imgFile){
         try{
@@ -38,7 +39,7 @@ public class ColorSource {
             case 0:
                 return c;
             case 4:case 5:
-                return new Color(img.getRGB((x+this.x)%img.getWidth(), (y+this.y)%img.getHeight()));
+                return new IntColor(img.getRGB((x+this.x)%img.getWidth(), (y+this.y)%img.getHeight()));
             default:
                 return null;
         }

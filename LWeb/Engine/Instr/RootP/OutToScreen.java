@@ -1,9 +1,10 @@
 package LWeb.Engine.Instr.RootP;
 
 import static LWeb.Common.Common.byteToInt;
+import static LWeb.Common.Common.lognm;
 import LWeb.Common.Counter;
 import LWeb.Engine.Core;
-import static LWeb.Engine.Core.resources;
+import LWeb.Engine.Util.GLEU.FrameBuffer;
 import LWeb.Engine.Util.GLEU.Texture;
 import LWeb.Engine.Util.SimpleRemoteThread;
 import LWeb.Engine.Util.Window;
@@ -19,26 +20,19 @@ import org.lwjgl.system.MemoryUtil;
 
 
 public class OutToScreen {
-    public static Runnable getInst(byte[] o, Counter i){
+    public static Runnable getInst(byte[] o, Counter i, Core c){
         int id = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
         int win = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+        int screen = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
         return () -> {
-            BufferedImage image = Core.getResource(id, BufferedImage.class);
-            Window window = Core.getResource(win, Window.class);
-            int width = image.getWidth(), height = image.getHeight();
-            int[] pixels = new int[width * height];
-            image.getRGB(0, 0, width, height, pixels, 0, width);
-
-            Texture texture = new Texture()
-                .setParameter(GL_TEXTURE_WRAP_S, GL_REPEAT)	
-                .setParameter(GL_TEXTURE_WRAP_T, GL_REPEAT)
-                .setParameter(GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)	
-                .setParameter(GL_TEXTURE_MAG_FILTER, GL_LINEAR)	
-                    .loadImage(image, false, true, true);
+            FrameBuffer buff = c.getResource(id, FrameBuffer.class);
+            long window = c.getResource(win, long.class);
             
-            window.screenBuffer().draw(texture);
+            buff.finnish(buff, true);
             
-            glfwSwapBuffers(window.winId());
+            //c.getResource(screen, FrameBuffer.class).draw(texture);
+            
+            glfwSwapBuffers(window);
         };
     }
 }

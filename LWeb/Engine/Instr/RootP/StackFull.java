@@ -13,7 +13,7 @@ import java.awt.image.BufferedImage;
 import java.util.function.BiFunction;
 
 public class StackFull {
-    public static Runnable getInst(byte o[], Counter i){
+    public static Runnable getInst(byte o[], Counter i, Core c){
         int source = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
         int target = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
         int mxr = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});//color mixer
@@ -41,25 +41,25 @@ public class StackFull {
         float sts[]=new float[]{ofx,ofy};//start pos
         //use mxMul tu cal new pos of pixel and area(1)*det(mx) for nex area(alpha) of pixel
         return () -> {
-            BufferedImage bis = Core.getResource(source, BufferedImage.class);
-            BufferedImage bit = Core.getResource(target, BufferedImage.class);
+            BufferedImage bis = c.getResource(source, BufferedImage.class);
+            BufferedImage bit = c.getResource(target, BufferedImage.class);
             int[] rgbArray=null;
             rgbArray = bis.getRGB(0, 0, bis.getWidth(), bis.getHeight(), rgbArray, 0, bis.getWidth());
             BiFunction<Color,Color,Color> mixer = ColorMixers.values()[mxr].func;
             //BiFunction<Color,Color,Color> mixer = ColorMixers.MULTIPLY.func;
             
-            for(int w:new Range(0,bis.getWidth()-1)){
-                for(int h:new Range(0,bis.getHeight()-1)){
-                    //sopl("  w:"+w+"  h:"+h+"  c:"+rgbArray[w+h*bis.getWidth()]);
-                    float xt=clamp(stx[0],0,bit.getWidth());
-                    float yt=clamp(sty[1],0,bit.getWidth());
-                    bit.setRGB( w, 
-                                h, 
-                               mixer.apply(
-                                      color(rgbArray[w+h*bis.getWidth()]),
-                                      color(bit.getRGB((int)xt,(int)yt))).color());
-                }
-            }
+//            for(int w:new Range(0,bis.getWidth()-1)){
+//                for(int h:new Range(0,bis.getHeight()-1)){
+//                    //sopl("  w:"+w+"  h:"+h+"  c:"+rgbArray[w+h*bis.getWidth()]);
+//                    float xt=clamp(stx[0],0,bit.getWidth());
+//                    float yt=clamp(sty[1],0,bit.getWidth());
+//                    bit.setRGB( w, 
+//                                h, 
+//                               mixer.apply(
+//                                      color(rgbArray[w+h*bis.getWidth()]),
+//                                      color(bit.getRGB((int)xt,(int)yt))).color());
+//                }
+//            }
         }; 
     }
 }
