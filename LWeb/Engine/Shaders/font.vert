@@ -15,6 +15,6 @@ void main()
     gl_Position = vec4(aPos, 0.0f, 1.0f);
     TexCoord = aTexCoord;
     fontColor = aColor;
-    vec2 bPos = aPos-drawBox.xy;
+    bPos = aPos-drawBox.xy;
     paintBox=drawBox;
 } 

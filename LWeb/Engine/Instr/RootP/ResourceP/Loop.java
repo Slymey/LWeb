@@ -3,7 +3,7 @@ package LWeb.Engine.Instr.RootP.ResourceP;
 import static LWeb.Common.Common.byteToFloat;
 import static LWeb.Common.Common.byteToInt;
 import static LWeb.Common.Common.lognm;
-import LWeb.Common.Counter;
+import LWeb.Common.ByteCounter;
 import LWeb.Engine.Core;
 
 public abstract class Loop {
@@ -22,24 +22,24 @@ public abstract class Loop {
         c=co;
     }
     public abstract int proccessLoop();
-    public static Object getRsc(byte[] o, Counter i, Core c){
-        byte isDelta = o[i.inc()];
-        int startPtr = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-        int endPtr = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-        byte subLoop = o[i.inc()];
+    public static Object getRsc(ByteCounter i, Core c){
+        byte isDelta = i.next();
+        int startPtr = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+        int endPtr = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+        byte subLoop = i.next();
         Loop loop = null;
         boolean sd=(isDelta&0x1)==1;
         boolean ed=(isDelta>>>1&0x1)==1;
         boolean inv=(isDelta>>>2&0x1)==1;
         switch (subLoop) {
             case 0:{
-                float start = byteToFloat(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-                float end = byteToFloat(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-                float amount = byteToFloat(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+                float start = byteToFloat(new byte[]{i.next(),i.next(),i.next(),i.next()});
+                float end = byteToFloat(new byte[]{i.next(),i.next(),i.next(),i.next()});
+                float amount = byteToFloat(new byte[]{i.next(),i.next(),i.next(),i.next()});
                 return new BoundedLoop(c, sd, ed, inv, startPtr, endPtr, start, end, amount);
             }
             case 1:{
-                int cond = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+                int cond = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
                 return new ConditionalLoop(c, sd, ed, inv, startPtr, endPtr, c.getResource(cond, Condition.class));
             }
         }

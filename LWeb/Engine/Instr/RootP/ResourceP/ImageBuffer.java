@@ -1,7 +1,7 @@
 package LWeb.Engine.Instr.RootP.ResourceP;
 
 import static LWeb.Common.Common.byteToInt;
-import LWeb.Common.Counter;
+import LWeb.Common.ByteCounter;
 import LWeb.Engine.Core;
 import LWeb.Engine.Util.GLEU.FrameBuffer;
 import LWeb.Engine.Util.GLEU.Texture;
@@ -19,8 +19,8 @@ public class ImageBuffer {
     Texture tex;
     Core c;
     
-    public static Object getRsc(byte[] o, Counter i, Core c){
-        int id = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+    public static Object getRsc(ByteCounter i, Core c){
+        int id = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
         return new ImageBuffer(c, id);
     }
     

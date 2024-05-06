@@ -2,7 +2,7 @@ package LWeb.Engine.Instr.RootP.ResourceP;
 
 import static LWeb.Common.Common.byteToInt;
 import static LWeb.Common.Common.lognm;
-import LWeb.Common.Counter;
+import LWeb.Common.ByteCounter;
 import LWeb.Engine.Core;
 import LWeb.Engine.Util.GLEU.Texture;
 import java.io.File;
@@ -19,8 +19,8 @@ public class ImageFile {
     URI file;
     Texture tex;
     
-    public static Object getRsc(byte[] o, Counter i, Core c){
-        URI uri = c.getResource(byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]}), URI.class);
+    public static Object getRsc(ByteCounter i, Core c){
+        URI uri = c.getResource(byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()}), URI.class);
         File fl = new File(uri);
 //        System.out.println(lognm()+""+uri.toString()+" "+fl+" "+fl.getAbsolutePath()+" "+fl.exists());
         return new ImageFile(uri);

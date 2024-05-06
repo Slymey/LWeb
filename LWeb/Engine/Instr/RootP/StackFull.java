@@ -5,7 +5,7 @@ import static LWeb.Common.Color.color;
 import LWeb.Common.Common;
 import static LWeb.Common.Common.*;
 import static LWeb.Common.Common.clamp;
-import LWeb.Common.Counter;
+import LWeb.Common.ByteCounter;
 import LWeb.Engine.Core;
 import LWeb.Engine.Util.ColorMixers;
 import LWeb.Common.Range.Range;
@@ -13,25 +13,25 @@ import java.awt.image.BufferedImage;
 import java.util.function.BiFunction;
 
 public class StackFull {
-    public static Runnable getInst(byte o[], Counter i, Core c){
-        int source = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-        int target = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-        int mxr = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});//color mixer
-        int wdh = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});//cropping
-        int hgh = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+    public static Runnable getInst(ByteCounter i, Core c){
+        int source = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+        int target = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+        int mxr = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});//color mixer
+        int wdh = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});//cropping
+        int hgh = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
         float mx[][] = {
             {
-                byteToFloat(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]}),//2d transfowm matrix ---wise
-                byteToFloat(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]}),//origin is at top left of target (modifiable in buffer)
-                byteToFloat(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]})//transforms pixel pos from final to original
+                byteToFloat(new byte[]{i.next(),i.next(),i.next(),i.next()}),//2d transfowm matrix ---wise
+                byteToFloat(new byte[]{i.next(),i.next(),i.next(),i.next()}),//origin is at top left of target (modifiable in buffer)
+                byteToFloat(new byte[]{i.next(),i.next(),i.next(),i.next()})//transforms pixel pos from final to original
             },{
-                byteToFloat(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]}),//pixels computed at top left
+                byteToFloat(new byte[]{i.next(),i.next(),i.next(),i.next()}),//pixels computed at top left
                 0,0
             },{
                 0,0,1}
         };
-        float ofx=byteToFloat(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-        float ofy=byteToFloat(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+        float ofx=byteToFloat(new byte[]{i.next(),i.next(),i.next(),i.next()});
+        float ofy=byteToFloat(new byte[]{i.next(),i.next(),i.next(),i.next()});
         float stx[]=mxMuls(new float[]{1,0,0},mx);//stepsizes
         stx[0]/=stx[2];
         stx[1]/=stx[2];

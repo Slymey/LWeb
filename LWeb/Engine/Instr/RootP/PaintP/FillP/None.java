@@ -1,10 +1,10 @@
 package LWeb.Engine.Instr.RootP.PaintP.FillP;
 
-import LWeb.Common.Counter;
+import LWeb.Common.ByteCounter;
 
 
 public class None {
-    public static Runnable getInst(byte[] o, Counter i){
+    public static Runnable getInst(ByteCounter i){
         return ()->{};
         
     }

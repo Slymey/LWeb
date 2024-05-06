@@ -5,7 +5,7 @@ import LWeb.Common.ColorSource;
 import LWeb.Common.Common;
 import static LWeb.Common.Common.byteToInt;
 import static LWeb.Common.Common.lognm;
-import LWeb.Common.Counter;
+import LWeb.Common.ByteCounter;
 import LWeb.Engine.Core;
 import LWeb.Common.Range.Range;
 import static LWeb.Engine.Constants.ConstTypes.LINEAR_GRADIENT_SHADER;
@@ -17,9 +17,9 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.*;
 
 public class Solid {
-    public static Runnable getInst(byte o[], Counter i, Core c){
-        int id = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-        int color = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+    public static Runnable getInst(ByteCounter i, Core c){
+        int id = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+        int color = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
         return () -> {
             FrameBuffer fb = c.getResource(id, FrameBuffer.class).use();
             Color cl = c.getResource(color, Color.class);

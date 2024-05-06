@@ -1,7 +1,8 @@
 package LWeb.Engine;
 
+import LWeb.Common.ByteCounter;
 import static LWeb.Common.Common.cast;
-import LWeb.Common.Counter;
+import LWeb.Common.ByteCounter;
 import LWeb.Common.DynArray.DynArray;
 import LWeb.Common.UbFunction;
 import LWeb.Engine.Constants.ConstTypes;
@@ -23,7 +24,7 @@ public class Core {
     public RenderTypes renderType=RenderTypes.OPENGL;
     private final DynArray<Object> resources = new DynArray<>();
     private final HashMap<String, UbFunction<?,?>> callables = new HashMap<>();
-    public final HashMap<String, Object> namedApi = new HashMap<>();
+    public final HashMap<String, Integer> namedApi = new HashMap<>();
     private final DynArray<Exception> errors = new DynArray<>();
     private final Constants consts = new Constants();
     private final Stack<Object> callStack = new Stack<>();
@@ -32,11 +33,11 @@ public class Core {
     public Thread progThread;
     private long newError=-1;
     
-    public Runnable[] byteToDraw(byte o[], Counter i){
+    public Runnable[] byteToDraw(ByteCounter i){
         progThread = Thread.currentThread();
         ArrayList<Runnable> rn=new ArrayList<>();        
         while(!i.ended){
-            rn.add(Root.getInst(o, i, this));
+            rn.add(Root.getInst(i, this));
             if(newError!=-1){
                 System.out.println(errors.get((int)newError));
                 newError=-1;
@@ -80,6 +81,16 @@ public class Core {
     }
     public void putCallable(String name, UbFunction<?,?> runnable){
         callables.put(name, runnable);
+    }
+    public<T> T getNamedApi(String name, Class<T> c){
+        Integer i = namedApi.get(name);
+        if(i==null)return null;
+        return getResource(namedApi.get(name), c);
+    }
+    public void putNamedApi(String name, Object re){
+        Integer i = namedApi.get(name);
+        if(i!=null)
+            putResource(i, re);
     }
     public void reportError(int pos, Exception ex){
         newError=pos;

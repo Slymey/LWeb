@@ -2,7 +2,7 @@ package LWeb.Engine.Instr.RootP.ResourceP;
 
 import static LWeb.Common.Common.byteToFloat;
 import static LWeb.Common.Common.byteToInt;
-import LWeb.Common.Counter;
+import LWeb.Common.ByteCounter;
 import LWeb.Engine.Core;
 
 public abstract class Position {
@@ -16,9 +16,9 @@ public abstract class Position {
         public float x;
         public float y;
 
-        public static Object getRsc(byte[] o, Counter i, Core c){
-            float x = byteToFloat(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-            float y = byteToFloat(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+        public static Object getRsc(ByteCounter i, Core c){
+            float x = byteToFloat(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            float y = byteToFloat(new byte[]{i.next(),i.next(),i.next(),i.next()});
             return new FloatPos(x, y);
         }
         public FloatPos(float x, float y){
@@ -36,9 +36,9 @@ public abstract class Position {
         public int x;
         public int y;
 
-        public static Object getRsc(byte[] o, Counter i, Core c){
-            int x = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-            int y = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+        public static Object getRsc(ByteCounter i, Core c){
+            int x = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            int y = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
 
             return new IntPos(x, y);
         }

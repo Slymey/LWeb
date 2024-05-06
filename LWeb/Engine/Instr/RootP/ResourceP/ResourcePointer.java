@@ -3,7 +3,7 @@ package LWeb.Engine.Instr.RootP.ResourceP;
 import LWeb.Common.Common;
 import static LWeb.Common.Common.byteToInt;
 import static LWeb.Common.Common.cast;
-import LWeb.Common.Counter;
+import LWeb.Common.ByteCounter;
 import LWeb.Engine.Core;
 import java.util.Arrays;
 
@@ -31,8 +31,8 @@ public class ResourcePointer {
         c.putRawResource(ptr, re);
     }
     
-    public static Object getRsc(byte[] o, Counter i, Core c){
-        int ptr = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+    public static Object getRsc(ByteCounter i, Core c){
+        int ptr = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
         return new ResourcePointer(ptr, c);
     }
 }

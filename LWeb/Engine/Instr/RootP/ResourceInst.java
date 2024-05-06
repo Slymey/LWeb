@@ -3,46 +3,100 @@ package LWeb.Engine.Instr.RootP;
 
 import static LWeb.Common.Common.byteToInt;
 import static LWeb.Common.Common.sg;
-import LWeb.Common.Counter;
+import LWeb.Common.ByteCounter;
 import LWeb.Common.Pair;
+import LWeb.Common.TriFunction;
 import LWeb.Engine.Core;
 import LWeb.Engine.Instr.RootP.ResourceP.*;
 import LWeb.Engine.Instr.RootP.ResourceP.None;
 import LWeb.Engine.Instr.RootP.ResourceP.Number;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
+
+//.*>(.*)\.getRsc.*\/\/([0-9]*)\r\n
+//$1::getRsc,       //$2\n
 public class ResourceInst {
-    public static Runnable getInst(byte o[], Counter i, Core c){
-        int type = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-        int ind = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-        Object rsc = sg((Supplier<Pair<Class, Object>>[])new Supplier[]{
-                ()->None.getRsc(o, i, c),              //0
-                ()->PlainText.getRsc(o, i, c),         //1
-                ()->FontFace.getRsc(o, i, c),          //2
-                ()->Palette.getRsc(o, i, c),           //3
-                ()->URLAbsolute.getRsc(o, i, c),       //4
-                ()->URLRelative.getRsc(o, i, c),       //5
-                ()->FlatColor.getRsc(o, i, c),        //6
-                ()->Callable.getRsc(o, i, c),       //7
-                ()->Loop.getRsc(o, i, c),       //8
-                ()->Number.getRsc(o, i, c),       //9
-                ()->WholeNumber.getRsc(o, i, c),       //10
-                ()->Condition.getRsc(o, i, c),       //11
-                ()->ResourcePointer.getRsc(o, i, c),       //12
-                ()->ImageFile.getRsc(o, i, c),       //13
-                ()->ImageBuffer.getRsc(o, i, c),       //14
-                ()->LinearGradient.getRsc(o, i, c),       //15
-                ()->Position.FloatPos.getRsc(o, i, c),       //16
-                ()->Position.IntPos.getRsc(o, i, c),       //17
-                ()->Box.FloatBox.getRsc(o, i, c),       //18
-                ()->Box.IntBox.getRsc(o, i, c),       //19
-                ()->BlendMode.getRsc(o, i, c),       //20
-            }, type);
-        c.putResource(ind, rsc);
-        return ()->{
+    static List<BiFunction<ByteCounter, Core, Object>> rList = Arrays.asList(
+            None::getRsc,       //0
+            PlainText::getRsc,       //1
+            FontFace::getRsc,       //2
+            Palette::getRsc,       //3
+            URLAbsolute::getRsc,       //4
+            URLRelative::getRsc,       //5
+            FlatColor::getRsc,       //6
+            Callable::getRsc,       //7
+            Loop::getRsc,       //8
+            Number::getRsc,       //9
+            WholeNumber::getRsc,       //10
+            Condition::getRsc,       //11
+            ResourcePointer::getRsc,       //12
+            ImageFile::getRsc,       //13
+            ImageBuffer::getRsc,       //14
+            LinearGradient::getRsc,       //15
+            Position.FloatPos::getRsc,       //16
+            Position.IntPos::getRsc,       //17
+            Box.FloatBox::getRsc,       //18
+            Box.IntBox::getRsc,       //19
+            BlendMode::getRsc       //20
+        );
+    public static class Resource{
+        public static Runnable getInst(ByteCounter i, Core c){
+            int type = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            int ind = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            Object rsc = rList.get(type).apply(i, c);
             c.putResource(ind, rsc);
-        };
-        
-        
+            return ()->{
+                c.putResource(ind, rsc);
+            };
+        }
     }
+    public static class OneTimeResource{
+        public static Runnable getInst(ByteCounter i, Core c){
+            int type = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            int ind = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            Object rsc = rList.get(type).apply(i, c);
+            return ()->{
+                if(c.getResource(ind, Object.class)==null)
+                    c.putResource(ind, rsc);
+            };
+        }
+    }
+    public static class CondResource{
+        public static Runnable getInst(ByteCounter i, Core c){
+            int type = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            int ind = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            int len = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            int cnd = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            ByteCounter i2 = new ByteCounter(i.o, i.c);
+            i.c+=len;
+            return  ()->{
+                if(c.getResource(cnd, Condition.class).evaluate()){
+                    i2.lock();
+                    Object rsc = rList.get(type).apply(i2, c);
+                    i2.unlock();
+                    c.putResource(ind, rsc);
+                }
+            };
+        }
+    }
+    public static class NegCondResource{
+        public static Runnable getInst(ByteCounter i, Core c){
+            int type = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            int ind = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            int len = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            int cnd = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            ByteCounter i2 = new ByteCounter(i.o, i.c);
+            i.c+=len;
+            return ()->{
+                if(!c.getResource(cnd, Condition.class).evaluate()){
+                    Object rsc = rList.get(type).apply(i2, c);
+                    c.putResource(ind, rsc);
+                }
+            };
+        }
+    }
+    
 }

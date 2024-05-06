@@ -1,7 +1,7 @@
 package LWeb.Engine.Instr.RootP;
 
 import static LWeb.Common.Common.byteToInt;
-import LWeb.Common.Counter;
+import LWeb.Common.ByteCounter;
 import LWeb.Engine.Core;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -11,9 +11,9 @@ import javax.imageio.ImageIO;
 
 
 public class OutToFile {
-    public static Runnable getInst(byte[] o, Counter i, Core c){
-        int id = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-        int file = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+    public static Runnable getInst(ByteCounter i, Core c){
+        int id = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+        int file = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
         return ()->{
             URI uri = c.getResource(file, URI.class);
             File of = new File(uri);

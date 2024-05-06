@@ -1,7 +1,7 @@
 package LWeb.Engine.Instr.RootP;
 
 import static LWeb.Common.Common.byteToInt;
-import LWeb.Common.Counter;
+import LWeb.Common.ByteCounter;
 import LWeb.Engine.Core;
 import LWeb.Engine.Util.GLEU.FrameBuffer;
 import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
@@ -10,8 +10,8 @@ import static org.lwjgl.opengl.GL11.GL_STENCIL_BUFFER_BIT;
 import static org.lwjgl.opengl.GL11.glClear;
 
 public class ClearBuffer {
-    public static Runnable getInst(byte o[], Counter i, Core c){
-        int id = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+    public static Runnable getInst(ByteCounter i, Core c){
+        int id = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
         return ()->{
             FrameBuffer fb = c.getResource(id, FrameBuffer.class);
             fb.bind();

@@ -4,6 +4,7 @@ import static LWeb.Common.Common.lognm;
 import static LWeb.Common.Common.mixIntBytes;
 import LWeb.Common.Triple;
 import LWeb.Engine.Instr.RootP.ResourceP.Position;
+import LWeb.Engine.Instr.RootP.ResourceP.Position.IntPos;
 import LWeb.Engine.Instr.RootP.ResourceP.ResourcePointer;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -25,9 +26,9 @@ import static org.lwjgl.opengl.GL11.glTexImage2D;
 import static org.lwjgl.opengl.GL11.glTexParameteri;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
-import static org.lwjgl.opengl.GL30.glGenerateMipmap;
+import static org.lwjgl.opengl.GL30.*;
 import org.lwjgl.stb.STBImage;
-import static org.lwjgl.stb.STBImage.stbi_set_flip_vertically_on_load;
+import static org.lwjgl.stb.STBImage.*;
 import org.lwjgl.system.MemoryStack;
 
 
@@ -38,6 +39,7 @@ public class Texture {
     public final int numId;
     public final int TEX;
     public ResourcePointer p;
+    public IntPos pd;
     public Texture(){
         numId=idBase++;
         TEX = glGenTextures();
@@ -68,7 +70,6 @@ public class Texture {
             IntBuffer w = stack.mallocInt(1);
             IntBuffer h = stack.mallocInt(1);
             IntBuffer channels = stack.mallocInt(1);
-            
             stbi_set_flip_vertically_on_load(shouldFlip);
             
             URL url = Texture.class.getResource(imgFile);
@@ -80,8 +81,12 @@ public class Texture {
             }
             width = w.get();
             height = h.get();
-            p.update(new Position.IntPos(width, height));
-            //glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+            System.out.println(lognm()+""+width+" "+height+" "+imgFile);
+            pd=new Position.IntPos(width, height);
+            if(p!=null){
+                p.update(pd);
+            }
+//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
             glTexImage2D(GL_TEXTURE_2D, 0, alpha?GL_RGBA:GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 
@@ -102,6 +107,7 @@ public class Texture {
             IntBuffer w = stack.mallocInt(1);
             IntBuffer h = stack.mallocInt(1);
             IntBuffer channels = stack.mallocInt(1);
+            
             stbi_set_flip_vertically_on_load(shouldFlip);
             
             File file = new File(imgFile);
@@ -112,8 +118,11 @@ public class Texture {
             }
             width = w.get();
             height = h.get();
-            p.update(new Position.IntPos(width, height));
-            //glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+            pd=new Position.IntPos(width, height);
+            if(p!=null){
+                p.update(pd);
+            }
+//glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
             glTexImage2D(GL_TEXTURE_2D, 0, alpha?GL_RGBA:GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 
@@ -134,7 +143,10 @@ public class Texture {
             buffer = Common.imageToBuffer(imgBuff, new int[]{2,1,0,3}, shouldFlipH, shouldFlipV);
             width =imgBuff.getWidth();
             height = imgBuff.getHeight();
-            p.update(new Position.IntPos(width, height));
+            pd=new Position.IntPos(width, height);
+            if(p!=null){
+                p.update(pd);
+            }
             //glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
             
             glTexImage2D(GL_TEXTURE_2D, 0, alpha?GL_RGBA:GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
@@ -152,7 +164,9 @@ public class Texture {
         return this;
     }
     
-    
+    public void delete(){
+        glDeleteTextures(TEX);
+    }
     
     public Texture bind(){
         bind(this);

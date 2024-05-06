@@ -2,7 +2,7 @@ package LWeb.Engine.Instr.RootP.ResourceP;
 
 import LWeb.Common.Color;
 import static LWeb.Common.Common.byteToInt;
-import LWeb.Common.Counter;
+import LWeb.Common.ByteCounter;
 import LWeb.Engine.Core;
 
 public class LinearGradient {
@@ -12,10 +12,10 @@ public class LinearGradient {
     Box f;
     Box p;
     
-    public static Object getRsc(byte[] o, Counter i, Core c){
-        int box = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-        int col1 = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-        int col2 = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+    public static Object getRsc(ByteCounter i, Core c){
+        int box = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+        int col1 = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+        int col2 = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
         
         Object resource = null;
         return resource;

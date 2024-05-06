@@ -3,7 +3,7 @@ package LWeb.Engine.Instr.RootP.FilterP;
 import LWeb.Common.Color;
 import LWeb.Common.Color.IntColor;
 import static LWeb.Common.Common.byteToInt;
-import LWeb.Common.Counter;
+import LWeb.Common.ByteCounter;
 import LWeb.Common.Pair;
 import LWeb.Engine.Core;
 import LWeb.Common.Range.Range;
@@ -11,9 +11,9 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
 public class PaletteSwap {
-    public static Runnable getInst(byte o[], Counter i, Core cr){
-        int id = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-        int index = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+    public static Runnable getInst(ByteCounter i, Core cr){
+        int id = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+        int index = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
         return () -> {
             IntColor cc = new IntColor();
             Pair<Integer, Integer> pair[]= cr.getResource(index, Pair[].class);

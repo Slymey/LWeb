@@ -4,6 +4,7 @@ import static LWeb.Common.Common.lognm;
 import static LWeb.Common.Pair.Pair;
 import LWeb.Common.Pair;
 import LWeb.Engine.Core;
+import LWeb.Engine.Instr.RootP.ResourceP.Position.IntPos;
 import LWeb.Engine.Util.GLEU.FontPainter;
 import LWeb.Engine.Util.GLEU.FrameBuffer;
 import java.io.File;
@@ -63,11 +64,11 @@ public class Window implements Runnable{
                 work[c.progCounter++].run();
             }
 
-            long window = c.getResource((int)c.namedApi.get("w"), long.class);
+            long window = c.getNamedApi("w", long.class);
 
-            glfwPollEvents();
-            if(glfwWindowShouldClose(window))break;
-            processInput(window);
+//            glfwPollEvents();
+//            if(glfwWindowShouldClose(window))break;
+//            processInput(window);
 
 //            FontPainter.viewBox=viewBox;
 //        glViewport(0, 0, viewBox.first, viewBox.second);
@@ -85,7 +86,7 @@ public class Window implements Runnable{
         return ready;
     }
     
-    public static void processInput(long window){
+    public static void processInput(long window, Core c){
         if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, true);
         if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
@@ -103,6 +104,10 @@ public class Window implements Runnable{
 //            System.out.println(lognm()+""+button+" "+action+" "+mods);
         });
         glfwSetCursorPosCallback(window, (windw, xpos, ypos) -> {
+            int w[] = new int[1];
+            int h[] = new int[1];
+            glfwGetWindowSize(windw, w, h);
+            c.putNamedApi("c", new IntPos((int)xpos, h[0]-(int)ypos));
 //            System.out.println(lognm()+""+xpos+" "+ypos);
         });
     }

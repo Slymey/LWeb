@@ -27,6 +27,7 @@ public class FileOperations {
         String out="";
         try{
             File fl=new File(file);
+//            System.out.println(lognm()+""+fl.getAbsolutePath());
             if(fl.exists()){
                 FileReader br = new FileReader(fl);
                 char cbuf[] = new char[(int)fl.length()];

@@ -1,16 +1,16 @@
 package LWeb.Engine.Instr.RootP;
 
 import static LWeb.Common.Common.byteToInt;
-import LWeb.Common.Counter;
+import LWeb.Common.ByteCounter;
 import LWeb.Engine.Core;
 import LWeb.Engine.Instr.RootP.ResourceP.Condition;
 
 
 public class CallIf {
     
-    public static Runnable getInst(byte[] o, Counter i, Core c){
-        int cond = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-        int ptr = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+    public static Runnable getInst(ByteCounter i, Core c){
+        int cond = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+        int ptr = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
         
         return () -> {
             if(ptr<0){

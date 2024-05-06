@@ -1,27 +1,30 @@
 package LWeb.Engine.Instr.RootP.PaintP.FillP;
 
 import static LWeb.Common.Common.byteToInt;
-import LWeb.Common.Counter;
+import static LWeb.Common.Common.lognm;
+import LWeb.Common.ByteCounter;
 import LWeb.Engine.Core;
 import LWeb.Engine.Constants;
 import LWeb.Engine.Instr.RootP.ResourceP.Box;
 import LWeb.Engine.Instr.RootP.ResourceP.ImageFile;
+import LWeb.Engine.Instr.RootP.ResourceP.Position;
 import LWeb.Engine.Util.GLEU.FrameBuffer;
 import LWeb.Engine.Util.GLEU.Shader;
 import LWeb.Engine.Util.GLEU.Texture;
 import LWeb.Engine.Util.GLEU.VertexArray;
 
 public class Image {
-    public static Runnable getInst(byte o[], Counter i, Core c){
-        int id = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-        int image = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-        int box = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+    public static Runnable getInst(ByteCounter i, Core c){
+        int id = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+        int image = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+        int box = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
         
         return () -> {
             FrameBuffer tfb = c.getResource(id, FrameBuffer.class);
             Texture img = c.getResource(image, ImageFile.class).getImage();
             Box bd = c.getResource(box, Box.class);
-            
+            Position p = tfb.getTex().p.resolve(Position.class);
+            bd.p=p;
             //c.getResource(blm, BlendMode.class).setBlendMode();
             tfb.draw(img,
                     c.getConstant(Constants.ConstTypes.BOX_SHADER, Shader.class)

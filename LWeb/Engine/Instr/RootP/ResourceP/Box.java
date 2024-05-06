@@ -3,7 +3,7 @@ package LWeb.Engine.Instr.RootP.ResourceP;
 import static LWeb.Common.Common.byteToFloat;
 import static LWeb.Common.Common.byteToFloat;
 import static LWeb.Common.Common.byteToInt;
-import LWeb.Common.Counter;
+import LWeb.Common.ByteCounter;
 import LWeb.Engine.Core;
 
 public abstract class Box {
@@ -21,11 +21,11 @@ public abstract class Box {
         float y;
         float z;
         float w;
-        public static Object getRsc(byte[] o, Counter i, Core c){
-            float x = byteToFloat(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-            float y = byteToFloat(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-            float z = byteToFloat(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-            float w = byteToFloat(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+        public static Object getRsc(ByteCounter i, Core c){
+            float x = byteToFloat(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            float y = byteToFloat(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            float z = byteToFloat(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            float w = byteToFloat(new byte[]{i.next(),i.next(),i.next(),i.next()});
             return new FloatBox(x, y, z, w);
         }
         public FloatBox(float x, float y, float z, float w){
@@ -53,11 +53,11 @@ public abstract class Box {
         int z;
         int w;
 
-        public static Object getRsc(byte[] o, Counter i, Core c){
-            int x = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-            int y = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-            int z = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-            int w = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+        public static Object getRsc(ByteCounter i, Core c){
+            int x = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            int y = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            int z = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            int w = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
             return new IntBox(x, y, z, w);
         }
 
@@ -72,9 +72,9 @@ public abstract class Box {
         public int yi(){return y;}
         public int zi(){return z;}
         public int wi(){return w;}
-        public float xf(){if(p==null)return x*100.0f; return x*1.0f/p.xi();}
-        public float yf(){if(p==null)return y*100.0f; return y*1.0f/p.yi();}
-        public float zf(){if(p==null)return z*100.0f; return z*1.0f/p.xi();}
-        public float wf(){if(p==null)return w*100.0f; return w*1.0f/p.yi();}
+        public float xf(){if(p==null)return x/100.0f; return x*1.0f/p.xi();}
+        public float yf(){if(p==null)return y/100.0f; return y*1.0f/p.yi();}
+        public float zf(){if(p==null)return z/100.0f; return z*1.0f/p.xi();}
+        public float wf(){if(p==null)return w/100.0f; return w*1.0f/p.yi();}
     }
 }

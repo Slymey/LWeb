@@ -1,15 +1,15 @@
 package LWeb.Engine.Instr.RootP.HeaderP;
 
 import static LWeb.Common.Common.byteToInt;
-import LWeb.Common.Counter;
+import LWeb.Common.ByteCounter;
 import LWeb.Engine.Core;
 import LWeb.Engine.Util.GLEU.FrameBuffer;
 
 
 public class Screen {
-    public static Runnable getInst(byte o[], Counter i, Core c){
+    public static Runnable getInst(ByteCounter i, Core c){
         
-        int id = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
+        int id = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
         return ()->{
             FrameBuffer screen = FrameBuffer.deafult
                     .attachShader(FrameBuffer.defaultShader)

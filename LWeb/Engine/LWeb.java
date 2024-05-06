@@ -1,9 +1,10 @@
 package LWeb.Engine;
 
+import LWeb.Common.ByteCounter;
 import static LWeb.Common.Common.ats;
 import static LWeb.Common.Common.byteToLong;
 import static LWeb.Common.Common.lognm;
-import LWeb.Common.Counter;
+import LWeb.Common.ByteCounter;
 import LWeb.Engine.Util.Window;
 import static LWeb.Engine.Util.Window.processInput;
 import java.util.concurrent.Executors;
@@ -21,12 +22,12 @@ public class LWeb {
     
     public LWeb(byte [] bytes){
         progCore = new Core();
-        Counter i = new Counter(0);
+        ByteCounter i = new ByteCounter(bytes, 0);
         
         long mb = byteToLong(bytes);
         i.inc(8);
         if(MAGIC_BYTES>>8==mb>>8   &&   (MAGIC_BYTES&0xff)<1){
-            r = progCore.byteToDraw(bytes, i);
+            r = progCore.byteToDraw(i);
         }else{
             readError=new VersionMismatch("Data identifier or version unsupported");
         }
@@ -45,8 +46,8 @@ public class LWeb {
         progCore.putCallable("E", (Object... o)->{
             glfwPollEvents();
             boolean b = glfwWindowShouldClose((long)o[0]);
-            processInput((long)o[0]);
-            System.out.println(lognm()+"evnt "+b+" "+(long)o[0]);
+            processInput((long)o[0], progCore);
+//            System.out.println(lognm()+"evnt "+b+" "+(long)o[0]);
             return b;
         });
         

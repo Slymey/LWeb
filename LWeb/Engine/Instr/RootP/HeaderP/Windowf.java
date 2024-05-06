@@ -2,7 +2,7 @@ package LWeb.Engine.Instr.RootP.HeaderP;
 
 import static LWeb.Common.Common.byteToFloat;
 import static LWeb.Common.Common.byteToInt;
-import LWeb.Common.Counter;
+import LWeb.Common.ByteCounter;
 import LWeb.Engine.Core;
 import LWeb.Engine.Instr.RootP.ResourceP.Position;
 import LWeb.Engine.Instr.RootP.ResourceP.Position.IntPos;
@@ -30,15 +30,15 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 
 public class Windowf {
-    public static Runnable getInst(byte o[], Counter i, Core c){
+    public static Runnable getInst(ByteCounter i, Core c){
         
-        int win = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-        float x = byteToFloat(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-        float y = byteToFloat(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-        int p = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-        byte gs = o[i.inc()];
-        int length = byteToInt(new byte[]{o[i.inc()],o[i.inc()],o[i.inc()],o[i.inc()]});
-        String name = new String(Arrays.copyOfRange(o, i.c, i.incp(length)));
+        int win = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+        float x = byteToFloat(new byte[]{i.next(),i.next(),i.next(),i.next()});
+        float y = byteToFloat(new byte[]{i.next(),i.next(),i.next(),i.next()});
+        int p = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+        byte gs = i.next();
+        int length = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+        String name = new String(Arrays.copyOfRange(i.o, i.c, i.incp(length)));
         return ()->{
             long window;
             GLFWErrorCallback.createPrint(System.err).set(); // Error handling
