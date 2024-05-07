@@ -6,6 +6,9 @@ import LWeb.Common.Common;
 import static LWeb.Common.Common.byteToInt;
 import static LWeb.Common.Common.lognm;
 import LWeb.Common.ByteCounter;
+import static LWeb.Common.Common.flatten;
+import static LWeb.Common.Common.ib;
+import static LWeb.Common.Common.itb;
 import LWeb.Engine.Core;
 import LWeb.Common.Range.Range;
 import static LWeb.Engine.Constants.ConstTypes.LINEAR_GRADIENT_SHADER;
@@ -17,6 +20,10 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL14.*;
 
 public class Solid {
+    public static byte[] getBytes(int Bid, int Rcolor){
+        return flatten(ib(2,1,1), itb(Bid), itb(Rcolor));
+    }
+    
     public static Runnable getInst(ByteCounter i, Core c){
         int id = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
         int color = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});

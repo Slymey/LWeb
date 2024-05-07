@@ -3,7 +3,10 @@ package LWeb.Engine.Instr.RootP.ResourceP;
 import static LWeb.Common.Common.byteToInt;
 import static LWeb.Common.Common.lognm;
 import LWeb.Common.ByteCounter;
+import static LWeb.Common.Common.ib;
+import static LWeb.Common.Common.itb;
 import LWeb.Engine.Core;
+import LWeb.Engine.Instr.RootP.ResourceInst;
 import LWeb.Engine.Util.GLEU.Texture;
 import java.io.File;
 import java.net.URI;
@@ -16,6 +19,10 @@ import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
 import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_T;
 
 public class ImageFile {
+    public static ResourceInst.RByteCol getBytes(int Rurl){
+        return new ResourceInst.RByteCol(13, itb(Rurl));
+    }
+    
     URI file;
     Texture tex;
     

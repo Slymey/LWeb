@@ -110,6 +110,7 @@ public class Window implements Runnable{
             c.putNamedApi("c", new IntPos((int)xpos, h[0]-(int)ypos));
 //            System.out.println(lognm()+""+xpos+" "+ypos);
         });
+        
     }
     
     

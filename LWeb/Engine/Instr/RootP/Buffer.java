@@ -2,6 +2,8 @@ package LWeb.Engine.Instr.RootP;
 
 import static LWeb.Common.Common.byteToInt;
 import LWeb.Common.ByteCounter;
+import LWeb.Common.Common;
+import static LWeb.Common.Common.*;
 import LWeb.Engine.Core;
 import LWeb.Common.Range.Range;
 import LWeb.Engine.Instr.RootP.ResourceP.Position;
@@ -21,7 +23,9 @@ import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
 public class Buffer {
     private static int baseColor= 0xffffffff;
     //------------
-    
+    public static byte[] getBytes(int id, int w, int h, int Tsize){
+        return flatten(ib(1),itb(id), itb(w), itb(h), itb(Tsize));
+    }
     public static Runnable getInst(ByteCounter i, Core c){
         int id = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
         int w = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});

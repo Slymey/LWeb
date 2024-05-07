@@ -3,7 +3,10 @@ package LWeb.Engine.Instr.RootP.ResourceP;
 import static LWeb.Common.Common.byteToFloat;
 import static LWeb.Common.Common.byteToInt;
 import LWeb.Common.ByteCounter;
+import static LWeb.Common.Common.ftb;
+import static LWeb.Common.Common.itb;
 import LWeb.Engine.Core;
+import LWeb.Engine.Instr.RootP.ResourceInst;
 
 public abstract class Position {
     public abstract float xf();
@@ -13,6 +16,10 @@ public abstract class Position {
     public Position p=null;
     
     public static class FloatPos extends Position{
+        public static ResourceInst.RByteCol getBytes(float x, float y){
+            return new ResourceInst.RByteCol(16, ftb(x), ftb(y));
+        }
+        
         public float x;
         public float y;
 
@@ -33,6 +40,10 @@ public abstract class Position {
     }
     
     public static class IntPos extends Position{
+        public static ResourceInst.RByteCol getBytes(int x, int y){
+            return new ResourceInst.RByteCol(17, itb(x), itb(y));
+        }
+        
         public int x;
         public int y;
 

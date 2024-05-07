@@ -4,6 +4,9 @@ import LWeb.Common.Color;
 import LWeb.Common.Color.IntColor;
 import static LWeb.Common.Common.byteToInt;
 import LWeb.Common.ByteCounter;
+import static LWeb.Common.Common.flatten;
+import static LWeb.Common.Common.ib;
+import static LWeb.Common.Common.itb;
 import LWeb.Common.Pair;
 import LWeb.Engine.Core;
 import LWeb.Common.Range.Range;
@@ -11,7 +14,11 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
 public class PaletteSwap {
-    public static Runnable getInst(ByteCounter i, Core cr){
+    public static byte[] getBytes(int Bid, int Rpalette){
+        return flatten(ib(6,1), itb(Bid),itb(Rpalette));
+    }
+    
+    public static Runnable getInst(ByteCounter i, Core cr){//TODO
         int id = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
         int index = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
         return () -> {

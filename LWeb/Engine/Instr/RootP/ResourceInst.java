@@ -4,6 +4,11 @@ package LWeb.Engine.Instr.RootP;
 import static LWeb.Common.Common.byteToInt;
 import static LWeb.Common.Common.sg;
 import LWeb.Common.ByteCounter;
+import static LWeb.Common.Common.flatten;
+import static LWeb.Common.Common.ib;
+import static LWeb.Common.Common.itb;
+import static LWeb.Common.Common.lognm;
+import static LWeb.Common.Common.vpb;
 import LWeb.Common.Pair;
 import LWeb.Common.TriFunction;
 import LWeb.Engine.Core;
@@ -19,6 +24,28 @@ import java.util.function.Supplier;
 //.*>(.*)\.getRsc.*\/\/([0-9]*)\r\n
 //$1::getRsc,       //$2\n
 public class ResourceInst {
+    public static void main(String[] args) {
+        System.out.println(lognm()+"un");
+    }
+    public static class RByteCol{
+        byte b[];
+        int t;
+        public RByteCol(int ty, byte []by){t=ty;b=by;}
+        public RByteCol(int ty, byte[]... by){t=ty;b=flatten(by);}
+        public byte[] at(int id){
+            return flatten(ib(5), itb(t), itb(id), b);
+        }
+        public byte[] atOnce(int id){
+            return flatten(ib(24), itb(t), itb(id), b);
+        }
+        public byte[] atCond(int id, int cond){
+            return flatten(ib(25), itb(t), itb(id),itb(b.length), itb(cond), b);
+        }
+        public byte[] atNegCond(int id, int cond){
+            return flatten(ib(26), itb(t), itb(id),itb(b.length), itb(cond), b);
+        }
+    }
+    
     static List<BiFunction<ByteCounter, Core, Object>> rList = Arrays.asList(
             None::getRsc,       //0
             PlainText::getRsc,       //1
@@ -40,7 +67,8 @@ public class ResourceInst {
             Position.IntPos::getRsc,       //17
             Box.FloatBox::getRsc,       //18
             Box.IntBox::getRsc,       //19
-            BlendMode::getRsc       //20
+            BlendMode::getRsc,       //20
+            FlatFloatColor::getRsc       //21
         );
     public static class Resource{
         public static Runnable getInst(ByteCounter i, Core c){

@@ -4,7 +4,10 @@ import static LWeb.Common.Common.byteToFloat;
 import static LWeb.Common.Common.byteToFloat;
 import static LWeb.Common.Common.byteToInt;
 import LWeb.Common.ByteCounter;
+import static LWeb.Common.Common.ftb;
+import static LWeb.Common.Common.itb;
 import LWeb.Engine.Core;
+import LWeb.Engine.Instr.RootP.ResourceInst;
 
 public abstract class Box {
     public abstract float xf();
@@ -17,6 +20,9 @@ public abstract class Box {
     public abstract int wi();
     public Position p=null;
     public static class FloatBox extends Box{
+        public static ResourceInst.RByteCol getBytes(float x, float y, float z, float w){
+            return new ResourceInst.RByteCol(18, ftb(x), ftb(y), ftb(z), ftb(w));
+        }
         float x;
         float y;
         float z;
@@ -48,6 +54,10 @@ public abstract class Box {
     
     
     public static class IntBox extends Box{
+        public static ResourceInst.RByteCol getBytes(int x, int y, int z, int w){
+            return new ResourceInst.RByteCol(19, itb(x), itb(y), itb(z), itb(w));
+        }
+        
         int x;
         int y;
         int z;

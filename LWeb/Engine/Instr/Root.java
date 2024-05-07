@@ -21,23 +21,23 @@ public class Root {
                 ()->Header.getInst(i, c),      //4
                 ()->ResourceInst.Resource.getInst(i, c),      //5
                 ()->Filter.getInst(i, c),      //6
-                ()->StackFull.getInst(i, c),      //7
+                ()->StackViewBox.getInst(i, c),      //7
                 ()->Wait.getInst(i, c),      //8
                 ()->OutToFile.getInst(i, c),      //9
                 ()->OutToScreen.getInst(i, c),      //10
                 ()->BranchIf.getInst(i, c),      //11
-                ()->BranchIf.getInst(i, c),      //12
-                ()->BranchIf.getInst(i, c),      //13
-                ()->BranchIf.getInst(i, c),      //14
-                ()->BranchIf.getInst(i, c),      //15
+                ()->BranchIfPtr.getInst(i, c),      //12
+                ()->CallIf.getInst(i, c),      //13
+                ()->CallIfPtr.getInst(i, c),      //14
+                ()->CallCallableIf.getInst(i, c),      //15
                 ()->NamedApi.getInst(i, c),      //16
                 ()->End.getInst(i, c),      //17
                 ()->BranchLoop.getInst(i, c),      //18
                 ()->BufferPtr.getInst(i, c),      //19
                 ()->ClearBuffer.getInst(i, c),      //20
                 ()->ClearBufferColor.getInst(i, c),      //21
-                ()->ClearBufferColor.getInst(i, c),      //22
-                ()->ClearBufferColor.getInst(i, c),      //23
+                ()->CondIntruction.getInst(i, c),      //22
+                ()->NegCondIntruction.getInst(i, c),      //23
                 ()->ResourceInst.OneTimeResource.getInst(i, c),      //24
                 ()->ResourceInst.CondResource.getInst(i, c),      //25
                 ()->ResourceInst.NegCondResource.getInst(i, c),      //26

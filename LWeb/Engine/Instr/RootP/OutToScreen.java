@@ -3,6 +3,9 @@ package LWeb.Engine.Instr.RootP;
 import static LWeb.Common.Common.byteToInt;
 import static LWeb.Common.Common.lognm;
 import LWeb.Common.ByteCounter;
+import static LWeb.Common.Common.flatten;
+import static LWeb.Common.Common.ib;
+import static LWeb.Common.Common.itb;
 import LWeb.Engine.Core;
 import LWeb.Engine.Util.GLEU.FrameBuffer;
 import LWeb.Engine.Util.GLEU.Texture;
@@ -20,6 +23,10 @@ import org.lwjgl.system.MemoryUtil;
 
 
 public class OutToScreen {
+    public static byte[] getBytes(int Bid, int Rwindow, int Rscreen){
+        return flatten(ib(9), itb(Bid), itb(Rwindow), itb(Rscreen));
+    }
+    
     public static Runnable getInst(ByteCounter i, Core c){
         int id = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
         int win = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});

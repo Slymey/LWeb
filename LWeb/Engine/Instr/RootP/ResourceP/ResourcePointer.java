@@ -4,11 +4,19 @@ import LWeb.Common.Common;
 import static LWeb.Common.Common.byteToInt;
 import static LWeb.Common.Common.cast;
 import LWeb.Common.ByteCounter;
+import static LWeb.Common.Common.ib;
+import static LWeb.Common.Common.istb;
+import static LWeb.Common.Common.itb;
 import LWeb.Engine.Core;
+import LWeb.Engine.Instr.RootP.ResourceInst;
 import java.util.Arrays;
 
 
 public class ResourcePointer {
+    public static ResourceInst.RByteCol getBytes(int Rresource){
+        return new ResourceInst.RByteCol(12, itb(Rresource));
+    }
+    
     public int ptr;
     Core c;
     public ResourcePointer(int ptr, Core c){

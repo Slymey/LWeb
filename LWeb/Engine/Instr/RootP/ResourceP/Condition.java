@@ -4,11 +4,16 @@ import static LWeb.Common.Common.byteToInt;
 import static LWeb.Common.Common.lognm;
 import LWeb.Common.ByteCounter;
 import static LWeb.Common.Common.bytesToInt;
+import static LWeb.Common.Common.ib;
+import static LWeb.Common.Common.istb;
+import static LWeb.Common.Common.itb;
 import LWeb.Common.UbFunction;
 import LWeb.Engine.Core;
+import LWeb.Engine.Instr.RootP.ResourceInst;
 import java.util.Arrays;
 
 public abstract class Condition {
+    
     public abstract boolean evaluate();
     
     public static Object getRsc(ByteCounter i, Core c){
@@ -41,6 +46,10 @@ public abstract class Condition {
     }
 
     private static class NegativeCondition extends Condition{
+        public static ResourceInst.RByteCol getBytes(int Rcondition){
+            return new ResourceInst.RByteCol(11,  ib(1), itb(Rcondition));
+        }
+        
         int cond;
         Core c;
         private NegativeCondition(Core co, int subc){
@@ -54,6 +63,10 @@ public abstract class Condition {
     }
 
     private static class CallbackCondition extends Condition{
+        public static ResourceInst.RByteCol getBytes(int Rcallable){
+            return new ResourceInst.RByteCol(11,  ib(2), itb(Rcallable));
+        }
+        
         int calb;
         Core c;
         public CallbackCondition(Core co, int calb){
@@ -68,6 +81,10 @@ public abstract class Condition {
         }
     }
     private static class BoxCondition extends Condition{
+        public static ResourceInst.RByteCol getBytes(int Rbox, int Rpos){
+            return new ResourceInst.RByteCol(11,  ib(3), itb(Rbox), itb(Rpos));
+        }
+        
         int box;
         int pos;
         Core c;
@@ -81,14 +98,18 @@ public abstract class Condition {
         public boolean evaluate(){
             Box b = c.getResource(box, Box.class);
             Position p = c.getResource(pos, Position.class);
-            System.out.println(lognm()+""+p.xi()+" "+p.yi()+" "+(p.xi()>b.xi()&&p.yi()>b.yi()&&p.xi()<(b.xi()+b.zi())&&p.yi()<(b.yi()+b.wi())));
-            System.out.println(lognm()+""+p.xf()+" "+p.yf()+" "+p.xi()+" "+p.yi());
-            System.out.println(lognm()+""+b.xf()+" "+ b.yf()+" "+ b.zf()+" "+ b.wf()+" "+b.xi()+" "+ b.yi()+" "+ b.zi()+" "+ b.wi());
+//            System.out.println(lognm()+""+p.xi()+" "+p.yi()+" "+(p.xi()>b.xi()&&p.yi()>b.yi()&&p.xi()<(b.xi()+b.zi())&&p.yi()<(b.yi()+b.wi())));
+//            System.out.println(lognm()+""+p.xf()+" "+p.yf()+" "+p.xi()+" "+p.yi());
+//            System.out.println(lognm()+""+b.xf()+" "+ b.yf()+" "+ b.zf()+" "+ b.wf()+" "+b.xi()+" "+ b.yi()+" "+ b.zi()+" "+ b.wi());
             return p.xi()>b.xi()&&p.yi()>b.yi()&&p.xi()<(b.xi()+b.zi())&&p.yi()<(b.yi()+b.wi());
         }
     }
 
     private static class ChainAndCondition  extends Condition{
+        public static ResourceInst.RByteCol getBytes(int... Rconditions){
+            byte r[] = istb(Rconditions);
+            return new ResourceInst.RByteCol(11,  ib(4), itb(r.length), r);
+        }
         int[] cdss;
         Core c;
         public ChainAndCondition(Core co, int[] cds){
@@ -104,6 +125,10 @@ public abstract class Condition {
         }
     }
     private static class ChainOrCondition  extends Condition{
+        public static ResourceInst.RByteCol getBytes(int... Rconditions){
+            byte r[] = istb(Rconditions);
+            return new ResourceInst.RByteCol(11,  ib(5), itb(r.length), r);
+        }
         int[] cdss;
         Core c;
         public ChainOrCondition(Core co, int[] cds){

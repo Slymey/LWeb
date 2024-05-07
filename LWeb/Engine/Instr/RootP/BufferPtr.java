@@ -2,6 +2,9 @@ package LWeb.Engine.Instr.RootP;
 
 import static LWeb.Common.Common.byteToInt;
 import LWeb.Common.ByteCounter;
+import static LWeb.Common.Common.flatten;
+import static LWeb.Common.Common.ib;
+import static LWeb.Common.Common.itb;
 import LWeb.Common.Range.Range;
 import LWeb.Engine.Core;
 import LWeb.Engine.Instr.RootP.ResourceP.Position.IntPos;
@@ -19,7 +22,9 @@ import static org.lwjgl.opengl.GL30.GL_COLOR_ATTACHMENT0;
 public class BufferPtr {
     private static int baseColor= 0xffffffff;
     //------------
-    
+    public static byte[] getBytes(int id, int Rpos){
+        return flatten(ib(19),itb(id), itb(Rpos));
+    }
     public static Runnable getInst(ByteCounter i, Core c){
         int id = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
         int pos = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});

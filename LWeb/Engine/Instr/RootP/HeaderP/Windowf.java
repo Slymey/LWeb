@@ -3,6 +3,11 @@ package LWeb.Engine.Instr.RootP.HeaderP;
 import static LWeb.Common.Common.byteToFloat;
 import static LWeb.Common.Common.byteToInt;
 import LWeb.Common.ByteCounter;
+import static LWeb.Common.Common.flatten;
+import static LWeb.Common.Common.ftb;
+import static LWeb.Common.Common.ib;
+import static LWeb.Common.Common.itb;
+import static LWeb.Common.Common.vpb;
 import LWeb.Engine.Core;
 import LWeb.Engine.Instr.RootP.ResourceP.Position;
 import LWeb.Engine.Instr.RootP.ResourceP.Position.IntPos;
@@ -30,6 +35,10 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 
 public class Windowf {
+    public static byte[] getBytes(int win, float x, float y, int Rposf, byte gSinc, String name){
+        byte b[] = name.getBytes();
+        return flatten(ib(4,2),itb(win), ftb(x), ftb(y), itb(Rposf ), vpb(gSinc), itb(b.length), b);
+    }
     public static Runnable getInst(ByteCounter i, Core c){
         
         int win = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});

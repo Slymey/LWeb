@@ -3,9 +3,11 @@ package LWeb.Engine.Instr.RootP.ResourceP;
 import static LWeb.Common.Common.byteToInt;
 import static LWeb.Common.Common.lognm;
 import LWeb.Common.ByteCounter;
+import static LWeb.Common.Common.itb;
 import LWeb.Common.Pair;
 import static LWeb.Common.Pair.Pair;
 import LWeb.Engine.Core;
+import LWeb.Engine.Instr.RootP.ResourceInst;
 import LWeb.Engine.Util.GLEU.FontPainter;
 import java.awt.Font;
 import java.util.Arrays;
@@ -16,6 +18,10 @@ public class FontFace {
     boolean aa;
     boolean fm;
     
+    public static ResourceInst.RByteCol getBytes(int style, int size, String text){
+        byte b[] = text.getBytes();
+        return new ResourceInst.RByteCol(2,  itb(style), itb(size), itb(b.length), b);
+    }
     public static Object getRsc(ByteCounter i, Core c){
         int style = byteToInt(Arrays.copyOfRange(i.o, i.c, i.c+4));
         int size = byteToInt(Arrays.copyOfRange(i.o, i.c+4, i.c+8));

@@ -138,6 +138,7 @@ public class Common {
     public static void sopl(String s){System.out.println(s);}
     public static void sopl(Object s){System.out.println(s);}
     public static void sopl(){System.out.println();}
+    
     public static float byteToFloat(byte[] ba){
         return Float.intBitsToFloat(byteToInt(ba));
     }
@@ -206,6 +207,91 @@ public class Common {
         ba[3]=(byte)(in>>>(0*8)&0xff);
         return ba;
     }
+    
+    public static float btf(byte[] ba){
+        return Float.intBitsToFloat(byteToInt(ba));
+    }
+    public static byte[] ftb(float ba){
+        return itb(Float.floatToIntBits(ba));
+    }
+    public static int bti(byte[] ba){
+        return  (ba[0]& 0xff)<<(3*8)|
+                (ba[1]& 0xff)<<(2*8)|
+                (ba[2]& 0xff)<<(1*8)|
+                (ba[3]& 0xff)<<(0*8);
+    }
+    public static int[] bsti(byte[] ba){
+        int len = ba.length/4;
+        int out[] = new int[len];
+        for (int i = 0; i < len; i++) {
+            out[i]=(ba[i*4+0]& 0xff)<<(3*8)|
+                (ba[i*4+1]& 0xff)<<(2*8)|
+                (ba[i*4+2]& 0xff)<<(1*8)|
+                (ba[i*4+3]& 0xff)<<(0*8);
+        }
+        return out;
+    }
+    public static int[] mib(int[] ba, int [] mix){
+        int len= ba.length;
+        int out[] = new int[len];
+        for (int i = 0; i < len; i++) {
+            out[i]=((ba[i]>>>(3*8)&0xff)<<((mix[3])*8))|
+                   ((ba[i]>>>(2*8)&0xff)<<((mix[2])*8))|
+                   ((ba[i]>>>(1*8)&0xff)<<((mix[1])*8))|
+                   ((ba[i]>>>(0*8)&0xff)<<((mix[0])*8));
+        }
+        return out;
+    }
+    public static long btl(byte[] ba){
+        return  ((long)ba[0]& 0xff)<<(7*8)|
+                ((long)ba[1]& 0xff)<<(6*8)|
+                ((long)ba[2]& 0xff)<<(5*8)|
+                ((long)ba[3]& 0xff)<<(4*8)|
+                ((long)ba[4]& 0xff)<<(3*8)|
+                ((long)ba[5]& 0xff)<<(2*8)|
+                ((long)ba[6]& 0xff)<<(1*8)|
+                ((long)ba[7]& 0xff)<<(0*8);
+    }
+    public static byte[] ltb(long in){
+        return new byte[]{
+                    (byte)(in>>>(7*8)&0xff),
+                    (byte)(in>>>(6*8)&0xff),
+                    (byte)(in>>>(5*8)&0xff),
+                    (byte)(in>>>(4*8)&0xff),
+                    (byte)(in>>>(3*8)&0xff),
+                    (byte)(in>>>(2*8)&0xff),
+                    (byte)(in>>>(1*8)&0xff),
+                    (byte)(in>>>(0*8)&0xff)
+                };
+    }
+    public static byte[] itb(int in){
+        return new byte[]{
+                    (byte)(in>>>(3*8)&0xff),
+                    (byte)(in>>>(2*8)&0xff),
+                    (byte)(in>>>(1*8)&0xff),
+                    (byte)(in>>>(0*8)&0xff)
+                };
+    }
+    public static byte[] istb(int[] in){
+        byte[] out = new byte[in.length*4];
+        for (int i = 0; i < in.length; i++) {
+                out[i*4]=(byte)(in[i]>>>(3*8)&0xff);
+                out[i*4+1]=(byte)(in[i]>>>(2*8)&0xff);
+                out[i*4+2]=(byte)(in[i]>>>(1*8)&0xff);
+                out[i*4+3]=(byte)(in[i]>>>(0*8)&0xff);
+        }
+        return out;
+    }
+    public static byte[] itb(int in, byte ba[]){
+        ba[0]=(byte)(in>>>(3*8)&0xff);
+        ba[1]=(byte)(in>>>(2*8)&0xff);
+        ba[2]=(byte)(in>>>(1*8)&0xff);
+        ba[3]=(byte)(in>>>(0*8)&0xff);
+        return ba;
+    }
+    
+    
+    
     public static BufferedImage mipmap(BufferedImage inp, int lvl){
         if(lvl<0)return null;
         BufferedImage out = new BufferedImage(inp.getWidth()/2,inp.getHeight()/2,inp.getType());
@@ -1593,6 +1679,39 @@ public class Common {
     public static double[] vp(double... t){
         return t;
     }
+    public static char[] vpc(char... t){
+        return t;
+    }
+    public static boolean[] vpo(boolean... t){
+        return t;
+    }
+    public static int[] vpi(int... t){
+        return t;
+    }
+    public static long[] vpl(long... t){
+        return t;
+    }
+    public static short[] vps(short... t){
+        return t;
+    }
+    public static byte[] vpb(byte... t){
+        return t;
+    }
+    public static float[] vpf(float... t){
+        return t;
+    }
+    public static double[] vpd(double... t){
+        return t;
+    }
+    
+    public static byte[] ib(int... t){
+        byte[] out = new byte[t.length];
+        for (int i = 0; i < t.length; i++) {
+            out[i]=(byte)t[i];
+        }
+        return out;
+    }
+
     //</editor-fold>
     
     public static <T> T sg(Supplier<T> func){
@@ -1694,7 +1813,7 @@ public class Common {
     public static <T> boolean basicEq(T t1, T t2){return t1.equals(t2);}
     
     //<editor-fold defaultstate="collapsed" desc="flatten">
-    public static <T> T[] flatten(T[][] a){
+    public static <T> T[] flatten(T[]... a){
         int len=0;
         for(T[] b:a){
             len+=b.length;
@@ -1709,7 +1828,7 @@ public class Common {
         return r;
     }
     
-    public static char[] flatten(char[][] a){
+    public static char[] flatten(char[]... a){
         int len=0;
         for(char[] b:a){
             len+=b.length;
@@ -1723,7 +1842,7 @@ public class Common {
         }
         return r;
     }
-    public static boolean[] flatten(boolean[][] a){
+    public static boolean[] flatten(boolean[]... a){
     int len=0;
     for(boolean[] b:a){
         len+=b.length;
@@ -1737,7 +1856,7 @@ public class Common {
     }
     return r;
 }
-    public static int[] flatten(int[][] a){
+    public static int[] flatten(int[]... a){
     int len=0;
     for(int[] b:a){
         len+=b.length;
@@ -1751,7 +1870,7 @@ public class Common {
     }
     return r;
 }
-    public static long[] flatten(long[][] a){
+    public static long[] flatten(long[]... a){
     int len=0;
     for(long[] b:a){
         len+=b.length;
@@ -1765,7 +1884,7 @@ public class Common {
     }
     return r;
 }
-    public static short[] flatten(short[][] a){
+    public static short[] flatten(short[]... a){
     int len=0;
     for(short[] b:a){
         len+=b.length;
@@ -1779,7 +1898,7 @@ public class Common {
     }
     return r;
 }
-    public static byte[] flatten(byte[][] a){
+    public static byte[] flatten(byte[]... a){
     int len=0;
     for(byte[] b:a){
         len+=b.length;
@@ -1793,7 +1912,7 @@ public class Common {
     }
     return r;
 }
-    public static float[] flatten(float[][] a){
+    public static float[] flatten(float[]... a){
     int len=0;
     for(float[] b:a){
         len+=b.length;
@@ -1807,7 +1926,7 @@ public class Common {
     }
     return r;
 }
-    public static double[] flatten(double[][] a){
+    public static double[] flatten(double[]... a){
         int len=0;
         for(double[] b:a){
             len+=b.length;
@@ -1885,7 +2004,10 @@ public class Common {
         int i = 0x56;
         int sa = map[(i&0xf)];
         int dr = map[(i>>>4)];
+        
         System.out.println(lognm()+""+sa+" "+dr);
+        Byte b=null;
+        System.out.println(lognm()+""+ats("w".getBytes()));
         
     }
 
