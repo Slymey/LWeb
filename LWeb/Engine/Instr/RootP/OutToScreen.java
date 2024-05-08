@@ -24,7 +24,7 @@ import org.lwjgl.system.MemoryUtil;
 
 public class OutToScreen {
     public static byte[] getBytes(int Bid, int Rwindow, int Rscreen){
-        return flatten(ib(9), itb(Bid), itb(Rwindow), itb(Rscreen));
+        return flatten(ib(10), itb(Bid), itb(Rwindow), itb(Rscreen));
     }
     
     public static Runnable getInst(ByteCounter i, Core c){

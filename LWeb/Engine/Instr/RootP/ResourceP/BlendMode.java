@@ -13,7 +13,7 @@ import LWeb.Engine.Core;
 import LWeb.Engine.Instr.RootP.ResourceInst;
 import static org.lwjgl.opengl.GL14.*;
 import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL41.*;
 
 public class BlendMode {
     public static enum BlendModes{ZERO(1),ONE(2),SRC_COLOR(3),ONE_MINUS_SRC_COLOR(4),SRC_ALPHA(5),ONE_MINUS_SRC_ALPHA(6),DST_ALPHA(7),ONE_MINUS_DST_ALPHA(8),DST_COLOR(9),ONE_MINUS_DST_COLOR(10),SRC_ALPHA_SATURATE(11),CONSTANT_COLOR(12),ONE_MINUS_CONSTANT_COLOR(13),CONSTANT_ALPHA(14),ONE_MINUS_CONSTANT_ALPHA(15);int b;private BlendModes(int b){this.b = b;}}
@@ -21,130 +21,193 @@ public class BlendMode {
         return new ResourceInst.RByteCol(20, ib(0,0,0,0,0));
     }
     //<editor-fold defaultstate="collapsed" desc="uniform blending">
-    public static ResourceInst.RByteCol uniformBlending(int blendModes){
-        if((blendModes>>>4)>=12||(blendModes&0xf)>=12){
-            return new ResourceInst.RByteCol(20, ib(blendModes,blendModes,blendModes,blendModes,0), itb(0));
+    public static ResourceInst.RByteCol uniformBlending(int srcBM, int dstBM){
+        if((srcBM&0xf)>=12||(dstBM&0xf)>=12){
+            return new ResourceInst.RByteCol(20, ib(srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),0), itb(0));
         }
-        return new ResourceInst.RByteCol(20, ib(blendModes,blendModes,blendModes,blendModes,0));
+        return new ResourceInst.RByteCol(20, ib(srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),0));
     }
-    public static ResourceInst.RByteCol uniformBlending(int blendModes, int color){
-        if((blendModes>>>4)>=12||(blendModes&0xf)>=12){
-            return new ResourceInst.RByteCol(20, ib(blendModes,blendModes,blendModes,blendModes,0), itb(color));
+    public static ResourceInst.RByteCol uniformBlending(int srcBM, int dstBM, int color){
+        if((srcBM&0xf)>=12||(dstBM&0xf)>=12){
+            return new ResourceInst.RByteCol(20, ib(srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),0), itb(color));
         }
-        return new ResourceInst.RByteCol(20, ib(blendModes,blendModes,blendModes,blendModes,0));
+        return new ResourceInst.RByteCol(20, ib(srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),0));
     }
-    public static ResourceInst.RByteCol uniformBlendingRefColor(int blendModes, int Rcolor){
-        if((blendModes>>>4)>=12||(blendModes&0xf)>=12){
-            return new ResourceInst.RByteCol(20, ib(blendModes,blendModes,blendModes,blendModes,0), itb(Rcolor));
+    public static ResourceInst.RByteCol uniformBlendingRefColor(int srcBM, int dstBM, int Rcolor){
+        if((srcBM&0xf)>=12||(dstBM&0xf)>=12){
+            return new ResourceInst.RByteCol(20, ib(srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),0), itb(Rcolor));
         }
-        return new ResourceInst.RByteCol(20, ib(blendModes,blendModes,blendModes,blendModes,0));
+        return new ResourceInst.RByteCol(20, ib(srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),0));
     }
-    public static ResourceInst.RByteCol uniformBlending(int blendModes, IntColor color){
-        if((blendModes>>>4)>=12||(blendModes&0xf)>=12){
-            return new ResourceInst.RByteCol(20, ib(blendModes,blendModes,blendModes,blendModes,0), ib(color.ri(),color.gi(),color.bi(),color.ai()));
+    public static ResourceInst.RByteCol uniformBlending(int srcBM, int dstBM, IntColor color){
+        if((srcBM&0xf)>=12||(dstBM&0xf)>=12){
+            return new ResourceInst.RByteCol(20, ib(srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),0), ib(color.ri(),color.gi(),color.bi(),color.ai()));
         }
-        return new ResourceInst.RByteCol(20, ib(blendModes,blendModes,blendModes,blendModes,0));
+        return new ResourceInst.RByteCol(20, ib(srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),0));
     }
-    public static ResourceInst.RByteCol uniformBlending(int blendModes, FloatColor color){
-        if((blendModes>>>4)>=12||(blendModes&0xf)>=12){
-            return new ResourceInst.RByteCol(20, ib(blendModes,blendModes,blendModes,blendModes,2), ftb(color.rf()),ftb(color.gf()),ftb(color.bf()),ftb(color.af()));
+    public static ResourceInst.RByteCol uniformBlending(int srcBM, int dstBM, FloatColor color){
+        if((srcBM&0xf)>=12||(dstBM&0xf)>=12){
+            return new ResourceInst.RByteCol(20, ib(srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),2), ftb(color.rf()),ftb(color.gf()),ftb(color.bf()),ftb(color.af()));
         }
-        return new ResourceInst.RByteCol(20, ib(blendModes,blendModes,blendModes,blendModes,0));
+        return new ResourceInst.RByteCol(20, ib(srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),srcBM<<4|(dstBM&0xf),0));
     }
-    public static ResourceInst.RByteCol uniformBlending(BlendModes blendModes){
-        if((blendModes.b>>>4)>=12||(blendModes.b&0xf)>=12){
-            return new ResourceInst.RByteCol(20, ib(blendModes.b,blendModes.b,blendModes.b,blendModes.b,0), itb(0));
+    public static ResourceInst.RByteCol uniformBlending(BlendModes srcBM, BlendModes dstBM){
+        if((srcBM.b&0xf)>=12||(dstBM.b&0xf)>=12){
+            return new ResourceInst.RByteCol(20, ib(srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),0), itb(0));
         }
-        return new ResourceInst.RByteCol(20, ib(blendModes.b,blendModes.b,blendModes.b,blendModes.b,0));
+        return new ResourceInst.RByteCol(20, ib(srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),0));
     }
-    public static ResourceInst.RByteCol uniformBlending(BlendModes blendModes, int color){
-        if((blendModes.b>>>4)>=12||(blendModes.b&0xf)>=12){
-            return new ResourceInst.RByteCol(20, ib(blendModes.b,blendModes.b,blendModes.b,blendModes.b,0), itb(color));
+    public static ResourceInst.RByteCol uniformBlending(BlendModes srcBM, BlendModes dstBM, int color){
+        if((srcBM.b&0xf)>=12||(dstBM.b&0xf)>=12){
+            return new ResourceInst.RByteCol(20, ib(srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),0), itb(color));
         }
-        return new ResourceInst.RByteCol(20, ib(blendModes.b,blendModes.b,blendModes.b,blendModes.b,0));
+        return new ResourceInst.RByteCol(20, ib(srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),0));
     }
-    public static ResourceInst.RByteCol uniformBlendingRefColor(BlendModes blendModes, int Rcolor){
-        if((blendModes.b>>>4)>=12||(blendModes.b&0xf)>=12){
-            return new ResourceInst.RByteCol(20, ib(blendModes.b,blendModes.b,blendModes.b,blendModes.b,0), itb(Rcolor));
+    public static ResourceInst.RByteCol uniformBlendingRefColor(BlendModes srcBM, BlendModes dstBM, int Rcolor){
+        if((srcBM.b&0xf)>=12||(dstBM.b&0xf)>=12){
+            return new ResourceInst.RByteCol(20, ib(srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),0), itb(Rcolor));
         }
-        return new ResourceInst.RByteCol(20, ib(blendModes.b,blendModes.b,blendModes.b,blendModes.b,0));
+        return new ResourceInst.RByteCol(20, ib(srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),0));
     }
-    public static ResourceInst.RByteCol uniformBlending(BlendModes blendModes, IntColor color){
-        if((blendModes.b>>>4)>=12||(blendModes.b&0xf)>=12){
-            return new ResourceInst.RByteCol(20, ib(blendModes.b,blendModes.b,blendModes.b,blendModes.b,0), ib(color.ri(),color.gi(),color.bi(),color.ai()));
+    public static ResourceInst.RByteCol uniformBlending(BlendModes srcBM, BlendModes dstBM, IntColor color){
+        if((srcBM.b&0xf)>=12||(dstBM.b&0xf)>=12){
+            return new ResourceInst.RByteCol(20, ib(srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),0), ib(color.ri(),color.gi(),color.bi(),color.ai()));
         }
-        return new ResourceInst.RByteCol(20, ib(blendModes.b,blendModes.b,blendModes.b,blendModes.b,0));
+        return new ResourceInst.RByteCol(20, ib(srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),0));
     }
-    public static ResourceInst.RByteCol uniformBlending(BlendModes blendModes, FloatColor color){
-        if((blendModes.b>>>4)>=12||(blendModes.b&0xf)>=12){
-            return new ResourceInst.RByteCol(20, ib(blendModes.b,blendModes.b,blendModes.b,blendModes.b,2), ftb(color.rf()),ftb(color.gf()),ftb(color.bf()),ftb(color.af()));
+    public static ResourceInst.RByteCol uniformBlending(BlendModes srcBM, BlendModes dstBM, FloatColor color){
+        if((srcBM.b&0xf)>=12||(dstBM.b&0xf)>=12){
+            return new ResourceInst.RByteCol(20, ib(srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),2), ftb(color.rf()),ftb(color.gf()),ftb(color.bf()),ftb(color.af()));
         }
-        return new ResourceInst.RByteCol(20, ib(blendModes.b,blendModes.b,blendModes.b,blendModes.b,0));
+        return new ResourceInst.RByteCol(20, ib(srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),srcBM.b<<4|(dstBM.b&0xf),0));
     }
 //</editor-fold>
-    //<editor-fold defaultstate="collapsed" desc="custum blending">
-    public static ResourceInst.RByteCol custumBlending(int redBM, int greenBM, int blueBM, int alphaBM){
-        if((redBM>>>4)>=12||(redBM&0xf)>=12||(greenBM>>>4)>=12||(greenBM&0xf)>=12||(blueBM>>>4)>=12||(blueBM&0xf)>=12||(alphaBM>>>4)>=12||(alphaBM&0xf)>=12){
-            return new ResourceInst.RByteCol(20, ib(redBM,greenBM,blueBM,alphaBM,0), itb(0));
+    //<editor-fold defaultstate="collapsed" desc="rgb-alpha blending">
+    public static ResourceInst.RByteCol custumBlending(int srcRgbBM, int dstRgbBM, int srcAlphaBM, int dstAlphaBM){
+        if((srcRgbBM&0xf)>=12||(dstRgbBM&0xf)>=12||(srcAlphaBM&0xf)>=12||(dstAlphaBM&0xf)>=12){
+            return new ResourceInst.RByteCol(20, ib((srcRgbBM<<4|(dstRgbBM&0xf)),(srcRgbBM<<4|(dstRgbBM&0xf)),(srcRgbBM<<4|(dstRgbBM&0xf)),(srcAlphaBM<<4|(dstAlphaBM&0xf)),0), itb(0));
         }
-        return new ResourceInst.RByteCol(20, ib(redBM,greenBM,blueBM,alphaBM,0));
+        return new ResourceInst.RByteCol(20, ib((srcRgbBM<<4|(dstRgbBM&0xf)),(srcRgbBM<<4|(dstRgbBM&0xf)),(srcRgbBM<<4|(dstRgbBM&0xf)),(srcAlphaBM<<4|(dstAlphaBM&0xf)),0));
     }
-    public static ResourceInst.RByteCol custumBlending(int redBM, int greenBM, int blueBM, int alphaBM, int color){
-        if((redBM>>>4)>=12||(redBM&0xf)>=12||(greenBM>>>4)>=12||(greenBM&0xf)>=12||(blueBM>>>4)>=12||(blueBM&0xf)>=12||(alphaBM>>>4)>=12||(alphaBM&0xf)>=12){
-            return new ResourceInst.RByteCol(20, ib(redBM,greenBM,blueBM,alphaBM,0), itb(color));
+    public static ResourceInst.RByteCol custumBlending(int srcRgbBM, int dstRgbBM, int srcAlphaBM, int dstAlphaBM, int color){
+        if((srcRgbBM&0xf)>=12||(dstRgbBM&0xf)>=12||(srcAlphaBM&0xf)>=12||(dstAlphaBM&0xf)>=12){
+            return new ResourceInst.RByteCol(20, ib((srcRgbBM<<4|(dstRgbBM&0xf)),(srcRgbBM<<4|(dstRgbBM&0xf)),(srcRgbBM<<4|(dstRgbBM&0xf)),(srcAlphaBM<<4|(dstAlphaBM&0xf)),0), itb(color));
         }
-        return new ResourceInst.RByteCol(20, ib(redBM,greenBM,blueBM,alphaBM,0));
+        return new ResourceInst.RByteCol(20, ib((srcRgbBM<<4|(dstRgbBM&0xf)),(srcRgbBM<<4|(dstRgbBM&0xf)),(srcRgbBM<<4|(dstRgbBM&0xf)),(srcAlphaBM<<4|(dstAlphaBM&0xf)),0));
     }
-    public static ResourceInst.RByteCol custumBlendingRefColor(int redBM, int greenBM, int blueBM, int alphaBM, int Rcolor){
-        if((redBM>>>4)>=12||(redBM&0xf)>=12||(greenBM>>>4)>=12||(greenBM&0xf)>=12||(blueBM>>>4)>=12||(blueBM&0xf)>=12||(alphaBM>>>4)>=12||(alphaBM&0xf)>=12){
-            return new ResourceInst.RByteCol(20, ib(redBM,greenBM,blueBM,alphaBM,0), itb(Rcolor));
+    public static ResourceInst.RByteCol custumBlendingRefColor(int srcRgbBM, int dstRgbBM, int srcAlphaBM, int dstAlphaBM, int Rcolor){
+        if((srcRgbBM&0xf)>=12||(dstRgbBM&0xf)>=12||(srcAlphaBM&0xf)>=12||(dstAlphaBM&0xf)>=12){
+            return new ResourceInst.RByteCol(20, ib((srcRgbBM<<4|(dstRgbBM&0xf)),(srcRgbBM<<4|(dstRgbBM&0xf)),(srcRgbBM<<4|(dstRgbBM&0xf)),(srcAlphaBM<<4|(dstAlphaBM&0xf)),0), itb(Rcolor));
         }
-        return new ResourceInst.RByteCol(20, ib(redBM,greenBM,blueBM,alphaBM,0));
+        return new ResourceInst.RByteCol(20, ib((srcRgbBM<<4|(dstRgbBM&0xf)),(srcRgbBM<<4|(dstRgbBM&0xf)),(srcRgbBM<<4|(dstRgbBM&0xf)),(srcAlphaBM<<4|(dstAlphaBM&0xf)),0));
     }
-    public static ResourceInst.RByteCol custumBlending(int redBM, int greenBM, int blueBM, int alphaBM, IntColor color){
-        if((redBM>>>4)>=12||(redBM&0xf)>=12||(greenBM>>>4)>=12||(greenBM&0xf)>=12||(blueBM>>>4)>=12||(blueBM&0xf)>=12||(alphaBM>>>4)>=12||(alphaBM&0xf)>=12){
-            return new ResourceInst.RByteCol(20, ib(redBM,greenBM,blueBM,alphaBM,0), ib(color.ri(),color.gi(),color.bi(),color.ai()));
+    public static ResourceInst.RByteCol custumBlending(int srcRgbBM, int dstRgbBM, int srcAlphaBM, int dstAlphaBM, IntColor color){
+        if((srcRgbBM&0xf)>=12||(dstRgbBM&0xf)>=12||(srcAlphaBM&0xf)>=12||(dstAlphaBM&0xf)>=12){
+            return new ResourceInst.RByteCol(20, ib((srcRgbBM<<4|(dstRgbBM&0xf)),(srcRgbBM<<4|(dstRgbBM&0xf)),(srcRgbBM<<4|(dstRgbBM&0xf)),(srcAlphaBM<<4|(dstAlphaBM&0xf)),0), ib(color.ri(),color.gi(),color.bi(),color.ai()));
         }
-        return new ResourceInst.RByteCol(20, ib(redBM,greenBM,blueBM,alphaBM,0));
+        return new ResourceInst.RByteCol(20, ib((srcRgbBM<<4|(dstRgbBM&0xf)),(srcRgbBM<<4|(dstRgbBM&0xf)),(srcRgbBM<<4|(dstRgbBM&0xf)),(srcAlphaBM<<4|(dstAlphaBM&0xf)),0));
     }
-    public static ResourceInst.RByteCol custumBlending(int redBM, int greenBM, int blueBM, int alphaBM, FloatColor color){
-        if((redBM>>>4)>=12||(redBM&0xf)>=12||(greenBM>>>4)>=12||(greenBM&0xf)>=12||(blueBM>>>4)>=12||(blueBM&0xf)>=12||(alphaBM>>>4)>=12||(alphaBM&0xf)>=12){
-            return new ResourceInst.RByteCol(20, ib(redBM,greenBM,blueBM,alphaBM,2), ftb(color.rf()),ftb(color.gf()),ftb(color.bf()),ftb(color.af()));
+    public static ResourceInst.RByteCol custumBlending(int srcRgbBM, int dstRgbBM, int srcAlphaBM, int dstAlphaBM, FloatColor color){
+        if((srcRgbBM&0xf)>=12||(dstRgbBM&0xf)>=12||(srcAlphaBM&0xf)>=12||(dstAlphaBM&0xf)>=12){
+            return new ResourceInst.RByteCol(20, ib((srcRgbBM<<4|(dstRgbBM&0xf)),(srcRgbBM<<4|(dstRgbBM&0xf)),(srcRgbBM<<4|(dstRgbBM&0xf)),(srcAlphaBM<<4|(dstAlphaBM&0xf)),2), ftb(color.rf()),ftb(color.gf()),ftb(color.bf()),ftb(color.af()));
         }
-        return new ResourceInst.RByteCol(20, ib(redBM,greenBM,blueBM,alphaBM,0));
+        return new ResourceInst.RByteCol(20, ib((srcRgbBM<<4|(dstRgbBM&0xf)),(srcRgbBM<<4|(dstRgbBM&0xf)),(srcRgbBM<<4|(dstRgbBM&0xf)),(srcAlphaBM<<4|(dstAlphaBM&0xf)),0));
     }
-    public static ResourceInst.RByteCol custumBlending(BlendModes redBM, BlendModes greenBM, BlendModes blueBM, BlendModes alphaBM){
-        if((redBM.b>>>4)>=12||(redBM.b&0xf)>=12||(greenBM.b>>>4)>=12||(greenBM.b&0xf)>=12||(blueBM.b>>>4)>=12||(blueBM.b&0xf)>=12||(alphaBM.b>>>4)>=12||(alphaBM.b&0xf)>=12){
-            return new ResourceInst.RByteCol(20, ib(redBM.b,greenBM.b,blueBM.b,alphaBM.b,0), itb(0));
+    public static ResourceInst.RByteCol custumBlending(BlendModes srcRgbBM, BlendModes dstRgbBM, BlendModes srcAlphaBM, BlendModes dstAlphaBM){
+        if((srcRgbBM.b&0xf)>=12||(dstRgbBM.b&0xf)>=12||(srcAlphaBM.b&0xf)>=12||(dstAlphaBM.b&0xf)>=12){
+            return new ResourceInst.RByteCol(20, ib((srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcAlphaBM.b<<4|(dstAlphaBM.b&0xf)),0), itb(0));
         }
-        return new ResourceInst.RByteCol(20, ib(redBM.b,greenBM.b,blueBM.b,alphaBM.b,0));
+        return new ResourceInst.RByteCol(20, ib((srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcAlphaBM.b<<4|(dstAlphaBM.b&0xf)),0));
     }
-    public static ResourceInst.RByteCol custumBlending(BlendModes redBM, BlendModes greenBM, BlendModes blueBM, BlendModes alphaBM, int color){
-        if((redBM.b>>>4)>=12||(redBM.b&0xf)>=12||(greenBM.b>>>4)>=12||(greenBM.b&0xf)>=12||(blueBM.b>>>4)>=12||(blueBM.b&0xf)>=12||(alphaBM.b>>>4)>=12||(alphaBM.b&0xf)>=12){
-            return new ResourceInst.RByteCol(20, ib(redBM.b,greenBM.b,blueBM.b,alphaBM.b,0), itb(color));
+    public static ResourceInst.RByteCol custumBlending(BlendModes srcRgbBM, BlendModes dstRgbBM, BlendModes srcAlphaBM, BlendModes dstAlphaBM, int color){
+        if((srcRgbBM.b&0xf)>=12||(dstRgbBM.b&0xf)>=12||(srcAlphaBM.b&0xf)>=12||(dstAlphaBM.b&0xf)>=12){
+            return new ResourceInst.RByteCol(20, ib((srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcAlphaBM.b<<4|(dstAlphaBM.b&0xf)),0), itb(color));
         }
-        return new ResourceInst.RByteCol(20, ib(redBM.b,greenBM.b,blueBM.b,alphaBM.b,0));
+        return new ResourceInst.RByteCol(20, ib((srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcAlphaBM.b<<4|(dstAlphaBM.b&0xf)),0));
     }
-    public static ResourceInst.RByteCol custumBlendingRefColor(BlendModes redBM, BlendModes greenBM, BlendModes blueBM, BlendModes alphaBM, int Rcolor){
-        if((redBM.b>>>4)>=12||(redBM.b&0xf)>=12||(greenBM.b>>>4)>=12||(greenBM.b&0xf)>=12||(blueBM.b>>>4)>=12||(blueBM.b&0xf)>=12||(alphaBM.b>>>4)>=12||(alphaBM.b&0xf)>=12){
-            return new ResourceInst.RByteCol(20, ib(redBM.b,greenBM.b,blueBM.b,alphaBM.b,0), itb(Rcolor));
+    public static ResourceInst.RByteCol custumBlendingRefColor(BlendModes srcRgbBM, BlendModes dstRgbBM, BlendModes srcAlphaBM, BlendModes dstAlphaBM, int Rcolor){
+        if((srcRgbBM.b&0xf)>=12||(dstRgbBM.b&0xf)>=12||(srcAlphaBM.b&0xf)>=12||(dstAlphaBM.b&0xf)>=12){
+            return new ResourceInst.RByteCol(20, ib((srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcAlphaBM.b<<4|(dstAlphaBM.b&0xf)),0), itb(Rcolor));
         }
-        return new ResourceInst.RByteCol(20, ib(redBM.b,greenBM.b,blueBM.b,alphaBM.b,0));
+        return new ResourceInst.RByteCol(20, ib((srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcAlphaBM.b<<4|(dstAlphaBM.b&0xf)),0));
     }
-    public static ResourceInst.RByteCol custumBlending(BlendModes redBM, BlendModes greenBM, BlendModes blueBM, BlendModes alphaBM, IntColor color){
-        if((redBM.b>>>4)>=12||(redBM.b&0xf)>=12||(greenBM.b>>>4)>=12||(greenBM.b&0xf)>=12||(blueBM.b>>>4)>=12||(blueBM.b&0xf)>=12||(alphaBM.b>>>4)>=12||(alphaBM.b&0xf)>=12){
-            return new ResourceInst.RByteCol(20, ib(redBM.b,greenBM.b,blueBM.b,alphaBM.b,0), ib(color.ri(),color.gi(),color.bi(),color.ai()));
+    public static ResourceInst.RByteCol custumBlending(BlendModes srcRgbBM, BlendModes dstRgbBM, BlendModes srcAlphaBM, BlendModes dstAlphaBM, IntColor color){
+        if((srcRgbBM.b&0xf)>=12||(dstRgbBM.b&0xf)>=12||(srcAlphaBM.b&0xf)>=12||(dstAlphaBM.b&0xf)>=12){
+            return new ResourceInst.RByteCol(20, ib((srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcAlphaBM.b<<4|(dstAlphaBM.b&0xf)),0), ib(color.ri(),color.gi(),color.bi(),color.ai()));
         }
-        return new ResourceInst.RByteCol(20, ib(redBM.b,greenBM.b,blueBM.b,alphaBM.b,0));
+        return new ResourceInst.RByteCol(20, ib((srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcAlphaBM.b<<4|(dstAlphaBM.b&0xf)),0));
     }
-    public static ResourceInst.RByteCol custumBlending(BlendModes redBM, BlendModes greenBM, BlendModes blueBM, BlendModes alphaBM, FloatColor color){
-        if((redBM.b>>>4)>=12||(redBM.b&0xf)>=12||(greenBM.b>>>4)>=12||(greenBM.b&0xf)>=12||(blueBM.b>>>4)>=12||(blueBM.b&0xf)>=12||(alphaBM.b>>>4)>=12||(alphaBM.b&0xf)>=12){
-            return new ResourceInst.RByteCol(20, ib(redBM.b,greenBM.b,blueBM.b,alphaBM.b,2), ftb(color.rf()),ftb(color.gf()),ftb(color.bf()),ftb(color.af()));
+    public static ResourceInst.RByteCol custumBlending(BlendModes srcRgbBM, BlendModes dstRgbBM, BlendModes srcAlphaBM, BlendModes dstAlphaBM, FloatColor color){
+        if((srcRgbBM.b&0xf)>=12||(dstRgbBM.b&0xf)>=12||(srcAlphaBM.b&0xf)>=12||(dstAlphaBM.b&0xf)>=12){
+            return new ResourceInst.RByteCol(20, ib((srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcAlphaBM.b<<4|(dstAlphaBM.b&0xf)),2), ftb(color.rf()),ftb(color.gf()),ftb(color.bf()),ftb(color.af()));
         }
-        return new ResourceInst.RByteCol(20, ib(redBM.b,greenBM.b,blueBM.b,alphaBM.b,0));
+        return new ResourceInst.RByteCol(20, ib((srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcRgbBM.b<<4|(dstRgbBM.b&0xf)),(srcAlphaBM.b<<4|(dstAlphaBM.b&0xf)),0));
     }
     //</editor-fold>
     
+//    //<editor-fold defaultstate="collapsed" desc="custum blending">
+//    public static ResourceInst.RByteCol custumBlending(int srcRedBM, int dstRedBM, int srcGreenBM, int dstGreenBM, int srcBlueBM, int dstBlueBM, int srcAlphaBM, int dstAlphaBM){
+//        if((srcRedBM&0xf)>=12||(dstRedBM&0xf)>=12||(srcGreenBM&0xf)>=12||(dstGreenBM&0xf)>=12||(srcBlueBM&0xf)>=12||(dstBlueBM&0xf)>=12||(srcAlphaBM&0xf)>=12||(dstAlphaBM&0xf)>=12){
+//            return new ResourceInst.RByteCol(20, ib((srcRedBM<<4|(dstRedBM&0xf)),(srcGreenBM<<4|(dstGreenBM&0xf)),(srcBlueBM<<4|(dstBlueBM&0xf)),(srcAlphaBM<<4|(dstAlphaBM&0xf)),0), itb(0));
+//        }
+//        return new ResourceInst.RByteCol(20, ib((srcRedBM<<4|(dstRedBM&0xf)),(srcGreenBM<<4|(dstGreenBM&0xf)),(srcBlueBM<<4|(dstBlueBM&0xf)),(srcAlphaBM<<4|(dstAlphaBM&0xf)),0));
+//    }
+//    public static ResourceInst.RByteCol custumBlending(int srcRedBM, int dstRedBM, int srcGreenBM, int dstGreenBM, int srcBlueBM, int dstBlueBM, int srcAlphaBM, int dstAlphaBM, int color){
+//        if((srcRedBM&0xf)>=12||(dstRedBM&0xf)>=12||(srcGreenBM&0xf)>=12||(dstGreenBM&0xf)>=12||(srcBlueBM&0xf)>=12||(dstBlueBM&0xf)>=12||(srcAlphaBM&0xf)>=12||(dstAlphaBM&0xf)>=12){
+//            return new ResourceInst.RByteCol(20, ib((srcRedBM<<4|(dstRedBM&0xf)),(srcGreenBM<<4|(dstGreenBM&0xf)),(srcBlueBM<<4|(dstBlueBM&0xf)),(srcAlphaBM<<4|(dstAlphaBM&0xf)),0), itb(color));
+//        }
+//        return new ResourceInst.RByteCol(20, ib((srcRedBM<<4|(dstRedBM&0xf)),(srcGreenBM<<4|(dstGreenBM&0xf)),(srcBlueBM<<4|(dstBlueBM&0xf)),(srcAlphaBM<<4|(dstAlphaBM&0xf)),0));
+//    }
+//    public static ResourceInst.RByteCol custumBlendingRefColor(int srcRedBM, int dstRedBM, int srcGreenBM, int dstGreenBM, int srcBlueBM, int dstBlueBM, int srcAlphaBM, int dstAlphaBM, int Rcolor){
+//        if((srcRedBM&0xf)>=12||(dstRedBM&0xf)>=12||(srcGreenBM&0xf)>=12||(dstGreenBM&0xf)>=12||(srcBlueBM&0xf)>=12||(dstBlueBM&0xf)>=12||(srcAlphaBM&0xf)>=12||(dstAlphaBM&0xf)>=12){
+//            return new ResourceInst.RByteCol(20, ib((srcRedBM<<4|(dstRedBM&0xf)),(srcGreenBM<<4|(dstGreenBM&0xf)),(srcBlueBM<<4|(dstBlueBM&0xf)),(srcAlphaBM<<4|(dstAlphaBM&0xf)),0), itb(Rcolor));
+//        }
+//        return new ResourceInst.RByteCol(20, ib((srcRedBM<<4|(dstRedBM&0xf)),(srcGreenBM<<4|(dstGreenBM&0xf)),(srcBlueBM<<4|(dstBlueBM&0xf)),(srcAlphaBM<<4|(dstAlphaBM&0xf)),0));
+//    }
+//    public static ResourceInst.RByteCol custumBlending(int srcRedBM, int dstRedBM, int srcGreenBM, int dstGreenBM, int srcBlueBM, int dstBlueBM, int srcAlphaBM, int dstAlphaBM, IntColor color){
+//        if((srcRedBM&0xf)>=12||(dstRedBM&0xf)>=12||(srcGreenBM&0xf)>=12||(dstGreenBM&0xf)>=12||(srcBlueBM&0xf)>=12||(dstBlueBM&0xf)>=12||(srcAlphaBM&0xf)>=12||(dstAlphaBM&0xf)>=12){
+//            return new ResourceInst.RByteCol(20, ib((srcRedBM<<4|(dstRedBM&0xf)),(srcGreenBM<<4|(dstGreenBM&0xf)),(srcBlueBM<<4|(dstBlueBM&0xf)),(srcAlphaBM<<4|(dstAlphaBM&0xf)),0), ib(color.ri(),color.gi(),color.bi(),color.ai()));
+//        }
+//        return new ResourceInst.RByteCol(20, ib((srcRedBM<<4|(dstRedBM&0xf)),(srcGreenBM<<4|(dstGreenBM&0xf)),(srcBlueBM<<4|(dstBlueBM&0xf)),(srcAlphaBM<<4|(dstAlphaBM&0xf)),0));
+//    }
+//    public static ResourceInst.RByteCol custumBlending(int srcRedBM, int dstRedBM, int srcGreenBM, int dstGreenBM, int srcBlueBM, int dstBlueBM, int srcAlphaBM, int dstAlphaBM, FloatColor color){
+//        if((srcRedBM&0xf)>=12||(dstRedBM&0xf)>=12||(srcGreenBM&0xf)>=12||(dstGreenBM&0xf)>=12||(srcBlueBM&0xf)>=12||(dstBlueBM&0xf)>=12||(srcAlphaBM&0xf)>=12||(dstAlphaBM&0xf)>=12){
+//            return new ResourceInst.RByteCol(20, ib((srcRedBM<<4|(dstRedBM&0xf)),(srcGreenBM<<4|(dstGreenBM&0xf)),(srcBlueBM<<4|(dstBlueBM&0xf)),(srcAlphaBM<<4|(dstAlphaBM&0xf)),2), ftb(color.rf()),ftb(color.gf()),ftb(color.bf()),ftb(color.af()));
+//        }
+//        return new ResourceInst.RByteCol(20, ib((srcRedBM<<4|(dstRedBM&0xf)),(srcGreenBM<<4|(dstGreenBM&0xf)),(srcBlueBM<<4|(dstBlueBM&0xf)),(srcAlphaBM<<4|(dstAlphaBM&0xf)),0));
+//    }
+//    public static ResourceInst.RByteCol custumBlending(BlendModes srcRedBM, BlendModes dstRedBM, BlendModes srcGreenBM, BlendModes dstGreenBM, BlendModes srcBlueBM, BlendModes dstBlueBM, BlendModes srcAlphaBM, BlendModes dstAlphaBM){
+//        if((srcRedBM.b&0xf)>=12||(dstRedBM.b&0xf)>=12||(srcGreenBM.b&0xf)>=12||(dstGreenBM.b&0xf)>=12||(srcBlueBM.b&0xf)>=12||(dstBlueBM.b&0xf)>=12||(srcAlphaBM.b&0xf)>=12||(dstAlphaBM.b&0xf)>=12){
+//            return new ResourceInst.RByteCol(20, ib((srcRedBM.b<<4|(dstRedBM.b&0xf)),(srcGreenBM.b<<4|(dstGreenBM.b&0xf)),(srcBlueBM.b<<4|(dstBlueBM.b&0xf)),(srcAlphaBM.b<<4|(dstAlphaBM.b&0xf)),0), itb(0));
+//        }
+//        return new ResourceInst.RByteCol(20, ib((srcRedBM.b<<4|(dstRedBM.b&0xf)),(srcGreenBM.b<<4|(dstGreenBM.b&0xf)),(srcBlueBM.b<<4|(dstBlueBM.b&0xf)),(srcAlphaBM.b<<4|(dstAlphaBM.b&0xf)),0));
+//    }
+//    public static ResourceInst.RByteCol custumBlending(BlendModes srcRedBM, BlendModes dstRedBM, BlendModes srcGreenBM, BlendModes dstGreenBM, BlendModes srcBlueBM, BlendModes dstBlueBM, BlendModes srcAlphaBM, BlendModes dstAlphaBM, int color){
+//        if((srcRedBM.b&0xf)>=12||(dstRedBM.b&0xf)>=12||(srcGreenBM.b&0xf)>=12||(dstGreenBM.b&0xf)>=12||(srcBlueBM.b&0xf)>=12||(dstBlueBM.b&0xf)>=12||(srcAlphaBM.b&0xf)>=12||(dstAlphaBM.b&0xf)>=12){
+//            return new ResourceInst.RByteCol(20, ib((srcRedBM.b<<4|(dstRedBM.b&0xf)),(srcGreenBM.b<<4|(dstGreenBM.b&0xf)),(srcBlueBM.b<<4|(dstBlueBM.b&0xf)),(srcAlphaBM.b<<4|(dstAlphaBM.b&0xf)),0), itb(color));
+//        }
+//        return new ResourceInst.RByteCol(20, ib((srcRedBM.b<<4|(dstRedBM.b&0xf)),(srcGreenBM.b<<4|(dstGreenBM.b&0xf)),(srcBlueBM.b<<4|(dstBlueBM.b&0xf)),(srcAlphaBM.b<<4|(dstAlphaBM.b&0xf)),0));
+//    }
+//    public static ResourceInst.RByteCol custumBlendingRefColor(BlendModes srcRedBM, BlendModes dstRedBM, BlendModes srcGreenBM, BlendModes dstGreenBM, BlendModes srcBlueBM, BlendModes dstBlueBM, BlendModes srcAlphaBM, BlendModes dstAlphaBM, int Rcolor){
+//        if((srcRedBM.b&0xf)>=12||(dstRedBM.b&0xf)>=12||(srcGreenBM.b&0xf)>=12||(dstGreenBM.b&0xf)>=12||(srcBlueBM.b&0xf)>=12||(dstBlueBM.b&0xf)>=12||(srcAlphaBM.b&0xf)>=12||(dstAlphaBM.b&0xf)>=12){
+//            return new ResourceInst.RByteCol(20, ib((srcRedBM.b<<4|(dstRedBM.b&0xf)),(srcGreenBM.b<<4|(dstGreenBM.b&0xf)),(srcBlueBM.b<<4|(dstBlueBM.b&0xf)),(srcAlphaBM.b<<4|(dstAlphaBM.b&0xf)),0), itb(Rcolor));
+//        }
+//        return new ResourceInst.RByteCol(20, ib((srcRedBM.b<<4|(dstRedBM.b&0xf)),(srcGreenBM.b<<4|(dstGreenBM.b&0xf)),(srcBlueBM.b<<4|(dstBlueBM.b&0xf)),(srcAlphaBM.b<<4|(dstAlphaBM.b&0xf)),0));
+//    }
+//    public static ResourceInst.RByteCol custumBlending(BlendModes srcRedBM, BlendModes dstRedBM, BlendModes srcGreenBM, BlendModes dstGreenBM, BlendModes srcBlueBM, BlendModes dstBlueBM, BlendModes srcAlphaBM, BlendModes dstAlphaBM, IntColor color){
+//        if((srcRedBM.b&0xf)>=12||(dstRedBM.b&0xf)>=12||(srcGreenBM.b&0xf)>=12||(dstGreenBM.b&0xf)>=12||(srcBlueBM.b&0xf)>=12||(dstBlueBM.b&0xf)>=12||(srcAlphaBM.b&0xf)>=12||(dstAlphaBM.b&0xf)>=12){
+//            return new ResourceInst.RByteCol(20, ib((srcRedBM.b<<4|(dstRedBM.b&0xf)),(srcGreenBM.b<<4|(dstGreenBM.b&0xf)),(srcBlueBM.b<<4|(dstBlueBM.b&0xf)),(srcAlphaBM.b<<4|(dstAlphaBM.b&0xf)),0), ib(color.ri(),color.gi(),color.bi(),color.ai()));
+//        }
+//        return new ResourceInst.RByteCol(20, ib((srcRedBM.b<<4|(dstRedBM.b&0xf)),(srcGreenBM.b<<4|(dstGreenBM.b&0xf)),(srcBlueBM.b<<4|(dstBlueBM.b&0xf)),(srcAlphaBM.b<<4|(dstAlphaBM.b&0xf)),0));
+//    }
+//    public static ResourceInst.RByteCol custumBlending(BlendModes srcRedBM, BlendModes dstRedBM, BlendModes srcGreenBM, BlendModes dstGreenBM, BlendModes srcBlueBM, BlendModes dstBlueBM, BlendModes srcAlphaBM, BlendModes dstAlphaBM, FloatColor color){
+//        if((srcRedBM.b&0xf)>=12||(dstRedBM.b&0xf)>=12||(srcGreenBM.b&0xf)>=12||(dstGreenBM.b&0xf)>=12||(srcBlueBM.b&0xf)>=12||(dstBlueBM.b&0xf)>=12||(srcAlphaBM.b&0xf)>=12||(dstAlphaBM.b&0xf)>=12){
+//            return new ResourceInst.RByteCol(20, ib((srcRedBM.b<<4|(dstRedBM.b&0xf)),(srcGreenBM.b<<4|(dstGreenBM.b&0xf)),(srcBlueBM.b<<4|(dstBlueBM.b&0xf)),(srcAlphaBM.b<<4|(dstAlphaBM.b&0xf)),2), ftb(color.rf()),ftb(color.gf()),ftb(color.bf()),ftb(color.af()));
+//        }
+//        return new ResourceInst.RByteCol(20, ib((srcRedBM.b<<4|(dstRedBM.b&0xf)),(srcGreenBM.b<<4|(dstGreenBM.b&0xf)),(srcBlueBM.b<<4|(dstBlueBM.b&0xf)),(srcAlphaBM.b<<4|(dstAlphaBM.b&0xf)),0));
+//    }
+//    //</editor-fold>
+//    
     
     private static int map[] = {-1, GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA_SATURATE, GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR, GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA};
     boolean doBlend;
@@ -211,10 +274,11 @@ public class BlendMode {
                 glBlendColor(cl.rf(), cl.gf(), cl.bf(), cl.af());
             }
             glEnable(GL_BLEND);
-            glBlendFunc(sr, dr);
-            glBlendFunc(sg, dg);
-            glBlendFunc(sb, db);
-            glBlendFunc(sa, da);
+            glBlendFuncSeparate(sr, dr, sa, da);// fully sepera rgba not supported
+//            glBlendFunc(sr, dr);
+//            glBlendFunc(sg, dg);
+//            glBlendFunc(sb, db);
+//            glBlendFunc(sa, da);
         }else{
             glDisable(GL_BLEND);
         }

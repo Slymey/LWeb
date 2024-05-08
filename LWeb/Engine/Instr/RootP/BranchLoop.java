@@ -10,7 +10,7 @@ import LWeb.Engine.Instr.RootP.ResourceP.Loop;
 
 public class BranchLoop {
     public static byte[] getBytes(int RloopId){
-        return flatten(ib(16), itb(RloopId));
+        return flatten(ib(18), itb(RloopId));
     }
     public static Runnable getInst(ByteCounter i, Core c){
         int id = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});

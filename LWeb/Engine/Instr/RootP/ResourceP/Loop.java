@@ -46,11 +46,11 @@ public abstract class Loop {
             }, subLoop);
     }
 
-    private static class BoundedLoop extends Loop{
+    public static class BoundedLoop extends Loop{
         public static ResourceInst.RByteCol getBytes(boolean isStartRelative, boolean isEndRelative, boolean condIsInverted, int startPointer, int endPointer,
                 float startNumber, float endNumber, float stride){
             int fl = (isStartRelative?1:0)|(isEndRelative?1:0)<<1|(condIsInverted?1:0)<<2;
-            return new ResourceInst.RByteCol(8,  ib(0), ib(fl), itb(startPointer), itb(endPointer), ftb(startNumber), ftb(endNumber), ftb(stride));
+            return new ResourceInst.RByteCol(8,   ib(fl), itb(startPointer), itb(endPointer), ib(0),ftb(startNumber), ftb(endNumber), ftb(stride));
         }
         public static Object getRsc(ByteCounter i, Core c, boolean sb, boolean eb, boolean inv, int startPtr, int endPtr){
             float start = byteToFloat(new byte[]{i.next(),i.next(),i.next(),i.next()});
@@ -76,10 +76,10 @@ public abstract class Loop {
         }
     }
 
-    private static class ConditionalLoop extends Loop{
+    public static class ConditionalLoop extends Loop{
         public static ResourceInst.RByteCol getBytes(boolean isStartRelative, boolean isEndRelative, boolean condIsInverted, int startPointer, int endPointer, int Rcondition){
             int fl = (isStartRelative?1:0)|(isEndRelative?1:0)<<1|(condIsInverted?1:0)<<2;
-            return new ResourceInst.RByteCol(8,  ib(1), ib(fl), itb(startPointer), itb(endPointer), itb(Rcondition));
+            return new ResourceInst.RByteCol(8,   ib(fl), itb(startPointer), itb(endPointer), ib(1),itb(Rcondition));
         }
         
         public static Object getRsc(ByteCounter i, Core c, boolean sb, boolean eb, boolean inv, int startPtr, int endPtr){

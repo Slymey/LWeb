@@ -35,9 +35,9 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 
 
 public class Windowf {
-    public static byte[] getBytes(int win, float x, float y, int Rposf, byte gSinc, String name){
+    public static byte[] getBytes(int win, float x, float y, int Rposf, boolean gSinc, String name){
         byte b[] = name.getBytes();
-        return flatten(ib(4,2),itb(win), ftb(x), ftb(y), itb(Rposf ), vpb(gSinc), itb(b.length), b);
+        return flatten(ib(4,2),itb(win), ftb(x), ftb(y), itb(Rposf ), ib(gSinc?1:0), itb(b.length), b);
     }
     public static Runnable getInst(ByteCounter i, Core c){
         

@@ -2,6 +2,7 @@ package LWeb.Engine.Instr.RootP;
 
 import static LWeb.Common.Common.lognm;
 import LWeb.Common.ByteCounter;
+import static LWeb.Common.Common.ib;
 import LWeb.Engine.Core;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.glfwDestroyWindow;
@@ -10,6 +11,9 @@ import static org.lwjgl.glfw.GLFW.glfwTerminate;
 
 
 public class End {
+    public static byte[] getBytes(){
+        return ib(17);
+    }
     public static Runnable getInst(ByteCounter i, Core c){
         i.ended=true;
         return ()->{

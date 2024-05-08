@@ -39,10 +39,10 @@ public class ResourceInst {
             return flatten(ib(24), itb(t), itb(id), b);
         }
         public byte[] atCond(int id, int cond){
-            return flatten(ib(25), itb(t), itb(id),itb(b.length), itb(cond), b);
+            return flatten(ib(25), itb(t), itb(id), itb(cond),itb(b.length), b);
         }
         public byte[] atNegCond(int id, int cond){
-            return flatten(ib(26), itb(t), itb(id),itb(b.length), itb(cond), b);
+            return flatten(ib(26), itb(t), itb(id), itb(cond),itb(b.length), b);
         }
     }
     
@@ -96,8 +96,8 @@ public class ResourceInst {
         public static Runnable getInst(ByteCounter i, Core c){
             int type = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
             int ind = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
-            int len = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
             int cnd = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            int len = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
             ByteCounter i2 = new ByteCounter(i.o, i.c);
             i.c+=len;
             return  ()->{
@@ -114,8 +114,8 @@ public class ResourceInst {
         public static Runnable getInst(ByteCounter i, Core c){
             int type = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
             int ind = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
-            int len = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
             int cnd = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+            int len = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
             ByteCounter i2 = new ByteCounter(i.o, i.c);
             i.c+=len;
             return ()->{

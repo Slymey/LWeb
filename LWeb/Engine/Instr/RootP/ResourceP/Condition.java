@@ -45,7 +45,7 @@ public abstract class Condition {
         return null;
     }
 
-    private static class NegativeCondition extends Condition{
+    public static class NegativeCondition extends Condition{
         public static ResourceInst.RByteCol getBytes(int Rcondition){
             return new ResourceInst.RByteCol(11,  ib(1), itb(Rcondition));
         }
@@ -62,7 +62,7 @@ public abstract class Condition {
         
     }
 
-    private static class CallbackCondition extends Condition{
+    public static class CallbackCondition extends Condition{
         public static ResourceInst.RByteCol getBytes(int Rcallable){
             return new ResourceInst.RByteCol(11,  ib(2), itb(Rcallable));
         }
@@ -80,7 +80,7 @@ public abstract class Condition {
             return (boolean)c.getResource(calb, Callable.class).call();
         }
     }
-    private static class BoxCondition extends Condition{
+    public static class BoxCondition extends Condition{
         public static ResourceInst.RByteCol getBytes(int Rbox, int Rpos){
             return new ResourceInst.RByteCol(11,  ib(3), itb(Rbox), itb(Rpos));
         }
@@ -105,7 +105,7 @@ public abstract class Condition {
         }
     }
 
-    private static class ChainAndCondition  extends Condition{
+    public static class ChainAndCondition  extends Condition{
         public static ResourceInst.RByteCol getBytes(int... Rconditions){
             byte r[] = istb(Rconditions);
             return new ResourceInst.RByteCol(11,  ib(4), itb(r.length), r);
@@ -124,7 +124,7 @@ public abstract class Condition {
             return true;
         }
     }
-    private static class ChainOrCondition  extends Condition{
+    public static class ChainOrCondition  extends Condition{
         public static ResourceInst.RByteCol getBytes(int... Rconditions){
             byte r[] = istb(Rconditions);
             return new ResourceInst.RByteCol(11,  ib(5), itb(r.length), r);

@@ -14,7 +14,7 @@ import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 public class LWeb {
     
-    private static final long MAGIC_BYTES=0x70724c5765620000l;// magic bytes + mayor/minor version (prLWebMm)
+    public static final long MAGIC_BYTES=0x70724c5765620000l;// magic bytes + mayor/minor version (prLWebMm)
     
     private Exception readError=null;
     private Core progCore;

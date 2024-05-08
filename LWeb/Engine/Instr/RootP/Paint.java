@@ -5,7 +5,7 @@ import LWeb.Common.ByteCounter;
 import LWeb.Engine.Core;
 import LWeb.Engine.Instr.RootP.PaintP.Fill;
 import LWeb.Engine.Instr.RootP.PaintP.None;
-import LWeb.Engine.Instr.RootP.PaintP.String;
+import LWeb.Engine.Instr.RootP.PaintP.DrawString;
 import java.util.function.Supplier;
 
 public class Paint {
@@ -14,7 +14,7 @@ public class Paint {
         return sg((Supplier<Runnable>[])new Supplier[]{
                 ()->None.getInst(i, c),     //0
                 ()->Fill.getInst(i, c),      //1
-                ()->String.getInst(i, c),      //2
+                ()->DrawString.getInst(i, c),      //2
             }, inst);
         
         

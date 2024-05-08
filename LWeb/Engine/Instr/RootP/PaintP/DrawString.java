@@ -16,7 +16,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
-public class String {
+public class DrawString {
     public static byte[] getBytes(int Bid, int Rtext, int Rfont, int Rpos){
         return flatten(ib(2,2), itb(Bid), itb(Rtext), itb(Rfont), itb(Rpos));
     }
