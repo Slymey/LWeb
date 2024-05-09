@@ -128,6 +128,12 @@ public class main2 {
             BlendMode.noBlending().at(0x2b0001),
             Box.IntBox.getBytes(100, 80, 100, 100).at(0x160001),
             Image.getBytes(0xf0000000, 0x000007, 0x160001),
+            Position.IntPos.getBytes(150,  200).at(0x230000),
+            Position.IntPos.getBytes(230,  400).at(0x230001),
+            Position.IntPos.getBytes(250,  180).at(0x230002),
+            WholeNumber.getBytes(2).at(0x230003),
+            Line.getBytes(0xf0000000, 0x230000, 0x230001, 0x230003, 0x000005),
+            Bezier.getBytes(0xf0000000, 0x230000, 0x230001, 0x230002, 0x230003, 0x000005),
             //OutToFile.getBytes(0xf0000000, 0x000008),
             OutToScreen.getBytes(0xf0000000, 0xff8000, 0xff8001),
             //Wait.getBytes(0xff0000),
@@ -152,37 +158,12 @@ public class main2 {
         lw.start();
         //System.out.println(Core.resources.toString());
         
-        /*
-        Canvas c= new Canvas();
-        Graphics g = c.getGraphics();
-        
-        
-        for(int i:new Range(0,0)){
-            ptr=0;  
-            while(f[ptr]!=0){
-                top();
-            }
-        }
-        */
         
         
         
         
         
         
-        //<editor-fold defaultstate="collapsed" desc="file stuf">
-        /*File f2 = new File("a.html");
-        try {
-            BufferedReader br = new BufferedReader(new FileReader(f2));
-            
-            
-            
-            br.close();
-        } catch (IOException ex) {
-            //ex.printStackTrace();
-        } */
-        
-        //</editor-fold>
         
         /*
         https://en.wikipedia.org/wiki/Alpha_compositing

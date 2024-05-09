@@ -68,7 +68,9 @@ public class ResourceInst {
             Box.FloatBox::getRsc,       //18
             Box.IntBox::getRsc,       //19
             BlendMode::getRsc,       //20
-            FlatFloatColor::getRsc       //21
+            FlatFloatColor::getRsc,       //21
+            FlatFloatColor::getRsc,       //22
+            Curve::getRsc       //23
         );
     public static class Resource{
         public static Runnable getInst(ByteCounter i, Core c){

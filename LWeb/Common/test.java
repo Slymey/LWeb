@@ -351,9 +351,17 @@ Shader grad2= new Shader()
                 .setUniformF("phase", 0, 0.3333f, 0.6666f, 0)
                 .setUniformF("pos", 0.25f, 0.25f, 0.75f, 0.75f);
 
-
+Shader line= new Shader()
+        .addVertShader("basic.vert")
+        .addFragShader("bezier.frag")
+        .initialize()
+        .use()
+        .setUniformF("p0", 0.2f, 0.2f)
+        .setUniformF("p1", 0.6f, 0.4f)
+        .setUniformF("p2", 0.4f, 0.7f)
+        .setUniformF("color", 0.6f, 0.4f, 0.4f, 1.0f)
+        ;
 //</editor-fold>
-
 
 
 
@@ -398,11 +406,13 @@ grad2.use()
     .setUniformF("pos", 0.25f, 0.25f, 0.75f, 0.75f);
 
 
-FrameBuffer.deafaultLayout.bind();//.enable(GL_BLEND).setGeneric2(GL11::glBlendFunc, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+FrameBuffer.deafaultLayout.bind().enable(GL_BLEND).setGeneric2(GL11::glBlendFunc, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 grad2.use();
-
 FrameBuffer.deafaultLayout.draw();
 
+line.use();
+
+FrameBuffer.deafaultLayout.draw();
 
 main.finnish(screen, true);
             
