@@ -39,7 +39,7 @@ public class Window implements Runnable{
     
     static{
         if(sw_render){
-            File fl = new File("LWeb/Engine/Util/Native");
+            File fl = new File("src/LWeb/Engine/Util/Native");
             System.load(fl.getAbsolutePath()+"\\opengl32.dll");
         }
     }
