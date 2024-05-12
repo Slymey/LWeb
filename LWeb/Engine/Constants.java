@@ -5,7 +5,7 @@ import LWeb.Engine.Util.GLEU.VertexArray;
 
 
 public class Constants {
-    public static enum ConstTypes{LINEAR_GRADIENT_SHADER, BASIC_QUAD, BOX_SHADER, LINE, BEZIER3P}
+    public static enum ConstTypes{LINEAR_GRADIENT_SHADER, BASIC_QUAD, BOX_SHADER, LINE, BEZIER3P, CURVE}
     
     private Object consts[] = new Object[ConstTypes.values().length];
     
@@ -51,6 +51,14 @@ public class Constants {
                     .addFragShader("bezier.frag")
                     .initialize()
                     .use();
+                return consts[ord];
+            }case CURVE:{
+                if(consts[ord]!=null)return consts[ord];
+                consts[ord] = new Shader()
+                        .addVertShader("basic.vert")
+                        .addFragShader("curve.frag")
+                        .initialize()
+                        .use();
                 return consts[ord];
             }
         }

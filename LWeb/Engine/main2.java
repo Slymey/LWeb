@@ -10,6 +10,9 @@ import LWeb.Engine.Instr.RootP.HeaderP.*;
 import LWeb.Engine.Instr.RootP.PaintP.*;
 import LWeb.Engine.Instr.RootP.PaintP.FillP.*;
 import LWeb.Engine.Instr.RootP.ResourceP.*;
+
+import java.lang.String;
+
 import static LWeb.Engine.Instr.RootP.ResourceP.BlendMode.BlendModes.*;
 
 
@@ -134,6 +137,8 @@ public class main2 {
             WholeNumber.getBytes(2).at(0x230003),
             Line.getBytes(0xf0000000, 0x230000, 0x230001, 0x230003, 0x000005),
             Bezier.getBytes(0xf0000000, 0x230000, 0x230001, 0x230002, 0x230003, 0x000005),
+            Curve.getBytes(130, 130, 120, 160, 128, 145, 134, 170, 240, 256).at(0x270000),
+            DrawCurve.getBytes(0xf0000000, 0x270000, 0x230003,0x000005),
             //OutToFile.getBytes(0xf0000000, 0x000008),
             OutToScreen.getBytes(0xf0000000, 0xff8000, 0xff8001),
             //Wait.getBytes(0xff0000),

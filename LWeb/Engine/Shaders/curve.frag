@@ -6,6 +6,7 @@ in vec2 TexCoords;
 uniform sampler1D points;
 uniform int length;
 uniform vec2 p0;
+uniform vec2 scale;
 uniform float width=0.004;
 uniform int rez=25;
 uniform vec4 color = vec4(0.0,0.0,0.0,1.0); 
@@ -43,7 +44,7 @@ vec4 circle(vec2 uv, vec2 pos, float r, vec4 color1, vec4 color2){
         return color2;
     }
 }
-vec4 bez(vec2 tx, vec2 p0, vec2 p1, vec2 p3, vec4 col1, vec4 col2){
+vec4 bez(vec2 tx, vec2 p0, vec2 p1, vec2 p2, vec4 col1, vec4 col2){
     vec4 col = col2;
     vec2 pp = p0;
     for(int i=0;i<rez;i++){

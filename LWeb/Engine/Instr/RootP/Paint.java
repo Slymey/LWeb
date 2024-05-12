@@ -3,11 +3,9 @@ package LWeb.Engine.Instr.RootP;
 import static LWeb.Common.Common.sg;
 import LWeb.Common.ByteCounter;
 import LWeb.Engine.Core;
-import LWeb.Engine.Instr.RootP.PaintP.Bezier;
-import LWeb.Engine.Instr.RootP.PaintP.Fill;
+import LWeb.Engine.Instr.RootP.PaintP.*;
 import LWeb.Engine.Instr.RootP.PaintP.None;
-import LWeb.Engine.Instr.RootP.PaintP.DrawString;
-import LWeb.Engine.Instr.RootP.PaintP.Line;
+
 import java.util.function.Supplier;
 
 public class Paint {
@@ -20,6 +18,7 @@ public class Paint {
                 ()->DrawString.getInst(i, c),      //3
                 ()->Line.getInst(i, c),      //4
                 ()->Bezier.getInst(i, c),      //5
+                ()->DrawCurve.getInst(i, c),      //6
             }, inst);
         
         
