@@ -14,7 +14,7 @@ import LWeb.Common.TriFunction;
 import LWeb.Engine.Core;
 import LWeb.Engine.Instr.RootP.ResourceP.*;
 import LWeb.Engine.Instr.RootP.ResourceP.None;
-import LWeb.Engine.Instr.RootP.ResourceP.Number;
+import LWeb.Engine.Instr.RootP.ResourceP.FloatNumber;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
@@ -46,8 +46,7 @@ public class ResourceInst {
         }
     }
     
-    static List<BiFunction<ByteCounter, Core, Object>> rList = Arrays.asList(
-            None::getRsc,       //0
+    static List<BiFunction<ByteCounter, Core, Object>> rList = Arrays.asList(None::getRsc,       //0
             PlainText::getRsc,       //1
             FontFace::getRsc,       //2
             Palette::getRsc,       //3
@@ -56,7 +55,7 @@ public class ResourceInst {
             FlatColor::getRsc,       //6
             Callable::getRsc,       //7
             Loop::getRsc,       //8
-            Number::getRsc,       //9
+            FloatNumber::getRsc,       //9
             WholeNumber::getRsc,       //10
             Condition::getRsc,       //11
             ResourcePointer::getRsc,       //12

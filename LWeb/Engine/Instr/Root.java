@@ -12,7 +12,7 @@ import java.util.function.Supplier;
 public class Root {
     public static Runnable getInst(ByteCounter i, Core c){
         byte inst = i.next();
-        System.out.println(lognm()+""+inst+" "+i.c);
+//        System.out.println(lognm()+""+inst+" "+i.c);
         return sg((Supplier<Runnable>[])new Supplier[]{
                 ()->None.getInst(i, c),     //0
                 ()->Buffer.getInst(i, c),      //1
@@ -41,6 +41,7 @@ public class Root {
                 ()->ResourceInst.OneTimeResource.getInst(i, c),      //24
                 ()->ResourceInst.CondResource.getInst(i, c),      //25
                 ()->ResourceInst.NegCondResource.getInst(i, c),      //26
+                ()->CopyResource.getInst(i, c),      //27
             }, inst);
         
         

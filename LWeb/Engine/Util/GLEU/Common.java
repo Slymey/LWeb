@@ -87,8 +87,10 @@ public class Common {
         if(!"".equals(error)){System.out.println(lognm(2)+""+error);return true;}
         return false;
     }
-    
     public static int glCheckError(){
+        return glCheckError(0);
+    }
+    public static int glCheckError(int d){
         int errorCode;
         while ((errorCode = glGetError()) != GL_NO_ERROR){
             String error="";
@@ -109,7 +111,7 @@ public class Common {
                 case GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE: error = "FRAMEBUFFER_INCOMPLETE_MULTISAMPLE";break;        
                 case GL_FRAMEBUFFER_UNDEFINED: error = "FRAMEBUFFER_UNDEFINED";break;                    
             }
-            System.out.println(lognm(2)+ error);
+            System.out.println(lognm(2+d)+ error);
         }
         return errorCode;
     }

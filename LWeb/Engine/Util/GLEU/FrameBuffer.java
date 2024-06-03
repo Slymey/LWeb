@@ -67,7 +67,7 @@ public class FrameBuffer {
         bind();
         this.tex=tex;
         glFramebufferTexture2D(GL_FRAMEBUFFER, type, GL_TEXTURE_2D, tex.TEX, 0);  
-        glCheckError();
+        glCheckError(0);
         return this;
     }
     public Texture getTex(){

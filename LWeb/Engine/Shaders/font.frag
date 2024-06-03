@@ -1,18 +1,19 @@
 #version 330 core
 out vec4 FragColor;
   
-in vec2 TexCoord;
-in vec4 fontColor;
-in vec4 paintBox;
-in vec2 bPos;
+in vec2 tx;
 
 uniform sampler2D text;
+uniform vec4 fontColor;
+uniform vec4 paintBox;
 
 void main()
 {
-    vec2 tst = bPos - paintBox.zw*2.0;
-    if(tst.x > 0.0 || tst.y > 0.0 || bPos.x <0.0 || bPos.y < 0.0){
+    vec2 bc2 = paintBox.xy + paintBox.zw;
+    if(tx.x < paintBox.x || tx.y < paintBox.y || tx.x > bc2.x || tx.y > bc2.y){
+        //FragColor = vec4(1.0, 0.0, 0.0, 1.0);
         discard;
+    }else{
+        FragColor = texture(text, clamp((tx-paintBox.xy)/paintBox.zw, 0.0, 1.0))*fontColor; 
     }
-    FragColor =   texture(text, clamp((TexCoord-paintBox.xy/2.0-0.5)/paintBox.zw, 0.0, 1.0))*fontColor; 
 }

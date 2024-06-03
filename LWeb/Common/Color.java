@@ -76,7 +76,7 @@ public interface Color {
                 n3=inList(s.charAt(3),hex);
                 n4=inList(s.charAt(4),hex);
                 if(n1==-1||n2==-1||n3==-1||n4==-1)return c;
-                c = new IntColor((15-n4&0xf)*16+(15-n4&0xf), (15-n1&0xf)*16+(15-n1&0xf), (15-n2&0xf)*16+(15-n2&0xf), (15-n3&0xf)*16+(15-n3&0xf));
+                c = new IntColor((15-n1&0xf)*16+(15-n1&0xf), (15-n2&0xf)*16+(15-n2&0xf), (15-n3&0xf)*16+(15-n3&0xf), (15-n4&0xf)*16+(15-n4&0xf));
                 break;
             case 7:
                 n1=inList(s.charAt(1),hex);
@@ -101,10 +101,11 @@ public interface Color {
                 n7=inList(s.charAt(7),hex);
                 n8=inList(s.charAt(8),hex);
                 if(n1==-1||n2==-1||n3==-1||n4==-1||n5==-1||n6==-1||n7==-1||n8==-1)return c;
-                c = new IntColor((15-n6&0xf)*16+(15-n8&0xf), 
+                c = new IntColor(
                         (15-n1&0xf)*16+(15-n2&0xf), 
                         (15-n3&0xf)*16+(15-n4&0xf), 
-                        (15-n5&0xf)*16+(15-n6&0xf));
+                        (15-n5&0xf)*16+(15-n6&0xf),
+                        (15-n6&0xf)*16+(15-n8&0xf));
                 break;
         }
         return c;
@@ -121,12 +122,12 @@ public interface Color {
             B=0;
         }
         public IntColor(int color){
-            A=color>>>(3*8)&0xff;
-            R=color>>>(2*8)&0xff;
-            G=color>>>(1*8)&0xff;
-            B=color>>>(0*8)&0xff;
+            R=color>>>(3*8)&0xff;
+            G=color>>>(2*8)&0xff;
+            B=color>>>(1*8)&0xff;
+            A=color>>>(0*8)&0xff;
         }
-        public IntColor(int a, int r, int g,int b){
+        public IntColor(int r, int g,int b, int a){
             A=a&0xff;
             R=r&0xff;
             G=g&0xff;
@@ -145,10 +146,10 @@ public interface Color {
                    B;
         }
         public void set(int color){
-            A=color>>>(3*8)&0xff;
-            R=color>>>(2*8)&0xff;
-            G=color>>>(1*8)&0xff;
-            B=color>>>(0*8)&0xff;
+            R=color>>>(3*8)&0xff;
+            G=color>>>(2*8)&0xff;
+            B=color>>>(1*8)&0xff;
+            A=color>>>(0*8)&0xff;
         }
         public Vector4f asVec(){
             return new Vector4f(R/255.0f, G/255.0f, B/255.0f, A/255.0f);

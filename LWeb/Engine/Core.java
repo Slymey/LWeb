@@ -47,6 +47,7 @@ public class Core {
     }
     
     public Object getResource(int id){
+        //if(id==0)return null;
         Object o = resources.get(id);
         if(o instanceof ResourcePointer){
             int ptr = ((ResourcePointer)o).ptr;
@@ -56,15 +57,19 @@ public class Core {
         return o;
     }
     public <T> T getResource(int id, Class<T> c){
+        //if(id==0)return null;
         return cast(c, getResource(id));
     }
     public Object getRawResource(int id){
+        //if(id==0)return null;
         return resources.get(id);
     }
     public <T> T getRawResource(int id, Class<T> c){
+        //if(id==0)return null;
         return cast(c,  resources.get(id));
     }
     public void putResource(int id, Object re){
+        if(id==0)return;
         Object o = resources.get(id);
         if(o instanceof ResourcePointer){
             int ptr = ((ResourcePointer)o).ptr;
@@ -74,6 +79,7 @@ public class Core {
         resources.set(id, re);
     }
     public void putRawResource(int id, Object re){
+        if(id==0)return;
         resources.set(id, re);
     }
     public UbFunction getCallable(String name){

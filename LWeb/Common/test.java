@@ -310,9 +310,6 @@ VertexArray VAO = new VertexArray()
         .setVertexAtribute(2, 2)
         .finnish();
 
-FontPainter fp = new FontPainter("src/LWeb/Common/arial.ttf", 0 ,10)
-        .initializeRenderer(true, true);
-
 
 FrameBuffer main = new FrameBuffer()
         .attachShader( new Shader()
@@ -363,6 +360,9 @@ Shader line= new Shader()
         ;
 //</editor-fold>
 
+FontPainter fp = new FontPainter("src/LWeb/Common/arial.ttf", 0 ,10)
+        .initializeRenderer(true, true);
+
 
 
         while(!glfwWindowShouldClose(window)){
@@ -388,7 +388,7 @@ texture2.activateOn(1);
 VAO.draw(6);
 
 
-fp.draw(0, 0, Color("#138848").asVec());
+//fp.draw(0, 0, Color("#138848").asVec());
 fp.draw("ubn", 300, 44);
 fp.draw("nllm", 100, 44);
 
@@ -407,12 +407,12 @@ grad2.use()
 
 
 FrameBuffer.deafaultLayout.bind().enable(GL_BLEND).setGeneric2(GL11::glBlendFunc, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-grad2.use();
-FrameBuffer.deafaultLayout.draw();
+//grad2.use();
+//FrameBuffer.deafaultLayout.draw();
 
-line.use();
-
-FrameBuffer.deafaultLayout.draw();
+//line.use();
+//
+//FrameBuffer.deafaultLayout.draw();
 
 main.finnish(screen, true);
             

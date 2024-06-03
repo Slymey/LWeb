@@ -9,7 +9,7 @@ import static LWeb.Common.Common.itb;
 import LWeb.Engine.Core;
 import LWeb.Engine.Instr.RootP.ResourceInst;
 
-public class Number {
+public class FloatNumber {
     public static ResourceInst.RByteCol getBytes(float number){
         return new ResourceInst.RByteCol(9,  ftb(number));
     }

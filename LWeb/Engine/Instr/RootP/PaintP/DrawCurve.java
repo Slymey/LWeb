@@ -29,15 +29,17 @@ public class DrawCurve {
             int w = c.getResource(wid, int.class);
             Position p = fb.getTex().p.resolve(Position.class);
 
-//            System.out.println(lognm()+""+cl);
             Shader shader = c.getConstant(CURVE, Shader.class)
                     .use()
                     .setUniformF("p0", cr.getX(), cr.getY())
                     .setUniformF("scale", p.xi(), p.yi())
                     .setUniformI("length", cr.getLen())
+                    //.setUniformF("asp", 1)
+                    .setUniformF("asp", p.xi()*1.0f/p.yi())
                     .setUniformF("color", cl.rf(), cl.gf(), cl.bf(), cl.af())
-                    .setUniformF("width", 1.0f*w/p.xi());
-            cr.getTex().bind();
+                    .setUniformF("width", 1.0f*w/p.yi());
+            cr.getTex().activateOn(0).bind();
+//            System.out.println(lognm()+""+p.xi()+" "+p.yi());
             fb.preferedLayout.draw();
 
         };

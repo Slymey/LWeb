@@ -39,8 +39,9 @@ public class Line {
                     .use()
                     .setUniformF("p1", p1.xf(), p1.yf())
                     .setUniformF("p2", p2.xf(), p2.yf())
+                    .setUniformF("asp", p.xi()*1.0f/p.yi())
                     .setUniformF("color", cl.rf(), cl.gf(), cl.bf(), cl.af())
-                    .setUniformF("width", 1.0f*w/p.xi());           
+                    .setUniformF("width", 0.5f*w/p.yi());           
             fb.preferedLayout.draw();
             
         };

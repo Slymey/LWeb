@@ -61,6 +61,7 @@ public class Window implements Runnable{
     private void loop() {
         do{
             for (int i = 0; i < 20&&c.progCounter<work.length; i++) {
+//                System.out.println(lognm()+""+c.progCounter);
                 work[c.progCounter++].run();
             }
 
@@ -101,6 +102,7 @@ public class Window implements Runnable{
 //            System.out.println(lognm()+""+key+" "+scancode+" "+action+" "+mods);
         });
         glfwSetMouseButtonCallback(window, (windw, button, action, mods) -> {
+            c.putNamedApi("b", action);
 //            System.out.println(lognm()+""+button+" "+action+" "+mods);
         });
         glfwSetCursorPosCallback(window, (windw, xpos, ypos) -> {

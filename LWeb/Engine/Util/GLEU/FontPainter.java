@@ -7,6 +7,7 @@ import LWeb.Common.Pair;
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.FontRenderContext;
+import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -96,7 +97,7 @@ public class FontPainter {
         return draw(rstr, x, y, c);
     }
     public FontPainter draw(RenderedString rstr, int x, int y, Vector4f c){
-        return draw(rstr, (x*1.0f/viewBox.first)*2-1, (y*1.0f/viewBox.second)*2-1, c);
+        return draw(rstr, (x*1.0f/viewBox.first), (y*1.0f/viewBox.second), c);
     }
     public FontPainter draw(float x, float y, Vector4f c){
         return draw(curent, x, y, c);
@@ -115,15 +116,19 @@ public class FontPainter {
     }
     public FontPainter draw(RenderedString rstr, float x, float y,  Vector4f c){
         if(rstr==null)return this;
+//        System.out.println(lognm()+" W: "+rstr.box.getWidth()+" H: "+rstr.box.getHeight());
         return draw(rstr, x, y, (float)rstr.box.getWidth()/viewBox.first, (float)rstr.box.getHeight()/viewBox.second, c);
+    }
+    public FontPainter draw(String text, float x, float y, float w, float h, Vector4f c){
+        return prepareText(text).draw(curent, x, y, w, h, c);
     }
     public FontPainter draw(RenderedString rstr, float x, float y, float w, float h, Vector4f c){
         if(rstr==null)return this;
-        
+//        System.out.println(lognm()+"ft: "+x+" "+y+" "+w+" "+h);
         fontShader.use();
         fontShader.setUniformI("text", 0);
-        fontShader.setUniformF("drawBox", x, y, w, h);
-        fontShader.setUniformF("aColor", c.x, c.y, c.z, c.w);
+        fontShader.setUniformF("paintBox", x, y, w, h);
+        fontShader.setUniformF("fontColor", c.x, c.y, c.z, c.w);
         fontBox.bind();
         
         rstr.tex.activateOn(0);
@@ -157,12 +162,27 @@ public class FontPainter {
     }
     
     private static Pair<BufferedImage, Rectangle2D> displayText( String text, Font font, FontRenderContext frc){
+//        System.out.println(lognm()+""+text);
         Rectangle2D bd = font.getStringBounds(text, frc);
         BufferedImage image=new BufferedImage((int)bd.getWidth()+2, (int)bd.getHeight()+2, TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();
         g.setFont(font);
         g.drawString(text, 1, (int)bd.getMaxY()+(int)(bd.getHeight()+2)/2);
         g.dispose();
+        
+        TextLayout layout = new TextLayout(text, font, frc);
+        Rectangle2D bounds = layout.getBounds();
+//        System.out.println(lognm()+" bds: "+bounds);
+//        layout.draw(g, (float)loc.getX(), (float)loc.getY());
+//
+//        bounds.setRect(bounds.getX()+loc.getX(),
+//                       bounds.getY()+loc.getY(),
+//                       bounds.getWidth(),
+//                       bounds.getHeight());
+//        g.draw(bounds);
+        
+//        System.out.println(lognm()+""+LWeb.Common.Common.ats(image.getData().getPixels(0, 0, image.getWidth(), image.getHeight(), (int[])null)));
+//        System.out.println(lognm()+""+image.getData());
         return Pair(image, bd);
     }
     public String toString(){

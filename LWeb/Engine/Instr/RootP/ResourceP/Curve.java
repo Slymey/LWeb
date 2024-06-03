@@ -6,6 +6,12 @@ import LWeb.Engine.Instr.RootP.ResourceInst;
 import LWeb.Engine.Util.GLEU.IntLineTexture;
 
 import static LWeb.Common.Common.*;
+import static org.lwjgl.opengl.GL11.GL_LINEAR;
+import static org.lwjgl.opengl.GL11.GL_NEAREST;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MAG_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_MIN_FILTER;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_WRAP_S;
+import static org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE;
 
 public class Curve {
     public int x;
@@ -39,7 +45,7 @@ public class Curve {
     public Curve(int x, int y, int[] pt) {
         this.x=x;
         this.y=y;
-        length=pt.length;
+        length=pt.length/4;
         this.pts=pt;
 
     }
@@ -54,8 +60,12 @@ public class Curve {
     }
     public IntLineTexture getTex(){
         if(tex==null){
+//            System.out.println(lognm()+""+ats(pts));
             tex = new IntLineTexture()
-                    .setImage(length, pts);
+                    .setParameter(GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+                    .setParameter(GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+                    .setParameter(GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+                    .setImage(length*4, pts);
         }
         return tex;
     }

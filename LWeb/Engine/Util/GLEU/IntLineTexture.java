@@ -3,7 +3,6 @@ package LWeb.Engine.Util.GLEU;
 import LWeb.Engine.Instr.RootP.ResourceP.ResourcePointer;
 
 import static LWeb.Common.Common.lognm;
-import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL30.*;
@@ -30,17 +29,18 @@ public class IntLineTexture {
     public IntLineTexture setImage(ResourcePointer p){
         bind();
         this.p=p;
-        glTexImage1D(GL_TEXTURE_1D, 0, GL_RED_INTEGER, p.resolve(int.class), 0, GL_RED_INTEGER, GL_UNSIGNED_BYTE, (int[])null);
+        glTexImage1D(GL_TEXTURE_1D, 0, GL_R32UI, p.resolve(int.class), 0, GL_RED_INTEGER, GL_UNSIGNED_INT, (int[])null);
         return this;
     }
     public IntLineTexture setImage(int len){
         bind();
-        glTexImage1D(GL_TEXTURE_1D, 0, GL_RED_INTEGER, len, 0, GL_RED_INTEGER, GL_UNSIGNED_BYTE, (int[])null);
+        glTexImage1D(GL_TEXTURE_1D, 0, GL_R32UI, len, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, (int[])null);
         return this;
     }
     public IntLineTexture setImage(int len, int[] data){
         bind();
-        glTexImage1D(GL_TEXTURE_1D, 0, GL_RED_INTEGER, len, 0, GL_RED_INTEGER, GL_UNSIGNED_BYTE, data);
+//        System.out.println(lognm()+""+LWeb.Common.Common.ats(data));
+        glTexImage1D(GL_TEXTURE_1D, 0, GL_R32UI, len, 0, GL_RED_INTEGER, GL_UNSIGNED_INT, data);
         return this;
     }
 

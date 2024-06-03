@@ -41,7 +41,7 @@ public class Main {
     public static void main(String args[]){
         System.out.println("Start");
         
-        File f1 = new File("e.html");
+        File f1 = new File("e2.html");
         File f2 = new File("e.css");
         
         String s1=fileToString(f1);
@@ -64,14 +64,14 @@ public class Main {
 //        //TODO: sorted list using specificity
 //        ArrayList<Pair<ArrayList<Selector>, LinkedHashSet<Property>>> css = css(ttk);
 //        System.out.println(css);
-        //System.out.println(fullyParse(s1, s2));
         //
         //System.out.println(Parser.fullyParseCss(stc));
         //System.out.println(Parser.fullyParseHtml(ste));
+        //System.out.println(fullyParse(s1, s2));
         
         
         
-        Tree<ElementTag> finl = fullyParse(ste, stc);
+        Tree<ElementTag> finl = fullyParse(s1, s2);
         System.out.println(lognm()+"Finished parsing");
         System.out.println(finl);
 

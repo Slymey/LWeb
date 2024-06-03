@@ -17,9 +17,6 @@ import static LWeb.Engine.Instr.RootP.ResourceP.BlendMode.BlendModes.*;
 
 
 public class main2 {
-
-    
-
     
 //    //<editor-fold defaultstate="collapsed" desc="old byte code input">
 //    static byte f[]={(byte)0x70, (byte)0x72, (byte)0x4c, (byte)0x57, (byte)0x65, (byte)0x62, (byte)0x00, (byte)0x00, //magic bytes
@@ -90,32 +87,38 @@ public class main2 {
     
     
     static byte f[]= flatten(ltb(LWeb.MAGIC_BYTES),
-            Position.IntPos.getBytes(800, 556).at(0x140000),
+            Position.IntPos.getBytes(800, 556).at(0x140000),//window dimentions
             NamedApi.getBytes(0xff8000, "w"),
-            NamedApi.getBytes(0x16000b, "c"),
-            Callable.getBytes("E", 0xff8000).at(0xe00000),
-            Window.getBytes(0xff8000, 256, 256, 0x140000, true, "A"),
-            Condition.CallbackCondition.getBytes(0xe00000).at(0xd00000),
-            Screen.getBytes(0xff8001),
+            NamedApi.getBytes(0x16000b, "c"),//cursor position callback
+            Callable.getBytes("E", 0xff8000).at(0xe00000),//window event processor
+            Window.getBytes(0xff8000, 256, 256, 0x140000, true, "A"),//window itself
+            Condition.CallbackCondition.getBytes(0xe00000).at(0xd00000),//loop condition
+            Screen.getBytes(0xff8001),//screen
+            WholeNumber.getBytes(0).at(0x16001b),
             PlainText.getBytes("Hello world!").at(0x000009),
             FontFace.getBytes(0, 20, "src/LWeb/Common/arial.ttf").at(0x00000a),
             Box.IntBox.getBytes(50, 50, 75, 50).at(0x16000a),
             Position.IntPos.getBytes(10, 20).at(0x16000b),
+            Position.IntPos.getBytes(150,  200).at(0x230000),
+            Position.IntPos.getBytes(230,  400).at(0x230001),
+            Position.IntPos.getBytes(250,  180).at(0x230002),
             Condition.BoxCondition.getBytes(0x16000a, 0x16000b).at(0x0d0000),
-            Loop.ConditionalLoop.getBytes(false, true, true, 12, 0, 0xd00000).at(0x0a0001),
-            BufferPtr.getBytes(0xf0000000, 0x140000),
+            Buffer.getBytes(0xf0000003, 331, 50, 0x0c000003),//                                      V - add relative to declaration loop positions
+            Loop.ConditionalLoop.getBytes(false, true, true, 17, 0, 0xd00000).at(0x0a0001),//draw loop dcl
+            BufferPtr.getBytes(0xf0000000, 0x140000),//draw buffer
             ClearBuffer.getBytes(0xf0000000),
-            Buffer.getBytes(0xf0000003, 331, 50, 0x0c000000),
-            Position.IntPos.getBytes(10, 20).at(0x140001),
-            DrawString.getBytes(0xf0000003, 0x000009, 0x00000a, 0x140001),
+            ClearBuffer.getBytes(0xf0000003),
+            Position.IntPos.getBytes(500, 400).at(0x140001),
+            DrawString.getBytes(0xf0000000, 0x000009, 0x00000a, 0x140001),
             FlatColor.getBytes(0xffffff00).at(0x000003),
             FlatColor.getBytes(0x6400ff00).at(0x000004),
             FlatColor.getBytes(0x640000ff).at(0x000005),
             FlatColor.getBytes(0x00ffffff).atCond(0x000005, 0x0d0000),
             BlendMode.uniformBlending(SRC_ALPHA, ONE_MINUS_SRC_ALPHA).at(0x2b0000),
-            Box.IntBox.getBytes(0, 20, 331, 50).at(0x160000),
-            Stack.getBytes(0xf0000003, 0xf0000000, 0x160000, 0x2b0000),
-            Buffer.getBytes(0xf0000001, 75, 50, 0x0c000000),
+            BlendMode.noBlending().at(0x2b0001),
+            Box.IntBox.getBytes(500, 400, 331, 50).at(0x160000),
+            //Stack.getBytes(0xf0000003, 0xf0000000, 0x160000, 0x2b0001),
+            Buffer.getBytes(0xf0000001, 75, 50, 0x0c000001),
             Solid.getBytes(0xf0000001, 0x000003),
             Box.IntBox.getBytes(25, 25, 75, 50).at(0x160000),
             Stack.getBytes(0xf0000001, 0xf0000000, 0x160000, 0x2b0000),
@@ -128,22 +131,26 @@ public class main2 {
             URLRelative.getBytes("test_1.png").at(0x000006),
             ImageFile.getBytes(0x000006).at(0x000007),
             URLRelative.getBytes("image.png").at(0x000008),
-            BlendMode.noBlending().at(0x2b0001),
             Box.IntBox.getBytes(100, 80, 100, 100).at(0x160001),
             Image.getBytes(0xf0000000, 0x000007, 0x160001),
-            Position.IntPos.getBytes(150,  200).at(0x230000),
-            Position.IntPos.getBytes(230,  400).at(0x230001),
-            Position.IntPos.getBytes(250,  180).at(0x230002),
-            WholeNumber.getBytes(2).at(0x230003),
-            Line.getBytes(0xf0000000, 0x230000, 0x230001, 0x230003, 0x000005),
-            Bezier.getBytes(0xf0000000, 0x230000, 0x230001, 0x230002, 0x230003, 0x000005),
-            Curve.getBytes(130, 130, 120, 160, 128, 145, 134, 170, 240, 256).at(0x270000),
-            DrawCurve.getBytes(0xf0000000, 0x270000, 0x230003,0x000005),
+            WholeNumber.getBytes(1).at(0x230003),
+            FloatNumber.getBytes(4f).at(0x230004),
+            WholeNumber.getBytes(50).at(0x230005),
+            Line.getBytes(0xf0000000, 0x230000, 0x230001, 0x230005, 0x000015),
+            
+            NamedApi.getBytes(0x16001b, "b"),
+            Condition.EqualsCondition.getBytes(0x16001b, 1).at(0x0d0001),
+            CondIntruction.conditional(CopyResource.getBytes(0x16000b, 0x230002), 0x0d0001),
+            
+            FlatColor.getBytes(0x000000ff).at(0x000015),
+            Bezier.getBytes(0xf0000000, 0x230000, 0x230001, 0x230002, 0x230003,0x230004, 0x000015),
+            Curve.getBytes(272, 281, 103, 367, 195, 503, 189, 349, 170, 456).at(0x270000),
+            DrawCurve.getBytes(0xf0000000, 0x270000, 0x230003,0x000015),
             //OutToFile.getBytes(0xf0000000, 0x000008),
-            OutToScreen.getBytes(0xf0000000, 0xff8000, 0xff8001),
+            OutToScreen.getBytes(0xf0000000, 0xff8000, 0xff8001),//output to screen
             //Wait.getBytes(0xff0000),
-            BranchLoop.getBytes(0x0a0001),
-            End.getBytes()
+            BranchLoop.getBytes(0x0a0001),//actual draw loop call
+            End.getBytes()//end the runtime
 
         );
     
@@ -151,7 +158,7 @@ public class main2 {
     };
     public static void main(String args[]) throws Exception {
         
-        System.out.println(lognm()+""+ats(f));
+//        System.out.println(lognm()+""+ats(f));
         
         
         

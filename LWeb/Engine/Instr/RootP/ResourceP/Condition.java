@@ -41,6 +41,11 @@ public abstract class Condition {
                 int cds[] =  bytesToInt(Arrays.copyOfRange(i.o, i.c, i.incp(len*4)));
                 return new ChainOrCondition(c, cds);
             }
+            case 6:{
+                int rval = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+                int val =  byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+                return new EqualsCondition(c, rval, val);
+            }
         }
         return null;
     }
@@ -143,7 +148,25 @@ public abstract class Condition {
             return false;
         }
     }
-    
+    public static class EqualsCondition  extends Condition{
+        public static ResourceInst.RByteCol getBytes(int Rvalue, int value){
+            return new ResourceInst.RByteCol(11,  ib(6), itb(Rvalue), itb(value));
+        }
+        int rval;
+        int val;
+        Core c;
+        public EqualsCondition(Core co, int rval, int val){
+            this.rval=rval;
+            this.val=val;
+            c=co;
+        }
+        
+        public boolean evaluate(){
+            //System.out.println("cond: "+c.getResource(rval, int.class)+" "+val);
+            return c.getResource(rval, int.class)==val;
+        }
+        
+    }
     
     
 }
