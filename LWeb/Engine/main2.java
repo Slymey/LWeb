@@ -150,7 +150,7 @@ public class main2 {
             OutToScreen.getBytes(0xf0000000, 0xff8000, 0xff8001),//output to screen
             //Wait.getBytes(0xff0000),
             BranchLoop.getBytes(0x0a0001),//actual draw loop call
-            End.getBytes()//end the runtime
+            End.getBytes(0xff8000)//end the runtime
 
         );
     

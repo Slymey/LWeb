@@ -1,12 +1,11 @@
 package LWeb.Engine;
 
-import LWeb.Common.ByteCounter;
-import static LWeb.Common.Common.ats;
 import static LWeb.Common.Common.byteToLong;
-import static LWeb.Common.Common.lognm;
 import LWeb.Common.ByteCounter;
+import static LWeb.Common.Common.fileToByte;
 import LWeb.Engine.Util.Window;
 import static LWeb.Engine.Util.Window.processInput;
+import java.io.File;
 import java.util.concurrent.Executors;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
@@ -14,13 +13,30 @@ import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
 public class LWeb {
     
-    public static final long MAGIC_BYTES=0x70724c5765620000l;// magic bytes + mayor/minor version (prLWebMm)
+    public static final long MAGIC_BYTES=0x724c576562000000l;// magic bytes + mayor/minor/revision version (rLWebMm)
     
     private Exception readError=null;
     private Core progCore;
     private Runnable r[];
     
+    public LWeb(){
+    }
     public LWeb(byte [] bytes){
+        this.setup(bytes);
+    }
+    public LWeb(File file){
+        this.setup(fileToByte(file));
+    }
+    public LWeb(String file){
+        this.setup(fileToByte(file));
+    }
+    
+
+    
+    
+    
+    
+    public LWeb setup(byte [] bytes){
         progCore = new Core();
         ByteCounter i = new ByteCounter(bytes, 0);
         
@@ -31,8 +47,9 @@ public class LWeb {
         }else{
             readError=new VersionMismatch("Data identifier or version unsupported");
         }
+        return this;
     }
-
+    
     public LWeb start() throws Exception{
         if(readError==null){
             start1();

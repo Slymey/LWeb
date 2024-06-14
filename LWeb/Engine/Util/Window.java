@@ -51,21 +51,37 @@ public class Window implements Runnable{
     public void run() {
             System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 
-            loop();
+            loop(true);
     }
 
     private void init() {
             
     }
 
-    private void loop() {
-        do{
-            for (int i = 0; i < 20&&c.progCounter<work.length; i++) {
-//                System.out.println(lognm()+""+c.progCounter);
+    private void loop(boolean first) {
+        try{
+            do{
                 work[c.progCounter++].run();
+            }while(c.progCounter<work.length);
+        }catch(Exception e){
+            if(!first){
+                throw e;
             }
-
-            long window = c.getNamedApi("w", long.class);
+            File fl = new File("src/LWeb/Engine/Util/Native");
+            System.load(fl.getAbsolutePath()+"\\opengl32.dll");
+            System.out.println(lognm()+"Switching to software renderer");
+            loop(false);
+            
+        }
+    }
+    
+    
+    
+    
+    //for (int i = 0; i < 20&&c.progCounter<work.length; i++) {
+//                System.out.println(lognm()+""+c.progCounter);
+            //}
+            //long window = c.getNamedApi("w", long.class);
 
 //            glfwPollEvents();
 //            if(glfwWindowShouldClose(window))break;
@@ -79,10 +95,6 @@ public class Window implements Runnable{
 //            FontPainter.viewBox=viewBox;
 //            glViewport(0, 0, widt, heigh);
 //        });
-            
-            
-        }while(c.progCounter<work.length);
-    }
     public boolean isReady(){
         return ready;
     }

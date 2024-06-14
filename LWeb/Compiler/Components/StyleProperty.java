@@ -4,7 +4,10 @@ package LWeb.Compiler.Components;
 
 import static LWeb.Common.Common.inList;
 import static LWeb.Common.Common.lognm;
+import LWeb.Compiler.Components.LayoutProperty.Layout;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.function.BiConsumer;
 import java.util.function.BiFunction;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,7 +20,7 @@ public class StyleProperty {
     public final String name;
     final TypeProvider type;
     final BiFunction<TypeProvider[],Integer,Property[]> cast;//mapings for eg, border: 10px solid red -> border-width:10px, ...
-    
+    public final BiConsumer<Property, HashMap<String, Object>> layouts;
     
     
     
@@ -27,10 +30,11 @@ public class StyleProperty {
      * border, width, ...
      *
      */
-    public <T> StyleProperty(String name, TypeProvider type, BiFunction<TypeProvider[],Integer,Property[]> reCasts){
+    public <T> StyleProperty(String name, TypeProvider type, BiFunction<TypeProvider[],Integer,Property[]> reCasts, BiConsumer<Property, HashMap<String, Object>> layouts){
         this.name=name;
         this.type=type;
         this.cast=reCasts;
+        this.layouts=layouts;
     }
     
     //do somethin for multi inputs

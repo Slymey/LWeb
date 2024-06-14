@@ -7,6 +7,7 @@ import static LWeb.Common.Common.*;
 import LWeb.Common.*;
 import static LWeb.Compiler.Components.Attribute.newAttribute;
 import static LWeb.Common.Pair.Pair;
+import LWeb.Compiler.Components.AsmGroup;
 import LWeb.Compiler.Components.StyleProperty.Property;
 import LWeb.Compiler.Parser.TokenType;
 import static LWeb.Compiler.Parser.TokenType.DQ_STRING;
@@ -71,7 +72,7 @@ public class Main {
         
         
         
-        Tree<ElementTag> finl = fullyParse(s1, s2);
+        AsmGroup finl = fullyParse(s1, s2);
         System.out.println(lognm()+"Finished parsing");
         System.out.println(finl);
 

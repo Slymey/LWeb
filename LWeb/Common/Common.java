@@ -18,9 +18,11 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -1711,6 +1713,21 @@ public class Common {
         }
         return out;
     }
+    
+    public static byte[] op(List<Byte> t){
+        byte[] out = new byte[t.size()];
+        for (int i = 0; i < t.size(); i++) {
+            out[i]=(byte)t.get(i);
+        }
+        return out;
+    }
+    public static List<Byte> po(byte[] t){
+        ArrayList<Byte> out = new ArrayList<>(t.length);
+        for (int i = 0; i < t.length; i++) {
+            out.add((Byte)t[i]);
+        }
+        return out;
+    }
 
     //</editor-fold>
     
@@ -1744,6 +1761,18 @@ public class Common {
     }
     //</editor-fold>
     
+    public static byte[] fileToByte(String f){
+        return fileToByte(new File(f));
+    }
+    public static byte[] fileToByte(File f){
+        byte[] b=null;
+        try{
+            b = Files.readAllBytes(f.toPath());
+        }catch(IOException ex){
+            ex.printStackTrace();
+        }
+        return b;
+    }
     public static String fileToString(String f){
         BufferedReader br1 = null;
         String s1="";
@@ -1990,24 +2019,56 @@ public class Common {
         return f-fn;
     }
 
-    public static<T> T cast(Class<T> c, Object o ){
+    public static<T> T cast(Class<T> c, Object o){
         return (T)o;
     } 
-    
-    
+    public static<T> T castp(Class<T> c, Object o){
+        if(o==null){
+            if(c.isPrimitive()){
+                if(c.equals(boolean.class))return (T)(Boolean)false;
+                if(c.equals(byte.class))return (T)(Byte)(byte)0;
+                if(c.equals(short.class))return (T)(Short)(short)0;
+                if(c.equals(int.class))return (T)(Integer)0;
+                if(c.equals(long.class))return (T)(Long)(long)0;
+                if(c.equals(char.class))return (T)(Character)(char)0;
+                if(c.equals(float.class))return (T)(Float)(float)0;
+                if(c.equals(double.class))return (T)(Double)(double)0;
+            }
+            try{
+                return c.newInstance();
+            }catch(Exception ex){
+                System.out.println(lognm()+""+ex);
+                return null;
+            }
+        }
+        return cast(c, o);
+    }
+    public static<T> T castpr(Class<T> c, Object o){
+        if(o==null){
+            if(c.isPrimitive()){
+                if(c.equals(boolean.class))return (T)(Boolean)false;
+                if(c.equals(byte.class))return (T)(Byte)(byte)0;
+                if(c.equals(short.class))return (T)(Short)(short)0;
+                if(c.equals(int.class))return (T)(Integer)0;
+                if(c.equals(long.class))return (T)(Long)(long)0;
+                if(c.equals(char.class))return (T)(Character)(char)0;
+                if(c.equals(float.class))return (T)(Float)(float)0;
+                if(c.equals(double.class))return (T)(Double)(double)0;
+            }
+            return null;
+        }
+        return cast(c, o);
+    }
     
     //testing ground
     static int map[] = {-1, GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA_SATURATE, GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR, GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA};
     public static void main(String[] args) {
         
+        Object o = null;
+        Object d = 1341.0;
+        //double i = cast(double.class, d);
+        System.out.println(lognm()+""+((double)d));
         
-        int i = 0x56;
-        int sa = map[(i&0xf)];
-        int dr = map[(i>>>4)];
-        
-        System.out.println(lognm()+""+sa+" "+dr);
-        Byte b=null;
-        System.out.println(lognm()+""+ats("w".getBytes()));
         
     }
 

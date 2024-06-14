@@ -4,12 +4,14 @@ import LWeb.Compiler.Components.Attribute.AttributeEl;
 import LWeb.Compiler.Components.ClassList.Activity;
 import LWeb.Common.Pair;
 import static LWeb.Compiler.Components.ClassList.Activity.*;
+import LWeb.Compiler.Components.LayoutProperty.Layout;
 import LWeb.Compiler.Components.StyleProperty.Property;
 import LWeb.Compiler.Parser.TokenType;
 import static LWeb.Compiler.Parser.TokenType.*;
 import static LWeb.Compiler.Parser.tokenize;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
@@ -22,6 +24,8 @@ public class ElementTag {
     public HashMap<String,AttributeEl> atributes = new HashMap<>();
     public HashMap<ClassList,Activity> classes = new HashMap<>();
     public LinkedList<Pair<ArrayList<ClassCondition>, LinkedHashSet<Property>>> style = new LinkedList<>();
+    public HashMap<String, Object> layout = new HashMap<>();
+    public AsmGroup asm;
     //public ElementNode parent = null;
     //HashMap<String,StyleProperty> styles = new HashMap<>();
     
@@ -117,16 +121,14 @@ public class ElementTag {
     
     @Override
     public String toString(){
-        return (textOnly?"\\":tag)+ "|"+textOnly+"|"+id+"|"+closingType+((atributes.isEmpty())?"":" "+atributes)+" "+((classes.isEmpty())?"":" "+classes)+" "+((style.isEmpty())?"":" "+style);
+        //return (textOnly?"\\":tag)+ "|"+textOnly+"|"+id+"|"+closingType+((atributes.isEmpty())?"":" "+atributes)+" "+((classes.isEmpty())?"":" "+classes)+" "+((style.isEmpty())?"":" "+style)+" "+((layout.isEmpty())?"":" "+layout);
+        return (textOnly?"\\":tag)+ "|"+textOnly+"|"+id+"|"+closingType+" "+((layout.isEmpty())?"":" "+layout)+" "+asm;
     }
     
     
-    
-    
-    private class StyleProperty {
-
-        public StyleProperty() {
-            
-        }
+    public static void main(String[] args) {
+        
     }
+    
+    
 }

@@ -16,6 +16,7 @@ public interface TypeProvider{
     public static float bpxs=1.0f;//virtual pixels per real pixel
     boolean detirmanant();
     Object get();
+    <T>T get(Class<T> c);
     int order();
     void set(TypeProvider p);
     void set(Object value,int order);
@@ -44,6 +45,10 @@ public interface TypeProvider{
         @Override
         public Object get() {
             return value;
+        }
+        @Override
+        public <T> T get(Class<T> c){
+            return cast(c, value);
         }
         @Override
         public int order() {
@@ -108,6 +113,8 @@ public interface TypeProvider{
         public TypeProvider copy() {
             return new PropCalc(value);
         }
+
+        
         
     }
     //</editor-fold>
@@ -125,6 +132,10 @@ public interface TypeProvider{
         @Override
         public Object get() {
             return value;
+        }
+        @Override
+        public <T> T get(Class<T> c){
+            return cast(c, value);
         }
         @Override
         public int order() {
@@ -208,6 +219,10 @@ public interface TypeProvider{
             return value;
         }
         @Override
+        public <T> T get(Class<T> c){
+            return cast(c, value);
+        }
+        @Override
         public int order() {
             return 0;
         }
@@ -288,6 +303,10 @@ public interface TypeProvider{
         @Override
         public Object get() {
             return value;
+        }
+        @Override
+        public <T> T get(Class<T> c){
+            return cast(c, value);
         }
         @Override
         public int order() {
@@ -378,6 +397,10 @@ public interface TypeProvider{
         @Override
         public Double get() {
             return value;
+        }
+        @Override
+        public <T> T get(Class<T> c){
+            return cast(c, value);
         }
         @Override
         public int order() {
@@ -486,7 +509,10 @@ public interface TypeProvider{
         public Object get() {
             return value;
         }
-
+        @Override
+        public <T> T get(Class<T> c){
+            return cast(c, value);
+        }
         @Override
         public int order() {
             return 0;
@@ -557,7 +583,10 @@ public interface TypeProvider{
         public Object get() {
             return value;
         }
-
+        @Override
+        public <T> T get(Class<T> c){
+            return cast(c, value);
+        }
         @Override
         public int order() {
             return 0;
@@ -628,7 +657,10 @@ public interface TypeProvider{
         public Object get() {
             return value;
         }
-
+        @Override
+        public <T> T get(Class<T> c){
+            return cast(c, value);
+        }
         @Override
         public int order() {
             return 0;
@@ -699,7 +731,10 @@ public interface TypeProvider{
         public Object get() {
             return value;
         }
-
+        @Override
+        public <T> T get(Class<T> c){
+            return cast(c, value);
+        }
         @Override
         public int order() {
             return 0;

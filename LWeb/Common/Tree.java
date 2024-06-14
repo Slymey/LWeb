@@ -112,7 +112,7 @@ public class Tree<T> implements Iterable<Node<T>>{
         private int indexInParent;
         private int size;
         private int itrI=0;
-        private List<Node<T>> children;
+        public final List<Node<T>> children;
         
         private Node(Node<T> parent, T data, int idx){
             this.parent=parent;

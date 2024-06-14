@@ -68,7 +68,7 @@ public interface Color {
                 n2=inList(s.charAt(2),hex);
                 n3=inList(s.charAt(3),hex);
                 if(n1==-1||n2==-1||n3==-1)return c;
-                c = new IntColor(255, (15-n1&0xf)*16+(15-n1&0xf), (15-n2&0xf)*16+(15-n2&0xf), (15-n3&0xf)*16+(15-n3&0xf));
+                c = new IntColor((15-n1&0xf)*16+(15-n1&0xf), (15-n2&0xf)*16+(15-n2&0xf), (15-n3&0xf)*16+(15-n3&0xf), 255);
                 break;
             case 5:
                 n1=inList(s.charAt(1),hex);
@@ -86,10 +86,10 @@ public interface Color {
                 n5=inList(s.charAt(5),hex);
                 n6=inList(s.charAt(6),hex);
                 if(n1==-1||n2==-1||n3==-1||n4==-1||n5==-1||n6==-1)return c;
-                c = new IntColor(255, 
+                c = new IntColor( 
                         (15-n1&0xf)*16+(15-n2&0xf), 
                         (15-n3&0xf)*16+(15-n4&0xf), 
-                        (15-n5&0xf)*16+(15-n6&0xf));
+                        (15-n5&0xf)*16+(15-n6&0xf),255);
                 break;
             case 9:
                 n1=inList(s.charAt(1),hex);
