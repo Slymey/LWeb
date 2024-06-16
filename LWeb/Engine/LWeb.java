@@ -3,6 +3,7 @@ package LWeb.Engine;
 import static LWeb.Common.Common.byteToLong;
 import LWeb.Common.ByteCounter;
 import static LWeb.Common.Common.fileToByte;
+import LWeb.Common.UbFunction;
 import LWeb.Engine.Util.Window;
 import static LWeb.Engine.Util.Window.processInput;
 import java.io.File;
@@ -57,6 +58,22 @@ public class LWeb {
             throw readError;
         }
         return this;
+    }
+    
+    public void addCallable(String name, UbFunction<?,?> runnable){
+        if(name==null||runnable==null||name.length()==0||name.charAt(0)=='$')return;
+        progCore.putCallable(name, runnable);
+    }
+    public <T> T getNamedAPI(String name, Class<T> type){
+        return progCore.getNamedApi(name, type);
+    }
+    public void putNamedApi(String name, Object data){
+        progCore.putNamedApi(name, data);
+    }
+    public void putCheckedNamedApi(String name, Object data){
+        Object o = progCore.getNamedApi(name, Object.class);
+        if(!data.getClass().isInstance(o))return;
+        progCore.putNamedApi(name, data);
     }
     
     private void start1(){

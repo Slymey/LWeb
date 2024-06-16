@@ -2,8 +2,11 @@ package LWeb.Compiler;
 
 import static LWeb.Common.Common.byteToFile;
 import static LWeb.Common.Common.fileToString;
+import static LWeb.Common.Common.flatten;
+import static LWeb.Common.Common.ltb;
 import static LWeb.Compiler.Parser.fullyParse;
 import static LWeb.Compiler.Parser.genBytes;
+import LWeb.Engine.LWeb;
 import java.io.File;
 
 
@@ -29,4 +32,13 @@ public class LWebc {
     public static void compileToFile(String html, String css, File output){
         byteToFile(genBytes(fullyParse(html, css)), output);
     }
+    
+    public static byte[] createDirectly(byte[]... instr){
+        return flatten(ltb(LWeb.MAGIC_BYTES), flatten(instr));
+    }
+    
+    public static void createDirectlyToFile(File output, byte[]... instr){
+        byteToFile(flatten(ltb(LWeb.MAGIC_BYTES), flatten(instr)),output);
+    }
+    
 }

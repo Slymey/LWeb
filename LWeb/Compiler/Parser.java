@@ -50,6 +50,7 @@ import LWeb.Engine.Instr.RootP.PaintP.FillP.Solid;
 import LWeb.Engine.Instr.RootP.ResourceP.*;
 import LWeb.Engine.Instr.RootP.*;
 import LWeb.Engine.LWeb;
+import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -182,6 +183,47 @@ public class Parser {
         }catch(Exception ex){
             ex.printStackTrace();
         }
+        
+        String html = "", css = "";
+        
+        
+        byte[] koda = LWebc.compile(html,css);
+        byte[] koda2 = LWebc.compile(new File("index.html"), new File("style.css"));
+        LWebc.compileToFile(html,css, new File("out.lweb"));
+        LWebc.compileToFile(new File("index.html"), new File("style.css"), new File("out.lweb"));
+        
+        
+        
+        
+        
+//        byte[] kode = LWebc.createDirectly(//primer kode
+//        Position.IntPos.getBytes(800, 556).at(0x140000),//window dimentions
+//        NamedApi.getBytes(0xff8000, "w"),//exposing the window through the api
+//        Callable.getBytes("E", 0xff8000).at(0xe00000),//window event processor
+//        Window.getBytes(0xff8000, 256, 256, 0x140000, true, "A"),
+//        Screen.getBytes(0xff8001),//screen
+//        Condition.CallbackCondition.getBytes(0xe00000).at(0xd00000),
+//        BlendMode.noBlending().at(0x2b0001),
+//        FlatColor.getBytes(0xffffff00).at(0x000003),
+//        Buffer.getBytes(0xf0000001, 75, 50, 0x0c000001),
+//        Loop.ConditionalLoop.getBytes(false, true, 
+//            true, 9, 0, 0xd00000).at(0x0a0001),//draw loop dcl
+//        BufferPtr.getBytes(0xf0000000, 0x140000),//draw buffer
+//        FlatColor.getBytes(0x00ffffff).atCond(0x000005, 0x0d0000),//conditionaly creating a color
+//        Solid.getBytes(0xf0000001, 0x000003),
+//        Box.IntBox.getBytes(25, 25, 75, 50).at(0x160000),
+//        Stack.getBytes(0xf0000001, 0xf0000000, 0x160000, 0x2b0000),
+//        OutToScreen.getBytes(0xf0000000, 0xff8000, 0xff8001),//output to screen
+//        BranchLoop.getBytes(0x0a0001),//actual draw loop call
+//        End.getBytes(0xff8000)
+//        );
+//        
+//        LWebc.createDirectlyToFile(new File("out.lweb"),//primer kode
+//            ...
+//        );
+        
+        
+        System.out.println(lognm()+""+koda+koda2);
             //conver group to be with Pi
             
 //        String s="<no<f> - . <!-- \"  gg\"\n" +

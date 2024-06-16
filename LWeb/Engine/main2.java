@@ -14,6 +14,7 @@ import LWeb.Engine.Instr.RootP.ResourceP.*;
 import java.lang.String;
 
 import static LWeb.Engine.Instr.RootP.ResourceP.BlendMode.BlendModes.*;
+import java.io.File;
 import java.net.URL;
 import java.net.URLClassLoader;
 
@@ -70,22 +71,9 @@ public class main2 {
 //                     //8,  0,(byte)0xff,0,0,
 //                     18, 0,10,0,1,
 //                     17};//end
-//    /*
-//    static Object q[]={CoreOps.BUFFER, 0, 1920, 1080,
-//                       CoreOps.RESOURCE, "String", 17, "Hello world!",
-//                       CoreOps.RESOURCE, "Font-face", 0, "",
-//                       CoreOps.BUFFER, 3, 331,  50,
-//                       CoreOps.Paint.STRING, 3, 0,  1, 10, 20,
-//                       CoreOps.BUFFER, 1, 150,  100,
-//                       CoreOps.Paint.Fill.SOLID, 1, 0xff000000,
-//                       CoreOps.STACK, 1, 0, 50, 50,
-//                       CoreOps.BUFFER, 2, 150,  100,
-//                       CoreOps.Paint.Fill.SOLID, 1, 0x00ff0000,
-//                       CoreOps.STACK, 2, 0, 100, 50,
-//                       CoreOps.END
-//    };*/
 //    //</editor-fold>
 //    
+    
     
     
     static byte f[]= flatten(ltb(LWeb.MAGIC_BYTES),
@@ -176,6 +164,32 @@ public class main2 {
         
         LWeb lw = new LWeb(f);
         lw.start();
+        
+        LWeb lw2 = new LWeb(new File("dat.lweb"));
+        lw2.start();
+        
+        
+        
+        lw2.start();
+        lw.addCallable("nekaj", (Object... o)->{
+            System.out.println("Zivjo!");
+            //funkcija mora nekaj vrniti
+            //za pravilno delovanje
+            return null;
+        });
+        
+        lw.addCallable("vracam", (Object... o)->{
+            return "Zivjo!";
+        });
+        
+        String podatek = lw.getNamedAPI("podatek", String.class);
+        
+        lw.putNamedApi("drugi", 25.4);
+        
+        lw.putCheckedNamedApi("tretji", "stvari");
+        
+        
+        System.out.println(lognm()+""+podatek);
         //System.out.println(Core.resources.toString());
         
         
