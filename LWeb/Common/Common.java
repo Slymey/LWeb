@@ -1828,6 +1828,15 @@ public class Common {
         }
         return s1;
     }
+    public static void byteToFile(byte[] byteArray, File filePath){
+        try (FileOutputStream fos = new FileOutputStream(filePath)) {
+            fos.write(byteArray);
+        }catch(FileNotFoundException ex){
+            ex.printStackTrace();
+        }catch(IOException ex){
+            ex.printStackTrace();
+        }
+    }
     
     public static <T> T[] na(T[][][] t, int size){
         return (T[]) java.lang.reflect.Array.newInstance(t.getClass().getComponentType().getComponentType().getComponentType(), size);

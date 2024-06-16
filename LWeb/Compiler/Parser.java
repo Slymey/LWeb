@@ -176,7 +176,7 @@ public class Parser {
         sopl(tree);
         byte[] b = genBytes(tree);
         sopl(ats(b));
-        LWeb l = new LWeb(b);
+        LWeb l = new LWeb(LWebc.compile(s,sc));
         try{
             l.start();
         }catch(Exception ex){
@@ -907,6 +907,7 @@ public class Parser {
         el.asm.inits.add(in);
         int x = el.m_left;//castpr(int.class, l.get("o-left"));
         int y = el.m_bottom;//castpr(int.class, l.get("o-bottom"));
+        System.out.println(lognm()+" rtc: "+x+" "+y);
         in = new Instr(Window.getBytes(3, x, y, 7, true, "A"),vpi(3, 7), vpi(2, 14));
         el.asm.inits.add(in);
         in = new Instr(Condition.CallbackCondition.getBytes(2).at(4),vpi(2, 4), vpi(10, 5));

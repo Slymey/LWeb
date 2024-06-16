@@ -29,7 +29,7 @@ public class StylePropertyList {
                 l.m_bottom += (int)(double)p.data.get(double.class);
                 l.m_bottom += l.previous.m_bottom + l.previous.height;
                 
-            }else if(l.parent!=null){
+            }else{
                 l.m_bottom += (int)(double)p.data.get(double.class);
                 
             }
