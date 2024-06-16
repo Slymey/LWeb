@@ -16,7 +16,7 @@ public class Shader {
     
     public Shader(){
         program = glCreateProgram();
-        basePath="src/LWeb/Engine/Shaders/";
+        basePath="LWeb/Engine/Shaders/";
     }
     public Shader(String path){
         program = glCreateProgram();

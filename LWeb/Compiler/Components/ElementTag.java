@@ -1,5 +1,6 @@
 package LWeb.Compiler.Components;
 
+import LWeb.Common.Color;
 import LWeb.Compiler.Components.Attribute.AttributeEl;
 import LWeb.Compiler.Components.ClassList.Activity;
 import LWeb.Common.Pair;
@@ -28,6 +29,26 @@ public class ElementTag {
     public AsmGroup asm;
     //public ElementNode parent = null;
     //HashMap<String,StyleProperty> styles = new HashMap<>();
+    public ElementTag parent;
+    public ElementTag previous;
+    public int width;
+    public int height;
+    public int d_width;
+    public int d_height;
+    public int r_width;
+    public int r_height;
+    
+    public int m_left;
+    public int m_bottom;
+    public int m_top;
+    public int m_right;
+    
+    public int p_left;
+    public int p_bottom;
+    
+    public Color background_color;
+    
+    
     
     public ElementTag(String tag, boolean textOnly){
         this.tag=tag;
@@ -38,6 +59,12 @@ public class ElementTag {
         this.textOnly=textOnly;
         this.closingType=clt;
     }
+    
+    
+    
+    
+    
+    //<editor-fold defaultstate="collapsed" desc="class/attr">
     public void addClass(String cl, Activity ac){
         classes.put(ClassList.makeClass(cl), ac);
     }
@@ -117,7 +144,9 @@ public class ElementTag {
     public void insertNode(int index, ElementNode element){
         nodes.add(index, element);
     }*/
-
+    //</editor-fold>
+    
+    
     
     @Override
     public String toString(){

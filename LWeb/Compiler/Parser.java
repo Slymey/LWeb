@@ -120,11 +120,6 @@ public class Parser {
 //        Tree<ElementTag> tree = buildTree(doc);
         //sopl(tree);
         //sopl(tree.root.findFirstNode((ElementTag e1)->{return "right".equals(e1.id)?0:-1;}, 0, 0));
-        s=        "<div>"
-                + "    "
-                + "</div>";
-        
-        
         String sc=" #title{height:12px !priority:-2;"
                 + "width: 23em !priority:-12;}"
                 + "div:not(:has(#tocke)){"
@@ -137,16 +132,35 @@ public class Parser {
                 + " margin:256px;"
                 + "}";
         
+        
+        
+        
+        
+        s=        "<div>"/*
+                + "     <div id = 'a'>"
+                + "     </div>"*/   
+                + "</div>";
+        
+        
+        
         sc =      "root{"
                 + " width:800px;"
                 + " height:600px;"
                 + " margin:256px;"
-                + "}"
+                + "}"/*
+                + "#a{"
+                + " width:100px;"
+                + " height:80px;"
+                + " margin:100px;"
+                + " background-color:#ff00ff;"
+                + "}"*/
                 + "div{"
                 + " width:100px;"
                 + " height:80px;"
+                + " margin:100px;"
                 + " background-color:#ff00ff;"
-                + "}";
+                + "}"
+                ;
 //        
 //        setTMax(10);
 //        Pair<String[], TokenType[]> tc = tokenize(sc);
@@ -160,8 +174,16 @@ public class Parser {
         
         AsmGroup tree = fullyParse(s, sc);
         sopl(tree);
-        //conver group to be with Pi
-        
+        byte[] b = genBytes(tree);
+        sopl(ats(b));
+        LWeb l = new LWeb(b);
+        try{
+            l.start();
+        }catch(Exception ex){
+            ex.printStackTrace();
+        }
+            //conver group to be with Pi
+            
 //        String s="<no<f> - . <!-- \"  gg\"\n" +
 //"<div ibn.in class='urnv %ioerbm &ierpbm nirm' uniin-o  = >  /* ///* \"z\\\"hh\" d onono='-3.2e-4hb\t\t\u3554ouerbn\"bmrbm3' >\n" +
 //"<*// */  --> < / uib>  */div> /kbn\\/u\\nv/i uobn";
@@ -178,8 +200,8 @@ public class Parser {
 //        sopl(ats(t.getFirst()));
 //        sopl(flatten(t.first).length());
 //        sopl(ats(t.getSecond()));
-        
-        //Main.main(null);
+
+//Main.main(null);
         
         
         
@@ -187,7 +209,7 @@ public class Parser {
     
     
     public static AsmGroup fullyParse(String html, String css){
-        return packAsm(genAsmTree(genLayout(mergeTreeCss(fullyParseHtml(html), fullyParseCss(css)))).root);
+        return packAsm(genAsmTree(genLayout2(mergeTreeCss(fullyParseHtml(html), fullyParseCss(css)).root)));
     }
     public static ArrayList<Pair<ArrayList<Selector>, LinkedHashSet<Property>>> fullyParseCss(String s){
         return css(group(tokenize(s),DQ_STRING,SQ_STRING, /*RX_STRING,  handle later*/SL_COMMENT, ML_COMMENT));
@@ -646,14 +668,39 @@ public class Parser {
     }
 //</editor-fold>
     
+    public static Node<ElementTag> genLayout2(Node<ElementTag> nd){
+        
+        for(int i = 0; i<nd.children.size(); i++){
+            Node<ElementTag> cl = nd.children.get(i);
+            cl.data.parent = nd.data;
+            if(i!=0){
+                cl.data.previous =  nd.children.get(i-1).data;
+            }
+            genLayout2(cl);
+        }
+        for(Pair<ArrayList<ClassCondition>, LinkedHashSet<Property>> i:nd.data.style){
+            for(Property p:i.second){
+                if(p.from.layouts==null)continue;
+                p.from.layouts.accept(p, nd.data);
+            }
+            break;//TODO
+
+        }
+        
+    
+        return nd;
+    }
+    
+    //<editor-fold defaultstate="collapsed" desc="old genLayout">
     public static Tree<ElementTag> genLayout(Tree<ElementTag> tree){
         for(Node<ElementTag> el:tree){
             el.data.layout.put("parent", el.getParent()!=null?el.getParent().data:null);
+            el.data.parent = el.getParent()!=null?el.getParent().data:null;
             HashMap<String, Object> l = el.data.layout;
             for(Pair<ArrayList<ClassCondition>, LinkedHashSet<Property>> i:el.data.style){
                 for(Property p:i.second){
                     if(p.from.layouts==null)continue;
-                    p.from.layouts.accept(p, l);
+                    p.from.layouts.accept(p, el.data);
                 }
                 break;//TODO
                 
@@ -663,56 +710,61 @@ public class Parser {
         }
         return tree;
     }
-    
+    //</editor-fold>
       
     
-    public static Tree<ElementTag> genAsmTree(Tree<ElementTag> tree){
-        for(Node<ElementTag> nd:tree){
-            ElementTag el = nd.data;
-            HashMap<String, Object> l = el.layout;
-            el.asm=new AsmGroup();
-            if(el.tag.equals("root")){
-                genAsmRoot(el);
-                continue;
-            }
-            System.out.println(lognm()+""+el.tag+": "+l);
-            
-            int h = castpr(int.class, l.get("o-height"));
-            int w = castpr(int.class, l.get("o-width"));
-            Instr in = new Instr(Buffer.getBytes(1, w, h, 2),vpi(1,2), vpi(1,13));
-            el.asm.inits.add(in);
-
-            Color col = castpr(Color.class, l.get("background-color"));
-            if(col!=null){
-                in = new Instr(FlatColor.getBytes(col).at(3),vpi(3),vpi(5));
-                el.asm.inits.add(in);
-                in = new Instr(Solid.getBytes(1, 3),vpi(1,3), vpi(3, 7));
-                el.asm.runs.add(in);
-            }
-            int x = castpr(int.class, l.get("o-left"));
-            int y = castpr(int.class, l.get("o-top"));
-            in = new Instr(Box.IntBox.getBytes(x, y, w, h).at(4),vpi(4),vpi(5));
-            el.asm.inits.add(in);
-
-            in = new Instr(BlendMode.noBlending().at(5),vpi(5),vpi(5));
-            el.asm.inits.add(in);
-
-            in = new Instr(Stack.getBytes(1, -1, 4, 5),vpi(1,-1,4,5),vpi(1,5,9,13));
-            el.asm.enders.add(in);
-            
-            el.asm.inind = vpi();//
-            el.asm.outind = vpi();
-            
-            /*
-            Buffer.getBytes(0xf0000001, 75, 50, 0x0c000001),
-            Solid.getBytes(0xf0000001, 0x000003),
-            Box.IntBox.getBytes(25, 25, 75, 50).at(0x160000),
-            Stack.getBytes(0xf0000001, 0xf0000000, 0x160000, 0x2b0000),
-            */
+    public static Node<ElementTag> genAsmTree(Node<ElementTag> nd){
+        
+        for(int i = 0; i<nd.children.size(); i++){
+            Node<ElementTag> cl = nd.children.get(i);
+            genAsmTree(cl);
         }
         
         
-        return tree;
+        ElementTag el = nd.data;
+        HashMap<String, Object> l = el.layout;
+        el.asm=new AsmGroup();
+        if(el.tag.equals("root")){
+            genAsmRoot(el);
+            return nd;
+        }
+        System.out.println(lognm()+""+el.tag+": "+l);
+
+        int h = el.d_height;//castpr(int.class, l.get("o-height"));
+        int w = el.d_width;//castpr(int.class, l.get("o-width"));
+        Instr in = new Instr(Buffer.getBytes(1, w, h, 2),vpi(1,2), vpi(1,13));
+        el.asm.inits.add(in);
+
+        Color col = el.background_color;//castpr(Color.class, l.get("background-color"));
+        if(col!=null){
+            in = new Instr(FlatColor.getBytes(col).at(3),vpi(3),vpi(5));
+            el.asm.inits.add(in);
+            in = new Instr(Solid.getBytes(1, 3),vpi(1,3), vpi(3, 7));
+            el.asm.runs.add(in);
+        }
+        int x = el.m_left;//castpr(int.class, l.get("o-left"));
+        int y = el.m_bottom;//castpr(int.class, l.get("o-bottom"));
+        in = new Instr(Box.IntBox.getBytes(x, y, w, h).at(4),vpi(4),vpi(5));
+        el.asm.inits.add(in);
+
+        in = new Instr(BlendMode.noBlending().at(5),vpi(5),vpi(5));
+        el.asm.inits.add(in);
+
+        in = new Instr(Stack.getBytes(1, -1, 4, 5),vpi(1,-1,4,5),vpi(1,5,9,13));
+        el.asm.enders.add(in);
+
+        el.asm.inind = vpi();//
+        el.asm.outind = vpi();
+
+        /*
+        Buffer.getBytes(0xf0000001, 75, 50, 0x0c000001),
+        Solid.getBytes(0xf0000001, 0x000003),
+        Box.IntBox.getBytes(25, 25, 75, 50).at(0x160000),
+        Stack.getBytes(0xf0000001, 0xf0000000, 0x160000, 0x2b0000),
+        */
+        
+        
+        return nd;
     }
     
     public static AsmGroup packAsm(Node<ElementTag> root){
@@ -727,7 +779,6 @@ public class Parser {
                 if(id<0)continue;
                 cmax=Math.max(cmax, id);
             }
-
         }
         ag.inits.addAll(root.data.asm.inits);
 
@@ -739,7 +790,6 @@ public class Parser {
                 if(id<0)continue;
                 cmax=Math.max(cmax, id);
             }
-
         }
         ag.runs.addAll(root.data.asm.runs);
 
@@ -748,14 +798,12 @@ public class Parser {
                 if(id<0)continue;
                 cmax=Math.max(cmax, id);
             }
-
         }
         ag.enders.addAll(0, root.data.asm.enders);
         index += cmax;
         cmax=0;
         
         for(Node<ElementTag> nd:root.children){
-            
             AsmGroup ce = packAsm(nd);
             for(Instr is:ce.inits){
                 for(int id:is.ioints){
@@ -763,7 +811,6 @@ public class Parser {
                     cmax=Math.max(cmax, id);
                     is.replace(id, index+id);
                 }
-                
             }
             ag.inits.addAll(ce.inits);
             
@@ -773,7 +820,6 @@ public class Parser {
                     cmax=Math.max(cmax, id);
                     is.replace(id, index+id);
                 }
-                
             }
             ag.runs.addAll(ce.runs);
             
@@ -787,15 +833,12 @@ public class Parser {
                     cmax=Math.max(cmax, id);
                     is.replace(id, index+id);
                 }
-                
             }
             ag.enders.addAll(0, ce.enders);
             System.out.println(lognm()+""+cmax);
             index += cmax;
             cmax=0;
         }
-        
-        
         return ag;
     }
     
@@ -803,7 +846,32 @@ public class Parser {
         ArrayList<Byte> al = new ArrayList<>();
         al.addAll(po(ltb(LWeb.MAGIC_BYTES)));
         
+        int instrNum = 0;
         
+        for(Instr is:ag.inits){
+            int id = inList(-2, is.ioints);
+            if(id!=-1){
+                is.replace(-2, instrNum);
+            }
+            instrNum++;
+            al.addAll(po(is.bytes));
+        }
+        for(Instr is:ag.runs){
+            int id = inList(-2, is.ioints);
+            if(id!=-1){
+                is.replace(-2, instrNum);
+            }
+            instrNum++;
+            al.addAll(po(is.bytes));
+        }
+        for(Instr is:ag.enders){
+            int id = inList(-2, is.ioints);
+            if(id!=-1){
+                is.replace(-2, instrNum);
+            }
+            instrNum++;
+            al.addAll(po(is.bytes));
+        }
         
         return op(al);
     }
@@ -831,14 +899,14 @@ public class Parser {
     
     public static void genAsmRoot(ElementTag el){
         HashMap<String, Object> l = el.layout;
-        int h = castpr(int.class, l.get("o-height"));
-        int w = castpr(int.class, l.get("o-width"));
+        int h = el.d_height;//castpr(int.class, l.get("o-height"));
+        int w = el.d_width;//castpr(int.class, l.get("o-width"));
         Instr in = new Instr(Position.IntPos.getBytes(w, h).at(7),vpi(7), vpi(5));
         el.asm.inits.add(in);
         in = new Instr(Callable.getBytes("E", 3).at(2),vpi(3, 2), vpi(18, 5));
         el.asm.inits.add(in);
-        int x = castpr(int.class, l.get("o-left"));
-        int y = castpr(int.class, l.get("o-top"));
+        int x = el.m_left;//castpr(int.class, l.get("o-left"));
+        int y = el.m_bottom;//castpr(int.class, l.get("o-bottom"));
         in = new Instr(Window.getBytes(3, x, y, 7, true, "A"),vpi(3, 7), vpi(2, 14));
         el.asm.inits.add(in);
         in = new Instr(Condition.CallbackCondition.getBytes(2).at(4),vpi(2, 4), vpi(10, 5));

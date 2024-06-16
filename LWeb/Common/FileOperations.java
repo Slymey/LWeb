@@ -1,6 +1,7 @@
 package LWeb.Common;
 
 import static LWeb.Common.Common.lognm;
+import static LWeb.Common.Common.readFileAsBytes;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -16,7 +17,7 @@ public class FileOperations {
     public static void main(String[] args) {
         
         
-        System.out.println(lognm()+""+loadAsString("src/LWeb/Engine/Shaders/sh1.glsl"));
+        System.out.println(lognm()+""+loadAsString("LWeb/Engine/Shaders/sh1.glsl"));
     }
     public FileOperations(String path){
         if(path.charAt(path.length()-1)!='/')path+='/';
@@ -35,9 +36,11 @@ public class FileOperations {
                 if(r!=-1){
                     out = new String(cbuf);
                 }
-            }else
-                System.out.println(lognm()+" no file: "+file);
+            }else{}
+            //System.out.println(lognm()+""+file);
+            return new String(readFileAsBytes(file));
         } catch (FileNotFoundException ex) {
+            System.out.println(lognm()+" no file: "+file);
             ex.printStackTrace();
         } catch (IOException ex) {
             ex.printStackTrace();

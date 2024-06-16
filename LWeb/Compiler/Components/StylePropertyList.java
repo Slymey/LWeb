@@ -16,20 +16,31 @@ public class StylePropertyList {
     static ArrayList<StyleProperty> list = sg(()->{
         ArrayList<StyleProperty> al= new ArrayList<>();
         list=al;
-        al.add(new StyleProperty("margin-top", new PropLength(0,"px"), null, (Property p, HashMap<String, Object> l)->{
-            addlint(l, "o-top", p);
+        al.add(new StyleProperty("margin-top", new PropLength(0,"px"), null, (Property p, ElementTag l)->{
 //            int top = getl(l, "o-top", int.class);
 //            top += p.data.get(int.class);
 //            l.put("o-top", top);
         }));
-        al.add(new StyleProperty("margin-right", new PropLength(0,"px"), null, (Property p, HashMap<String, Object> l)->{
+        al.add(new StyleProperty("margin-right", new PropLength(0,"px"), null, (Property p, ElementTag l)->{
             
         }));
-        al.add(new StyleProperty("margin-bottom", new PropLength(0,"px"), null, (Property p, HashMap<String, Object> l)->{
+        al.add(new StyleProperty("margin-bottom", new PropLength(0,"px"), null, (Property p, ElementTag l)->{
+            if(l.previous!=null){
+                l.m_bottom += (int)(double)p.data.get(double.class);
+                l.m_bottom += l.previous.m_bottom + l.previous.height;
+                
+            }else if(l.parent!=null){
+                l.m_bottom += (int)(double)p.data.get(double.class);
+                
+            }
+            
+            
+            //addlint(l, "o-bottom", p);
             
         }));
-        al.add(new StyleProperty("margin-left", new PropLength(0,"px"), null, (Property p, HashMap<String, Object> l)->{
-            addlint(l, "o-left", p);
+        al.add(new StyleProperty("margin-left", new PropLength(0,"px"), null, (Property p, ElementTag l)->{
+            l.m_left += (int)(double)p.data.get(double.class);
+            //addlint(l, "o-left", p);
         }));
         al.add(new StyleProperty("margin", new PropLength(0,"px"), sg(()->{
             //<editor-fold defaultstate="collapsed" desc="cast">
@@ -69,17 +80,24 @@ public class StylePropertyList {
             return cast;
             //</editor-fold>
         }), null));
-        al.add(new StyleProperty("width", new PropLength(0,"px"), null, (Property p, HashMap<String, Object> l)->{
-            addlint(l, "o-width", p);
-            l.put("c-width", (int)(double)p.data.get(double.class));
+        al.add(new StyleProperty("width", new PropLength(0,"px"), null, (Property p, ElementTag l)->{
+            l.d_width += (int)(double)p.data.get(double.class);
+            
+            l.width = (int)(double)p.data.get(double.class);
+            //addlint(l, "o-width", p);
+            //l.put("c-width", (int)(double)p.data.get(double.class));
         }));
-        al.add(new StyleProperty("height", new PropLength(0,"px"), null, (Property p, HashMap<String, Object> l)->{
-            addlint(l, "o-height", p);
-            l.put("c-height", (int)(double)p.data.get(double.class));
+        al.add(new StyleProperty("height", new PropLength(0,"px"), null, (Property p, ElementTag l)->{
+            l.d_height += (int)(double)p.data.get(double.class);
+            
+            l.height += (int)(double)p.data.get(double.class);
+            //addlint(l, "o-height", p);
+            //l.put("c-height", (int)(double)p.data.get(double.class));
         }));
-        al.add(new StyleProperty("background-color", new PropColor(0), null, (Property p, HashMap<String, Object> l)->{
+        al.add(new StyleProperty("background-color", new PropColor(0), null, (Property p, ElementTag l)->{
+            l.background_color = p.data.get(Color.class);
             System.out.println(lognm()+""+p);
-            l.put("background-color", p.data.get(Color.class));
+            //l.put("background-color", p.data.get(Color.class));
         }));
         
         return al;

@@ -1,5 +1,6 @@
 package LWeb.Engine.Util;
 
+import static LWeb.Common.Common.getCachedFilePath;
 import static LWeb.Common.Common.lognm;
 import static LWeb.Common.Pair.Pair;
 import LWeb.Common.Pair;
@@ -8,14 +9,18 @@ import LWeb.Engine.Instr.RootP.ResourceP.Position.IntPos;
 import LWeb.Engine.Util.GLEU.FontPainter;
 import LWeb.Engine.Util.GLEU.FrameBuffer;
 import java.io.File;
+import java.io.IOException;
 import org.lwjgl.*;
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.*;
 import org.lwjgl.system.*;
 
 import java.nio.*;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import static org.lwjgl.glfw.Callbacks.*;
 import static org.lwjgl.glfw.GLFW.*;
@@ -67,10 +72,21 @@ public class Window implements Runnable{
             if(!first){
                 throw e;
             }
-            File fl = new File("src/LWeb/Engine/Util/Native");
-            System.load(fl.getAbsolutePath()+"\\opengl32.dll");
-            System.out.println(lognm()+"Switching to software renderer");
-            loop(false);
+            try{
+                Path sogl = null;
+                if(System.getProperty("sun.arch.data.model").equals("32")){
+                    sogl = getCachedFilePath("LWeb/Engine/Util/Native/x86/opengl32.dll");
+                }else{
+                    sogl = getCachedFilePath("LWeb/Engine/Util/Native/x64/opengl32.dll");
+                }
+                //System.out.println(lognm()+""+sogl);
+                System.load(sogl.toString());
+                System.out.println(lognm()+"Switching to software renderer");
+                loop(false);
+            }catch(IOException ex){
+                Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
+                return;
+            }
             
         }
     }

@@ -20,7 +20,7 @@ public class StyleProperty {
     public final String name;
     final TypeProvider type;
     final BiFunction<TypeProvider[],Integer,Property[]> cast;//mapings for eg, border: 10px solid red -> border-width:10px, ...
-    public final BiConsumer<Property, HashMap<String, Object>> layouts;
+    public final BiConsumer<Property, ElementTag> layouts;
     
     
     
@@ -30,7 +30,7 @@ public class StyleProperty {
      * border, width, ...
      *
      */
-    public <T> StyleProperty(String name, TypeProvider type, BiFunction<TypeProvider[],Integer,Property[]> reCasts, BiConsumer<Property, HashMap<String, Object>> layouts){
+    public <T> StyleProperty(String name, TypeProvider type, BiFunction<TypeProvider[],Integer,Property[]> reCasts, BiConsumer<Property, ElementTag> layouts){
         this.name=name;
         this.type=type;
         this.cast=reCasts;

@@ -11,17 +11,25 @@ import LWeb.Engine.LWeb;
 import LWeb.Engine.Util.GLEU.Shader;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.security.ProtectionDomain;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -33,6 +41,8 @@ import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import static org.lwjgl.opengl.GL11.GL_DST_ALPHA;
@@ -2060,14 +2070,120 @@ public class Common {
         return cast(c, o);
     }
     
+    
+    private static final HashMap<String, byte[]> jarFileCache = new HashMap<>();
+    private static final Path CACHE_DIR = Paths.get(System.getProperty("java.io.tmpdir"), "LWeb_cache");
+    
+    public static byte[] readFileAsBytes(String fileToRead) throws IOException {
+        if (isRunningFromJar()) {
+            return readFileFromJarAsBytes(fileToRead);
+        } else {
+            return readFileFromClassPathAsBytes(fileToRead);
+        }
+    }
+
+    private static boolean isRunningFromJar() {
+        ProtectionDomain protectionDomain = LWeb.class.getProtectionDomain();
+        String codeSourceLocation = protectionDomain.getCodeSource().getLocation().getPath();
+        return codeSourceLocation.endsWith(".jar");
+    }
+
+    private static byte[] readFileFromJarAsBytes(String fileToRead) throws IOException {
+        Path cacheFilePath = CACHE_DIR.resolve(fileToRead);
+
+        // Check if file is already cached on disk
+        if (Files.exists(cacheFilePath)) {
+            return Files.readAllBytes(cacheFilePath);
+        }
+
+        String jarFilePath = getJarFilePath();
+
+        try (JarFile jar = new JarFile(jarFilePath)) {
+            JarEntry entry = jar.getJarEntry(fileToRead);
+            if (entry == null) {
+                throw new FileNotFoundException("File " + fileToRead + " not found in JAR file: " + jarFilePath);
+            }
+
+            // Create cache directories if they don't exist
+            Files.createDirectories(cacheFilePath.getParent());
+
+            try (InputStream inputStream = jar.getInputStream(entry);
+                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+                byte[] buffer = new byte[1024];
+                int bytesRead;
+                while ((bytesRead = inputStream.read(buffer)) != -1) {
+                    outputStream.write(buffer, 0, bytesRead);
+                }
+                byte[] fileBytes = outputStream.toByteArray();
+
+                // Cache the file bytes to disk
+                Files.write(cacheFilePath, fileBytes);
+
+                return fileBytes;
+            }
+        }
+    }
+
+    private static byte[] readFileFromClassPathAsBytes(String fileToRead) throws IOException {
+        try (InputStream inputStream = LWeb.class.getClassLoader().getResourceAsStream(fileToRead);
+             ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+            if (inputStream == null) {
+                throw new FileNotFoundException("File " + fileToRead + " not found in classpath.");
+            }
+
+            byte[] buffer = new byte[1024];
+            int bytesRead;
+            while ((bytesRead = inputStream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, bytesRead);
+            }
+            return outputStream.toByteArray();
+        }
+    }
+
+    private static String getJarFilePath() throws IOException {
+        ProtectionDomain protectionDomain = LWeb.class.getProtectionDomain();
+        File jarFile = new File(protectionDomain.getCodeSource().getLocation().getPath());
+
+        if (!jarFile.exists()) {
+            throw new FileNotFoundException("JAR file not found: " + jarFile.getPath());
+        }
+
+        return jarFile.getAbsolutePath();
+    }
+    
+    public static Path getCachedFilePath(String fileToRead) throws IOException {
+        Path cacheFilePath = CACHE_DIR.resolve(fileToRead);
+
+        // Check if file is already cached on disk
+        if (!Files.exists(cacheFilePath)) {
+            // Copy file from JAR or classpath to cache
+            byte[] fileBytes = readFileAsBytes(fileToRead);
+            Files.createDirectories(cacheFilePath.getParent());
+            Files.write(cacheFilePath, fileBytes);
+        }
+
+        return cacheFilePath;
+    }
+    
+    
+    
+    
+    
     //testing ground
     static int map[] = {-1, GL_ZERO, GL_ONE, GL_SRC_COLOR, GL_ONE_MINUS_SRC_COLOR, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_DST_ALPHA, GL_ONE_MINUS_DST_ALPHA, GL_DST_COLOR, GL_ONE_MINUS_DST_COLOR, GL_SRC_ALPHA_SATURATE, GL_CONSTANT_COLOR, GL_ONE_MINUS_CONSTANT_COLOR, GL_CONSTANT_ALPHA, GL_ONE_MINUS_CONSTANT_ALPHA};
-    public static void main(String[] args) {
+    static String h;
+    
+    public static void main(String[] args) throws IOException {
         
         Object o = null;
         Object d = 1341.0;
         //double i = cast(double.class, d);
-        System.out.println(lognm()+""+((double)d));
+        System.out.println(lognm()+""+getJarFilePath());
+        System.out.println(lognm()+""+CACHE_DIR.resolve("gggg").toFile());
+        System.out.println(lognm()+""+CACHE_DIR.resolve("gggg").toFile().exists());
+        System.out.println(lognm()+""+getCachedFilePath("LWeb/Engine/Shaders/basic.frag"));
+        System.out.println(lognm()+""+new String(readFileAsBytes("LWeb/Engine/Shaders/basic.frag")));
+        System.out.println(lognm()+""+(System.getProperty("sun.arch.data.model").equals("32")));
         
         
     }

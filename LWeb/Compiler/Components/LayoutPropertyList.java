@@ -14,12 +14,12 @@ public class LayoutPropertyList {
         HashSet<LayoutProperty> al= new HashSet<>();
         list=al;
         al.add(new LayoutProperty("o-left"));
-        al.add(new LayoutProperty("o-top"));
+        al.add(new LayoutProperty("o-bottom"));
         al.add(new LayoutProperty("o-width"));
         al.add(new LayoutProperty("o-height"));
         al.add(new LayoutProperty("parent"));
         al.add(new LayoutProperty("c-left"));
-        al.add(new LayoutProperty("c-top"));
+        al.add(new LayoutProperty("c-bottom"));
         al.add(new LayoutProperty("c-width"));
         al.add(new LayoutProperty("c-height"));
         al.add(new LayoutProperty("text"));

@@ -14,6 +14,8 @@ import LWeb.Engine.Instr.RootP.ResourceP.*;
 import java.lang.String;
 
 import static LWeb.Engine.Instr.RootP.ResourceP.BlendMode.BlendModes.*;
+import java.net.URL;
+import java.net.URLClassLoader;
 
 
 public class main2 {
@@ -160,8 +162,14 @@ public class main2 {
         
 //        System.out.println(lognm()+""+ats(f));
         
-        
-        
+        //org.lwjgl.system.Library.loadSystem();
+        System.out.println("Working Directory = " + System.getProperty("user.dir"));
+        System.out.println("Natives Directory = " + System.getProperty("java.library.path"));
+        ClassLoader cl = ClassLoader.getSystemClassLoader();
+        URL[] urls = ((URLClassLoader)cl).getURLs();
+        for(URL url: urls){
+            System.out.println(url.getFile());
+        }
         
         
         
