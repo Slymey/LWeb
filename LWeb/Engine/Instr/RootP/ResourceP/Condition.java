@@ -3,6 +3,7 @@ package LWeb.Engine.Instr.RootP.ResourceP;
 import static LWeb.Common.Common.byteToInt;
 import static LWeb.Common.Common.lognm;
 import LWeb.Common.ByteCounter;
+import static LWeb.Common.Common.ats;
 import static LWeb.Common.Common.bytesToInt;
 import static LWeb.Common.Common.ib;
 import static LWeb.Common.Common.istb;
@@ -33,7 +34,9 @@ public abstract class Condition {
             }
             case 4:{
                 int len = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+//                System.out.println(lognm()+"cac: "+len);
                 int cds[] =  bytesToInt(Arrays.copyOfRange(i.o, i.c, i.incp(len*4)));
+//                System.out.println(lognm()+"cacs: "+ats(cds));
                 return new ChainAndCondition(c, cds);
             }
             case 5:{
@@ -113,7 +116,7 @@ public abstract class Condition {
     public static class ChainAndCondition  extends Condition{
         public static ResourceInst.RByteCol getBytes(int... Rconditions){
             byte r[] = istb(Rconditions);
-            return new ResourceInst.RByteCol(11,  ib(4), itb(r.length), r);
+            return new ResourceInst.RByteCol(11,  ib(4), itb(Rconditions.length), r);
         }
         int[] cdss;
         Core c;
@@ -132,7 +135,7 @@ public abstract class Condition {
     public static class ChainOrCondition  extends Condition{
         public static ResourceInst.RByteCol getBytes(int... Rconditions){
             byte r[] = istb(Rconditions);
-            return new ResourceInst.RByteCol(11,  ib(5), itb(r.length), r);
+            return new ResourceInst.RByteCol(11,  ib(5), itb(Rconditions.length), r);
         }
         int[] cdss;
         Core c;

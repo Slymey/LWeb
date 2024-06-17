@@ -3,11 +3,16 @@ package LWeb.Engine;
 import static LWeb.Common.Common.byteToLong;
 import LWeb.Common.ByteCounter;
 import static LWeb.Common.Common.fileToByte;
+import static LWeb.Common.Common.getTopClass;
+import static LWeb.Common.Common.readFileAsBytes;
 import LWeb.Common.UbFunction;
 import LWeb.Engine.Util.Window;
 import static LWeb.Engine.Util.Window.processInput;
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 
@@ -29,7 +34,11 @@ public class LWeb {
         this.setup(fileToByte(file));
     }
     public LWeb(String file){
-        this.setup(fileToByte(file));
+        try{
+            this.setup(readFileAsBytes(file));
+        }catch(IOException ex){
+            Logger.getLogger(LWeb.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
 
@@ -38,6 +47,7 @@ public class LWeb {
     
     
     public LWeb setup(byte [] bytes){
+        getTopClass();
         progCore = new Core();
         ByteCounter i = new ByteCounter(bytes, 0);
         

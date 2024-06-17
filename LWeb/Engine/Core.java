@@ -36,6 +36,8 @@ public class Core {
     public Position creenSize;
     
     public Runnable[] byteToDraw(ByteCounter i){
+        
+        
         progThread = Thread.currentThread();
         ArrayList<Runnable> rn=new ArrayList<>();        
         while(!i.ended){

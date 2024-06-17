@@ -10,9 +10,10 @@ import java.util.function.Supplier;
 
 
 public class Root {
+    static int n =0;
     public static Runnable getInst(ByteCounter i, Core c){
         byte inst = i.next();
-//        System.out.println(lognm()+""+inst+" "+i.c);
+//        System.out.println(lognm()+""+inst+" "+i.c+" "+(n++));
         return sg((Supplier<Runnable>[])new Supplier[]{
                 ()->None.getInst(i, c),     //0
                 ()->Buffer.getInst(i, c),      //1

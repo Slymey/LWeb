@@ -7,6 +7,7 @@ import static LWeb.Common.Triple.*;
 import LWeb.Compiler.Main.*;
 import LWeb.Common.Range.Range;
 import LWeb.Engine.Constants;
+import LWeb.Engine.Core;
 import LWeb.Engine.LWeb;
 import LWeb.Engine.Util.GLEU.Shader;
 import java.awt.image.BufferedImage;
@@ -32,6 +33,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -73,6 +76,7 @@ public class Common {
     private static Thread safetyNetSource=null;
     private static int terminatorCount=0;
     private static int terminatorMax=1000;
+    public static Class rootClass;
     public enum Troolean{False,None,True}
     
     //+ColorMixersNoAlpha +ColorMixersAlphaMultiply +ColorMixersComposite
@@ -89,6 +93,18 @@ public class Common {
         return ""+ste;
     }
     
+    public static Class getTopClass(){
+        if(rootClass==null){
+            StackTraceElement[] st = Thread.currentThread().getStackTrace();
+            try{
+                rootClass = Class.forName(st[st.length-1].getClassName());
+            }catch(ClassNotFoundException ex){
+                ex.printStackTrace();
+                //Logger.getLogger(Common.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        return rootClass;
+    }
     
     public static class LoopTerminationException extends RuntimeException{
         public LoopTerminationException() {
@@ -2126,7 +2142,8 @@ public class Common {
     }
 
     private static boolean isRunningFromJar() {
-        ProtectionDomain protectionDomain = LWeb.class.getProtectionDomain();
+//        System.out.println(lognm()+""+getTopClass());
+        ProtectionDomain protectionDomain = getTopClass().getProtectionDomain();
         String codeSourceLocation = protectionDomain.getCodeSource().getLocation().getPath();
         return codeSourceLocation.endsWith(".jar");
     }
@@ -2168,7 +2185,7 @@ public class Common {
     }
 
     private static byte[] readFileFromClassPathAsBytes(String fileToRead) throws IOException {
-        try (InputStream inputStream = LWeb.class.getClassLoader().getResourceAsStream(fileToRead);
+        try (InputStream inputStream = getTopClass().getClassLoader().getResourceAsStream(fileToRead);
              ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
             if (inputStream == null) {
                 throw new FileNotFoundException("File " + fileToRead + " not found in classpath.");
@@ -2184,7 +2201,7 @@ public class Common {
     }
 
     private static String getJarFilePath() throws IOException {
-        ProtectionDomain protectionDomain = LWeb.class.getProtectionDomain();
+        ProtectionDomain protectionDomain = getTopClass().getProtectionDomain();
         File jarFile = new File(protectionDomain.getCodeSource().getLocation().getPath());
 
         if (!jarFile.exists()) {

@@ -107,6 +107,17 @@ public class Parser {
                 "    \n" +
                 "    \n" +
                 "</body>";
+        String sc=" #title{height:12px !priority:-2;"
+                + "width: 23em !priority:-12;}"
+                + "div:not(:has(#tocke)){"
+                + " --var:izbn;"
+                + " adf:rgba(24, 24, 24 / 50%);"
+                + "}"
+                + "root{"
+                + " width:800px;"
+                + " height:600px;"
+                + " margin:256px;"
+                + "}";
         //s="ubn &ion %oh %uohj oh ouhjm &onm &onmkl uonmkk";
         //s="ubn &ion %oh %uohj oh ouhjm &onm &onmkl & uonmkk";
         //s=" uiun=oino ounm ljn= \"ibu\" onm = 'tz tzm' nim ==imk";
@@ -122,17 +133,6 @@ public class Parser {
 //        Tree<ElementTag> tree = buildTree(doc);
         //sopl(tree);
         //sopl(tree.root.findFirstNode((ElementTag e1)->{return "right".equals(e1.id)?0:-1;}, 0, 0));
-        String sc=" #title{height:12px !priority:-2;"
-                + "width: 23em !priority:-12;}"
-                + "div:not(:has(#tocke)){"
-                + " --var:izbn;"
-                + " adf:rgba(24, 24, 24 / 50%);"
-                + "}"
-                + "root{"
-                + " width:800px;"
-                + " height:600px;"
-                + " margin:256px;"
-                + "}";
         
         
         
@@ -160,6 +160,7 @@ public class Parser {
                 + " font-size: 20px;"
                 + " color:#ff0000;"
                 + "padding:20px;"
+                + "editable-content:true;"
                 + "}"
                 + "div{"/*
                 + " width:200px;"
@@ -185,6 +186,7 @@ public class Parser {
         sopl(tree);
         byte[] b = genBytes(tree);
         //sopl(ats(b));
+        LWebc.compileToFile(s,sc, new File("demo1.lweb"));
         LWeb l = new LWeb(LWebc.compile(s,sc));
         try{
             l.start();
@@ -1057,8 +1059,8 @@ public class Parser {
         Instr in = new Instr(PlainText.getBytes(trimWhitespace(el.tag)).at(2),vpi(2), vpi(5));
         el.asm.inits.add(in);
         
-        int h = el.parent.font_size;//castpr(int.class, l.get("o-bottom"));
-        in = new Instr(FontFace.getBytes(0, h, "src/LWeb/Common/arial.ttf").at(3),vpi(3), vpi(5));
+        int s = el.parent.font_size;//castpr(int.class, l.get("o-bottom"));
+        in = new Instr(FontFace.getBytes(0, s, "src/LWeb/Common/arial.ttf").at(3),vpi(3), vpi(5));
         el.asm.inits.add(in);
         
         int x = nvl(el.parent.p_left);//castpr(int.class, l.get("o-left"));
@@ -1076,7 +1078,30 @@ public class Parser {
         
         in = new Instr(DrawString.getBytes(-1, 2, 3, 4, 5),vpi(-1, 2, 3, 4, 5), vpi(2,6,10,14, 18));
         el.asm.runs.add(in);
-
+        /*
+        if(el.parent.editable_content){
+            int h = el.parent.d_height==null?el.parent.r_height:el.parent.d_height;//castpr(int.class, l.get("o-height"));
+            int w = el.parent.d_width==null?el.parent.r_width:el.parent.d_width;
+            int xp = nvl(el.parent.m_left);//castpr(int.class, l.get("o-left"));
+            int yp = nvl(el.parent.m_bottom);
+            
+            in = new Instr(Condition.EqualsCondition.getBytes(0x16001b, 1).at(0x0d0001),//mouse detection
+            el.asm.inits.add(in);
+            in = new Instr(Condition.BoxCondition.getBytes(0x160008, 0x16000b).at(0x0d0002),//text box hover
+            el.asm.inits.add(in);
+            in = new Instr(Condition.ChainAndCondition.getBytes(0x0d0001,0x0d0002).at(0x0d0003),//click on box detection
+            el.asm.inits.add(in);
+            in = new Instr(Condition.EqualsCondition.getBytes(0x16001c, 1).at(0x0d0004),//text selection condition
+            el.asm.inits.add(in);
+            in = new Instr(Condition.NegativeCondition.getBytes(0x0d0002).at(0x0d0005),//not in box detection
+            el.asm.inits.add(in);
+            in = new Instr(Condition.ChainAndCondition.getBytes(0x0d0001,0x0d0005).at(0x0d0006),//out of box click
+            el.asm.inits.add(in);
+            in = new Instr(Condition.EqualsCondition.getBytes(0x16001c, 0).at(0x0d0007),//text non selection condition
+            el.asm.inits.add(in);
+            in = new Instr(WholeNumber.getBytes(0).at(0x16001c),//is text box selected
+            el.asm.inits.add(in);
+        }*/
         
 //        in = new Instr(End.getBytes(3),vpi(3),vpi(1));
 //        el.asm.enders.add(in);

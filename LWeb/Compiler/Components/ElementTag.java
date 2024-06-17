@@ -53,6 +53,7 @@ public class ElementTag {
     
     public Color background_color;
     
+    public Boolean editable_content;
     
     
     public ElementTag(String tag, boolean textOnly){

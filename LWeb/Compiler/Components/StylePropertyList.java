@@ -171,6 +171,14 @@ public class StylePropertyList {
             System.out.println(lognm()+""+p);
             //l.put("background-color", p.data.get(Color.class));
         }));
+        al.add(new StyleProperty("editable-content", new PropList("false"), null, (Property p, ElementTag l)->{
+            String t = p.data.get(String.class);
+            if("true".equals(t)){
+                l.editable_content=true;
+            }
+            System.out.println(lognm()+""+p);
+            //l.put("background-color", p.data.get(Color.class));
+        }));
         
         return al;
     });
