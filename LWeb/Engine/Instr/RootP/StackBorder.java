@@ -15,6 +15,7 @@ import LWeb.Engine.Util.ColorMixers;
 import LWeb.Common.Range.Range;
 import LWeb.Engine.Constants;
 import LWeb.Engine.Instr.RootP.ResourceP.BlendMode;
+import LWeb.Engine.Instr.RootP.ResourceP.Border;
 import LWeb.Engine.Instr.RootP.ResourceP.Box;
 import LWeb.Engine.Instr.RootP.ResourceP.Position;
 import LWeb.Engine.Util.GLEU.FrameBuffer;
@@ -23,22 +24,24 @@ import LWeb.Engine.Util.GLEU.VertexArray;
 import java.awt.image.BufferedImage;
 import java.util.function.BiFunction;
 
-public class Stack {
-    public static byte[] getBytes(int Bsource, int Btarget, int Rbox, int RblendMode){
-        return flatten(ib(3), itb(Bsource), itb(Btarget), itb(Rbox), itb(RblendMode));
+public class StackBorder {
+    public static byte[] getBytes(int Bsource, int Btarget, int Rbox, int RblendMode, int Rborder){
+        return flatten(ib(28), itb(Bsource), itb(Btarget), itb(Rbox), itb(RblendMode), itb(Rborder));
     }
     public static Runnable getInst(ByteCounter i, Core c){
         int source = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
         int target = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
         int box = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
         int blm = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
+        int brd = byteToInt(new byte[]{i.next(),i.next(),i.next(),i.next()});
         return () -> {
             FrameBuffer sfb = c.getResource(source, FrameBuffer.class);
             FrameBuffer tfb = c.getResource(target, FrameBuffer.class);
             //FrameBuffer tuogv = c.getResource(0xf0000000, FrameBuffer.class);//0x140000
             Box locs = c.getResource(box, Box.class);
-            //Position p = tfb.getTex().p.resolve(Position.class);
+            Position p = tfb.getTex().p.resolve(Position.class);
             Position sp = sfb.getTex().p.resolve(Position.class);
+            Border b = c.getResource(brd, Border.class);
             //Position jno = tuogv.getTex().p.resolve(Position.class);
 //            if(locs.wi()==20||true){
 //            System.out.println(lognm()+" ----- ");
@@ -53,6 +56,7 @@ public class Stack {
 //            System.out.println(lognm()+""+1.0f*locs.zi()/(sp.xi())+" "+ 1.0f*locs.wi()/(sp.yi()));
 //            }
             locs.p=c.creenSize;
+            b.p=p;
 //            if(locs.wi()==20||true){
 //                System.out.println(lognm()+""+locs.xf()+" "+ locs.yf()+" "+ locs.zf()+" "+ locs.wf()+" "+locs.xi()+" "+ locs.yi()+" "+ locs.zi()+" "+ locs.wi());
 //                //System.out.println(lognm()+""+locs.xf()*(p.xi())+" "+ locs.yf()*(p.yi())+" "+ locs.zf()*(p.xi())+" "+ locs.wf()*(p.yi()));
@@ -60,9 +64,22 @@ public class Stack {
 //            }
             c.getResource(blm, BlendMode.class).setBlendMode();
             tfb.draw(sfb.getTex(),
-                    c.getConstant(Constants.ConstTypes.BOX_SHADER, Shader.class)
-                            .use().setUniformF("box", locs.xf(), locs.yf(), locs.zf(), locs.wf()) 
-                            .setUniformF("viewBox", 0, 0, 1.0f*locs.zi()/(sp.xi()), 1.0f*locs.wi()/(sp.yi())), 
+                    c.getConstant(Constants.ConstTypes.BORDER_SHADER, Shader.class)
+                            .use()
+                            .setUniformF("box", locs.xf(), locs.yf(), locs.zf(), locs.wf())
+                            .setUniformF("wt", b.wt())
+                            .setUniformF("wr", b.wr())
+                            .setUniformF("wb", b.wb())
+                            .setUniformF("wl", b.wl())
+                            .setUniformF("ct", b.ct().rf(), b.ct().gf(), b.ct().bf(), b.ct().af())
+                            .setUniformF("cr", b.cr().rf(), b.cr().gf(), b.cr().bf(), b.cr().af())
+                            .setUniformF("cb", b.cb().rf(), b.cb().gf(), b.cb().bf(), b.cb().af())
+                            .setUniformF("cl", b.cl().rf(), b.cl().gf(), b.cl().bf(), b.cl().af())
+                            .setUniformF("bss", b.ssx(), b.ssy())
+                            .setUniformF("bse", b.sex(), b.sey())
+                            .setUniformF("bes", b.esx(), b.esy())
+                            .setUniformF("bee", b.eex(), b.eey()),
+                            //.setUniformF("viewBox", 0, 0, 1.0f*locs.zi()/(sp.xi()), 1.0f*locs.wi()/(sp.yi())), 
                     c.getConstant(Constants.ConstTypes.BASIC_QUAD, VertexArray.class));
             
             

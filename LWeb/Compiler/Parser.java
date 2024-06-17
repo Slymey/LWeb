@@ -49,6 +49,7 @@ import LWeb.Engine.Instr.RootP.HeaderP.*;
 import LWeb.Engine.Instr.RootP.PaintP.FillP.Solid;
 import LWeb.Engine.Instr.RootP.ResourceP.*;
 import LWeb.Engine.Instr.RootP.*;
+import LWeb.Engine.Instr.RootP.PaintP.DrawString;
 import LWeb.Engine.LWeb;
 import java.io.File;
 import java.net.URI;
@@ -137,9 +138,11 @@ public class Parser {
         
         
         
-        s=        "<div>"/*
+        s=        "<div>"
+                + "     "
                 + "     <div id = 'a'>"
-                + "     </div>"*/   
+                + "         textest"
+                + "     </div>"
                 + "</div>";
         
         
@@ -148,18 +151,23 @@ public class Parser {
                 + " width:800px;"
                 + " height:600px;"
                 + " margin:256px;"
-                + "}"/*
+                + "}"
                 + "#a{"
                 + " width:100px;"
                 + " height:80px;"
+                + " margin:20px;"
+                + " background-color:#ffff00;"
+                + " font-size: 20px;"
+                + " color:#ff0000;"
+                + "padding:20px;"
+                + "}"
+                + "div{"/*
+                + " width:200px;"
+                + " height:160px;"*/
                 + " margin:100px;"
                 + " background-color:#ff00ff;"
-                + "}"*/
-                + "div{"
-                + " width:100px;"
-                + " height:80px;"
-                + " margin:100px;"
-                + " background-color:#ff00ff;"
+                + " font-size: 20px;"
+                + " color:#ff0000;"
                 + "}"
                 ;
 //        
@@ -176,7 +184,7 @@ public class Parser {
         AsmGroup tree = fullyParse(s, sc);
         sopl(tree);
         byte[] b = genBytes(tree);
-        sopl(ats(b));
+        //sopl(ats(b));
         LWeb l = new LWeb(LWebc.compile(s,sc));
         try{
             l.start();
@@ -184,13 +192,7 @@ public class Parser {
             ex.printStackTrace();
         }
         
-        String html = "", css = "";
         
-        
-        byte[] koda = LWebc.compile(html,css);
-        byte[] koda2 = LWebc.compile(new File("index.html"), new File("style.css"));
-        LWebc.compileToFile(html,css, new File("out.lweb"));
-        LWebc.compileToFile(new File("index.html"), new File("style.css"), new File("out.lweb"));
         
         
         
@@ -223,7 +225,6 @@ public class Parser {
 //        );
         
         
-        System.out.println(lognm()+""+koda+koda2);
             //conver group to be with Pi
             
 //        String s="<no<f> - . <!-- \"  gg\"\n" +
@@ -251,7 +252,10 @@ public class Parser {
     
     
     public static AsmGroup fullyParse(String html, String css){
-        return packAsm(genAsmTree(genLayout2(mergeTreeCss(fullyParseHtml(html), fullyParseCss(css)).root)));
+        
+        Tree<ElementTag> tree = mergeTreeCss(fullyParseHtml(html), fullyParseCss(css));
+        System.out.println(lognm()+""+tree);
+        return packAsm(genAsmTree(genLayout2(tree.root)));
     }
     public static ArrayList<Pair<ArrayList<Selector>, LinkedHashSet<Property>>> fullyParseCss(String s){
         return css(group(tokenize(s),DQ_STRING,SQ_STRING, /*RX_STRING,  handle later*/SL_COMMENT, ML_COMMENT));
@@ -710,6 +714,7 @@ public class Parser {
     }
 //</editor-fold>
     
+    //<editor-fold defaultstate="collapsed" desc="genlayout">
     public static Node<ElementTag> genLayout2(Node<ElementTag> nd){
         
         for(int i = 0; i<nd.children.size(); i++){
@@ -717,6 +722,9 @@ public class Parser {
             cl.data.parent = nd.data;
             if(i!=0){
                 cl.data.previous =  nd.children.get(i-1).data;
+                nd.children.get(i-1).data.next = cl.data;
+            }else{
+                nd.data.firstChild = nd.children.get(0).data;
             }
             genLayout2(cl);
         }
@@ -732,6 +740,7 @@ public class Parser {
     
         return nd;
     }
+    //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="old genLayout">
     public static Tree<ElementTag> genLayout(Tree<ElementTag> tree){
@@ -770,10 +779,16 @@ public class Parser {
             genAsmRoot(el);
             return nd;
         }
+        if(el.textOnly){
+            System.out.println(lognm()+"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee");
+            genAsmText(el);
+            return nd;
+        }
+        
         System.out.println(lognm()+""+el.tag+": "+l);
 
-        int h = el.d_height;//castpr(int.class, l.get("o-height"));
-        int w = el.d_width;//castpr(int.class, l.get("o-width"));
+        int h = el.d_height==null?el.r_height:el.d_height;//castpr(int.class, l.get("o-height"));
+        int w = el.d_width==null?el.r_width:el.d_width;//castpr(int.class, l.get("o-width"));
         Instr in = new Instr(Buffer.getBytes(1, w, h, 2),vpi(1,2), vpi(1,13));
         el.asm.inits.add(in);
 
@@ -811,7 +826,7 @@ public class Parser {
     
     public static AsmGroup packAsm(Node<ElementTag> root){
         AsmGroup ag = new AsmGroup();
-        int index=1;
+        int index=0;
         int cmax=0;
         for(Instr is:root.data.asm.inits){
             for(int id:is.ioints){
@@ -847,40 +862,85 @@ public class Parser {
         
         for(Node<ElementTag> nd:root.children){
             AsmGroup ce = packAsm(nd);
+            int max = 1;
             for(Instr is:ce.inits){
                 for(int id:is.ioints){
+                    System.out.println(lognm()+"a1: "+id);
+                    if(id<0)continue;
+                    max=Math.max(max, id);
+                }
+            }
+            for(Instr is:ce.runs){
+                for(int id:is.ioints){
+                    System.out.println(lognm()+"a2: "+id);
+//                    System.out.println(lognm()+"a2");
+                    if(id<0)continue;
+                    max=Math.max(max, id);
+                }
+            }
+            for(Instr is:ce.enders){
+                for(int id:is.ioints){
+                    System.out.println(lognm()+"a3: "+id);
+//                    System.out.println(lognm()+"a3");
+                    if(id<0)continue;
+                    max=Math.max(max, id);
+                }
+            }
+            
+            
+            for(Instr is:ce.inits){
+                for(int id:is.ioints){
+                    System.out.println(lognm()+"a4: "+id);
+                    if(id==-1){
+//                        System.out.println(lognm()+""+nd.data.parent);
+                        is.replace(id, ag.parBuff);
+                        continue;
+                    }
                     if(id<0)continue;
                     cmax=Math.max(cmax, id);
-                    is.replace(id, index+id);
+                    is.replace(id, index+max*2-id);
                 }
             }
             ag.inits.addAll(ce.inits);
             
             for(Instr is:ce.runs){
                 for(int id:is.ioints){
+                    System.out.println(lognm()+"a5: "+id);
+//                    System.out.println(lognm()+"a5");
+                    if(id==-1){
+//                        System.out.println(lognm()+""+nd.data.parent);
+                        is.replace(id, ag.parBuff);
+                        continue;
+                    }
                     if(id<0)continue;
                     cmax=Math.max(cmax, id);
-                    is.replace(id, index+id);
+                    is.replace(id, index+max*2-id);
                 }
             }
             ag.runs.addAll(ce.runs);
             
             for(Instr is:ce.enders){
                 for(int id:is.ioints){
+                    System.out.println(lognm()+"a6: "+id);
+//                    System.out.println(lognm()+"a6");
                     if(id==-1){
+//                        System.out.println(lognm()+""+nd.data);
+//                        System.out.println(lognm()+""+nd.data.parent+" "+ag.parBuff);
                         is.replace(id, ag.parBuff);
                         continue;
                     }
                     if(id<0)continue;
                     cmax=Math.max(cmax, id);
-                    is.replace(id, index+id);
+                    is.replace(id, index+max*2-id);
                 }
             }
             ag.enders.addAll(0, ce.enders);
-            System.out.println(lognm()+""+cmax);
-            index += cmax;
+//            System.out.println(lognm()+""+cmax);
+            index += max;
             cmax=0;
         }
+        System.out.println(lognm()+"par: "+root.data);
+        System.out.println(lognm()+"asm: "+ag);
         return ag;
     }
     
@@ -891,6 +951,7 @@ public class Parser {
         int instrNum = 0;
         
         for(Instr is:ag.inits){
+//            System.out.println(lognm()+"a7");
             int id = inList(-2, is.ioints);
             if(id!=-1){
                 is.replace(-2, instrNum);
@@ -899,6 +960,7 @@ public class Parser {
             al.addAll(po(is.bytes));
         }
         for(Instr is:ag.runs){
+//            System.out.println(lognm()+"a8");
             int id = inList(-2, is.ioints);
             if(id!=-1){
                 is.replace(-2, instrNum);
@@ -907,6 +969,7 @@ public class Parser {
             al.addAll(po(is.bytes));
         }
         for(Instr is:ag.enders){
+//            System.out.println(lognm()+"a9");
             int id = inList(-2, is.ioints);
             if(id!=-1){
                 is.replace(-2, instrNum);
@@ -945,7 +1008,7 @@ public class Parser {
         int w = el.d_width;//castpr(int.class, l.get("o-width"));
         Instr in = new Instr(Position.IntPos.getBytes(w, h).at(7),vpi(7), vpi(5));
         el.asm.inits.add(in);
-        in = new Instr(Callable.getBytes("E", 3).at(2),vpi(3, 2), vpi(18, 5));
+        in = new Instr(Callable.getBytes("$e", 3).at(2),vpi(3, 2), vpi(18, 5));
         el.asm.inits.add(in);
         int x = el.m_left;//castpr(int.class, l.get("o-left"));
         int y = el.m_bottom;//castpr(int.class, l.get("o-bottom"));
@@ -972,8 +1035,53 @@ public class Parser {
         in = new Instr(End.getBytes(3),vpi(3),vpi(1));
         el.asm.enders.add(in);
     }
+    
     //</editor-fold>
 
+    /*
+    PlainText.getBytes("Hello world!").at(2),
+    FontFace.getBytes(0, 20, "src/LWeb/Common/arial.ttf").at(3),
+    Position.IntPos.getBytes(500, 400).at(4),
+
+    DrawString.getBytes(-1, 2, 3, 4),
+    */
+    public static void genAsmText(ElementTag el){
+        HashMap<String, Object> l = el.layout;
+//        int h = el.d_height;//castpr(int.class, l.get("o-height"));
+//        int w = el.d_width;//castpr(int.class, l.get("o-width"));
+//        Instr in = new Instr(Position.IntPos.getBytes(w, h).at(7),vpi(7), vpi(5));
+//        el.asm.inits.add(in);
+//        in = new Instr(Callable.getBytes("$e", 3).at(2),vpi(3, 2), vpi(18, 5));
+//        el.asm.inits.add(in);
+        System.out.println(lognm()+"aaaaaa "+trimWhitespace(el.tag));
+        Instr in = new Instr(PlainText.getBytes(trimWhitespace(el.tag)).at(2),vpi(2), vpi(5));
+        el.asm.inits.add(in);
+        
+        int h = el.parent.font_size;//castpr(int.class, l.get("o-bottom"));
+        in = new Instr(FontFace.getBytes(0, h, "src/LWeb/Common/arial.ttf").at(3),vpi(3), vpi(5));
+        el.asm.inits.add(in);
+        
+        int x = nvl(el.parent.p_left);//castpr(int.class, l.get("o-left"));
+        int y = nvl(el.parent.p_bottom);//castpr(int.class, l.get("o-bottom"));
+        System.out.println(lognm()+" tpp: "+x+" "+y);
+        in = new Instr(Position.IntPos.getBytes(x, y).at(4),vpi(4), vpi(5));
+        el.asm.inits.add(in);
+        
+        if(el.parent.text_color!=null){
+            in = new Instr(FlatColor.getBytes(el.parent.text_color).at(5),vpi(5), vpi(5));
+        }else{
+            in = new Instr(FlatColor.getBytes(0x000000ff).at(5),vpi(5), vpi(5));
+        }
+        el.asm.inits.add(in);
+        
+        in = new Instr(DrawString.getBytes(-1, 2, 3, 4, 5),vpi(-1, 2, 3, 4, 5), vpi(2,6,10,14, 18));
+        el.asm.runs.add(in);
+
+        
+//        in = new Instr(End.getBytes(3),vpi(3),vpi(1));
+//        el.asm.enders.add(in);
+    }
+    
 }
 
 //<editor-fold defaultstate="collapsed" desc="pi">

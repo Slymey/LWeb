@@ -31,20 +31,25 @@ public class ElementTag {
     //HashMap<String,StyleProperty> styles = new HashMap<>();
     public ElementTag parent;
     public ElementTag previous;
-    public int width;
-    public int height;
-    public int d_width;
-    public int d_height;
-    public int r_width;
-    public int r_height;
+    public ElementTag next;
+    public ElementTag firstChild;
+    public Integer width;
+    public Integer height;
+    public Integer d_width;
+    public Integer d_height;
+    public Integer r_width;
+    public Integer r_height;
     
-    public int m_left;
-    public int m_bottom;
-    public int m_top;
-    public int m_right;
+    public Integer m_left;
+    public Integer m_bottom;
+    public Integer m_top;
+    public Integer m_right;
     
-    public int p_left;
-    public int p_bottom;
+    public Integer p_left;
+    public Integer p_bottom;
+    
+    public Integer font_size;
+    public Color text_color;
     
     public Color background_color;
     
@@ -151,7 +156,7 @@ public class ElementTag {
     @Override
     public String toString(){
         //return (textOnly?"\\":tag)+ "|"+textOnly+"|"+id+"|"+closingType+((atributes.isEmpty())?"":" "+atributes)+" "+((classes.isEmpty())?"":" "+classes)+" "+((style.isEmpty())?"":" "+style)+" "+((layout.isEmpty())?"":" "+layout);
-        return (textOnly?"\\":tag)+ "|"+textOnly+"|"+id+"|"+closingType+" "+((layout.isEmpty())?"":" "+layout)+" "+asm;
+        return (textOnly?"\\":tag)+ "|"+textOnly+"|"+id+"|"+closingType+" "+((style.isEmpty())?"":" "+style)+" "+((layout.isEmpty())?"":" "+layout)+" "+asm;
     }
     
     

@@ -3,6 +3,7 @@ package LWeb.Compiler.Components;
 import LWeb.Common.Common;
 import static LWeb.Common.Common.ats;
 import static LWeb.Common.Common.itb;
+import static LWeb.Common.Common.lognm;
 import java.util.ArrayList;
 
 
@@ -28,7 +29,8 @@ public class AsmGroup{
         
         public void replace(int ind, int newi){
             int i = Common.inList(ind, ioints);
-            for(int d = 0; d<ioints.length&&i!=-1; d+=i,i = Common.inList(ind, ioints, d,ioints.length)){
+            for(int d = 0; d<ioints.length&&i!=-1; d+=i+1,i = Common.inList(ind, ioints, d,ioints.length)){
+                System.out.println(lognm()+"b1: "+i+" "+ind+" "+newi);
                 if(i!=-1){
                     int p = iopos[i];
                     byte n[] = itb(newi);

@@ -7,6 +7,7 @@ import LWeb.Common.DynArray.DynArray;
 import LWeb.Common.UbFunction;
 import LWeb.Engine.Constants.ConstTypes;
 import LWeb.Engine.Instr.Root;
+import LWeb.Engine.Instr.RootP.ResourceP.Position;
 import LWeb.Engine.Instr.RootP.ResourceP.ResourcePointer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ public class Core {
     public int progCounter=0;
     public Thread progThread;
     private long newError=-1;
+    public Position creenSize;
     
     public Runnable[] byteToDraw(ByteCounter i){
         progThread = Thread.currentThread();

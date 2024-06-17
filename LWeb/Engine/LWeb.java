@@ -77,7 +77,7 @@ public class LWeb {
     }
     
     private void start1(){
-        progCore.putCallable("E", (Object... o)->{
+        progCore.putCallable("$e", (Object... o)->{
             glfwPollEvents();
             boolean b = glfwWindowShouldClose((long)o[0]);
             processInput((long)o[0], progCore);

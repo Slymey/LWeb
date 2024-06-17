@@ -42,6 +42,7 @@ public class Root {
                 ()->ResourceInst.CondResource.getInst(i, c),      //25
                 ()->ResourceInst.NegCondResource.getInst(i, c),      //26
                 ()->CopyResource.getInst(i, c),      //27
+                ()->StackBorder.getInst(i, c),      //28
             }, inst);
         
         

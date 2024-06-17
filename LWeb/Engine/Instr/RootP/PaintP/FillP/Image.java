@@ -31,7 +31,8 @@ public class Image {
             Texture img = c.getResource(image, ImageFile.class).getImage();
             Box bd = c.getResource(box, Box.class);
             Position p = tfb.getTex().p.resolve(Position.class);
-            bd.p=p;
+            //bd.p=p;
+            bd.p=c.creenSize;
             //c.getResource(blm, BlendMode.class).setBlendMode();
             tfb.draw(img,
                     c.getConstant(Constants.ConstTypes.BOX_SHADER, Shader.class)

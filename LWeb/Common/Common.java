@@ -302,7 +302,30 @@ public class Common {
         return ba;
     }
     
-    
+    public static char nvl(Character t){
+        return t==null?0:t;
+    }
+    public static boolean nvl(Boolean t){
+        return t==null?false:t;
+    }
+    public static int nvl(Integer t){
+        return t==null?0:t;
+    }
+    public static long nvl(Long t){
+        return t==null?0:t;
+    }
+    public static short nvl(Short t){
+        return t==null?0:t;
+    }
+    public static byte nvl(Byte t){
+        return t==null?0:t;
+    }
+    public static float nvl(Float t){
+        return t==null?0:t;
+    }
+    public static double nvl(Double t){
+        return t==null?0:t;
+    }
     
     public static BufferedImage mipmap(BufferedImage inp, int lvl){
         if(lvl<0)return null;
@@ -455,6 +478,17 @@ public class Common {
         }
         return totalSize;
     }
+    
+    public static String trimWhitespace(String s){
+        //boolean nw=false;
+        int i = 0;
+        for(;i<s.length();i++){
+            char c = s.charAt(i);
+            if(!(c==' '||c=='\t'||c=='\n'||c=='\r'))break;
+        }
+        return s.substring(i);
+    }
+    
     
     public static Class[] getClassTree(Class c){
         ArrayList<Class> al = new ArrayList<>();
@@ -2187,12 +2221,7 @@ public class Common {
         Object o = null;
         Object d = 1341.0;
         //double i = cast(double.class, d);
-        System.out.println(lognm()+""+getJarFilePath());
-        System.out.println(lognm()+""+CACHE_DIR.resolve("gggg").toFile());
-        System.out.println(lognm()+""+CACHE_DIR.resolve("gggg").toFile().exists());
-        System.out.println(lognm()+""+getCachedFilePath("LWeb/Engine/Shaders/basic.frag"));
-        System.out.println(lognm()+""+new String(readFileAsBytes("LWeb/Engine/Shaders/basic.frag")));
-        System.out.println(lognm()+""+(System.getProperty("sun.arch.data.model").equals("32")));
+        System.out.println(lognm()+""+(Integer)o);
         
         
     }

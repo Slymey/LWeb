@@ -249,6 +249,7 @@ out vec4 FragColor;
 in vec2 TexCoords;
 
 uniform sampler2D tex;
+uniform vec4 box;
 uniform vec2 bss = vec2(0);
 uniform vec2 bse = vec2(0);
 uniform vec2 bes = vec2(0);
@@ -266,7 +267,7 @@ uniform vec4 cl = vec4(0.0,0.0,0.0,1.0);
 void main(){
     vec4 col = vec4(0);
     if(inbox(TexCoords, box)){
-        col = texture(tex, (texCoords - box.xy)/box.zw);
+        col = texture(tex, (TexCoords - box.xy)/box.zw);
     }
     col = border(TexCoords, 
                  box,

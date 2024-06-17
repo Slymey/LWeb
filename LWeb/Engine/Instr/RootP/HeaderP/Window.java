@@ -64,6 +64,7 @@ public class Window {
             glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);  
             //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);//mac-osx
             Position pos = c.getResource(p, Position.class);
+            c.creenSize=pos;
             // Create a GLFW window and set context
             System.out.println(lognm()+""+pos.xi()+" "+ pos.yi());
             window = glfwCreateWindow(pos.xi(), pos.yi(), name, NULL, NULL);
@@ -84,7 +85,9 @@ public class Window {
                 glfwSetWindowPos(window,x, y);
             }
             glfwSetWindowSizeCallback(window, (long wd, int width, int height)->{
-                c.putResource(p, new IntPos(width,height));
+                Position po = new IntPos(width,height);
+                c.putResource(p, po);
+                c.creenSize=po;
                 glViewport(0, 0, width, height);
             });
 

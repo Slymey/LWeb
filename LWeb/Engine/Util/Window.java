@@ -1,7 +1,10 @@
 package LWeb.Engine.Util;
 
+import LWeb.Common.Common;
+import static LWeb.Common.Common.ats;
 import static LWeb.Common.Common.getCachedFilePath;
 import static LWeb.Common.Common.lognm;
+import static LWeb.Common.Common.rangeA_Z;
 import static LWeb.Common.Pair.Pair;
 import LWeb.Common.Pair;
 import LWeb.Engine.Core;
@@ -72,6 +75,8 @@ public class Window implements Runnable{
             if(!first){
                 throw e;
             }
+            System.out.println(lognm()+"c.progCounter: "+c.progCounter);
+            e.printStackTrace();
             try{
                 Path sogl = null;
                 if(System.getProperty("sun.arch.data.model").equals("32")){
@@ -84,6 +89,7 @@ public class Window implements Runnable{
                 System.out.println(lognm()+"Switching to software renderer");
                 loop(false);
             }catch(IOException ex){
+                System.out.println(lognm()+"c.progCounter: "+c.progCounter);
                 Logger.getLogger(Window.class.getName()).log(Level.SEVERE, null, ex);
                 return;
             }
@@ -115,29 +121,48 @@ public class Window implements Runnable{
         return ready;
     }
     
+    static boolean keyFired=false;
+    
     public static void processInput(long window, Core c){
         if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
             glfwSetWindowShouldClose(window, true);
-        if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
-            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-        if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
-            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+//        if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
+//            glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+//        if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
+//            glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         
         glfwSetScrollCallback(window, (long wd, double xoffset, double yoffset)->{
 //            System.out.println(lognm()+""+xoffset+" "+yoffset);
         });
+        glfwSetCharCallback(window, (windw, ch) -> {
+            String s = c.getNamedApi("$s", String.class);
+            if(s!=null){
+                s += (char)ch;
+                c.putNamedApi("$s", s);
+            }
+            //System.out.println(lognm()+""+ch);
+        });
         glfwSetKeyCallback(window, (windw, key, scancode, action, mods) -> {
-//            System.out.println(lognm()+""+key+" "+scancode+" "+action+" "+mods);
+            String s = c.getNamedApi("$s", String.class);
+            if(s!=null&&(action==1||action==2)){//backsoace 259, del 261, key 
+                if(key==259&&s.length()>0){
+                    s=s.substring(0, s.length()-1);
+                }else if(key==261&&s.length()>0){
+                    s=s.substring(1);
+                }
+                c.putNamedApi("$s", s);
+            }
+            //System.out.println(lognm()+""+key+" "+scancode+" "+action+" "+mods+" "+(char)(key+((mods==1||!rangeA_Z.equals(key))?0:32)));
         });
         glfwSetMouseButtonCallback(window, (windw, button, action, mods) -> {
-            c.putNamedApi("b", action);
+            c.putNamedApi("$b", action);
 //            System.out.println(lognm()+""+button+" "+action+" "+mods);
         });
         glfwSetCursorPosCallback(window, (windw, xpos, ypos) -> {
             int w[] = new int[1];
             int h[] = new int[1];
             glfwGetWindowSize(windw, w, h);
-            c.putNamedApi("c", new IntPos((int)xpos, h[0]-(int)ypos));
+            c.putNamedApi("$c", new IntPos((int)xpos, h[0]-(int)ypos));
 //            System.out.println(lognm()+""+xpos+" "+ypos);
         });
         

@@ -78,15 +78,16 @@ public class main2 {
     
     static byte f[]= flatten(ltb(LWeb.MAGIC_BYTES),
             Position.IntPos.getBytes(800, 556).at(0x140000),//window dimentions
-            NamedApi.getBytes(0xff8000, "w"),
-            NamedApi.getBytes(0x16000b, "c"),//cursor position callback
-            Callable.getBytes("E", 0xff8000).at(0xe00000),//window event processor
+            NamedApi.getBytes(0xff8000, "$w"),
+            NamedApi.getBytes(0x16000b, "$c"),//cursor position callback
+            Callable.getBytes("$e", 0xff8000).at(0xe00000),//window event processor
             Window.getBytes(0xff8000, 256, 256, 0x140000, true, "A"),//window itself
             Condition.CallbackCondition.getBytes(0xe00000).at(0xd00000),//loop condition
             Screen.getBytes(0xff8001),//screen
             WholeNumber.getBytes(0).at(0x16001b),
             PlainText.getBytes("Hello world!").at(0x000009),
-            FontFace.getBytes(0, 20, "src/LWeb/Common/arial.ttf").at(0x00000a),
+            NamedApi.getBytes(0x000009, "$s"),
+            FontFace.getBytes(0, 40, "src/LWeb/Common/arial.ttf").at(0x00000a),
             Box.IntBox.getBytes(50, 50, 75, 50).at(0x16000a),
             Position.IntPos.getBytes(10, 20).at(0x16000b),
             Position.IntPos.getBytes(150,  200).at(0x230000),
@@ -94,18 +95,26 @@ public class main2 {
             Position.IntPos.getBytes(250,  180).at(0x230002),
             Condition.BoxCondition.getBytes(0x16000a, 0x16000b).at(0x0d0000),
             Buffer.getBytes(0xf0000003, 331, 50, 0x0c000003),//                                      V - add relative to declaration loop positions
-            Loop.ConditionalLoop.getBytes(false, true, true, 17, 0, 0xd00000).at(0x0a0001),//draw loop dcl
+            Loop.ConditionalLoop.getBytes(false, true, true, 18, 0, 0xd00000).at(0x0a0001),//draw loop dcl
             BufferPtr.getBytes(0xf0000000, 0x140000),//draw buffer
             ClearBuffer.getBytes(0xf0000000),
             ClearBuffer.getBytes(0xf0000003),
-            Position.IntPos.getBytes(500, 400).at(0x140001),
-            DrawString.getBytes(0xf0000000, 0x000009, 0x00000a, 0x140001),
-            FlatColor.getBytes(0xffffff00).at(0x000003),
-            FlatColor.getBytes(0x6400ff00).at(0x000004),
+            FlatColor.getBytes(0x222222ff).at(0x000006),
+            FlatColor.getBytes(0x000000ff).at(0x000007),
+            Border.getBytes(1, 1, 1, 1, 0x000006, 0x000006, 0x000006, 0x000006, 0, 0, 0, 0, 0, 0, 0, 0).at(0x330000),
+            Buffer.getBytes(0xf0000005, 300, 40, 0x0c000005),
+            BlendMode.noBlending().at(0x2b0001),
+            Box.IntBox.getBytes(300, 300, 300, 40).at(0x160008),
+            Position.IntPos.getBytes(0, -10).at(0x140001),
+            DrawString.getBytes(0xf0000005, 0x000009, 0x00000a, 0x140001, 0x000007),
+            StackBorder.getBytes(0xf0000005, 0xf0000000, 0x160008, 0x2b0001, 0x330000),
+            
+            
+            FlatColor.getBytes(0xffff00ff).at(0x000003),
+            FlatColor.getBytes(0x6400ffff).at(0x000004),
             FlatColor.getBytes(0x640000ff).at(0x000005),
             FlatColor.getBytes(0x00ffffff).atCond(0x000005, 0x0d0000),
             BlendMode.uniformBlending(SRC_ALPHA, ONE_MINUS_SRC_ALPHA).at(0x2b0000),
-            BlendMode.noBlending().at(0x2b0001),
             Box.IntBox.getBytes(500, 400, 331, 50).at(0x160000),
             //Stack.getBytes(0xf0000003, 0xf0000000, 0x160000, 0x2b0001),
             Buffer.getBytes(0xf0000001, 75, 50, 0x0c000001),
@@ -113,22 +122,28 @@ public class main2 {
             Box.IntBox.getBytes(25, 25, 75, 50).at(0x160000),
             Stack.getBytes(0xf0000001, 0xf0000000, 0x160000, 0x2b0000),
             Solid.getBytes(0xf0000001, 0x000004),
-            Box.IntBox.getBytes(75, 25, 75, 50).at(0x160000),
-            Stack.getBytes(0xf0000001, 0xf0000000, 0x160000, 0x2b0000),
+            Box.IntBox.getBytes(75, 25, 75, 50).at(0x160100),
+            Stack.getBytes(0xf0000001, 0xf0000000, 0x160100, 0x2b0000),
             Solid.getBytes(0xf0000001, 0x000005),
-            Box.IntBox.getBytes(50, 50, 75, 50).at(0x160000),
-            Stack.getBytes(0xf0000001, 0xf0000000, 0x160000, 0x2b0000),
+            Box.IntBox.getBytes(50, 50, 75, 50).at(0x160200),
+            
+            Buffer.getBytes(0xf0000011, 25, 20, 0x0c000002),            
+            Solid.getBytes(0xf0000011, 0x000003),
+            Box.IntBox.getBytes(1, 1, 25, 20).at(0x160300),
+            Stack.getBytes(0xf0000011, 0xf0000001, 0x160300, 0x2b0000),
+            
+            Stack.getBytes(0xf0000001, 0xf0000000, 0x160200, 0x2b0000),
             URLRelative.getBytes("test_1.png").at(0x000006),
             ImageFile.getBytes(0x000006).at(0x000007),
             URLRelative.getBytes("image.png").at(0x000008),
-            Box.IntBox.getBytes(100, 80, 100, 100).at(0x160001),
+            Box.IntBox.getBytes(100, 80, 50, 50).at(0x160001),
             Image.getBytes(0xf0000000, 0x000007, 0x160001),
             WholeNumber.getBytes(1).at(0x230003),
             FloatNumber.getBytes(4f).at(0x230004),
             WholeNumber.getBytes(50).at(0x230005),
             Line.getBytes(0xf0000000, 0x230000, 0x230001, 0x230005, 0x000015),
             
-            NamedApi.getBytes(0x16001b, "b"),
+            NamedApi.getBytes(0x16001b, "$b"),
             Condition.EqualsCondition.getBytes(0x16001b, 1).at(0x0d0001),
             CondIntruction.conditional(CopyResource.getBytes(0x16000b, 0x230002), 0x0d0001),
             
@@ -165,31 +180,10 @@ public class main2 {
         LWeb lw = new LWeb(f);
         lw.start();
         
-        LWeb lw2 = new LWeb(new File("dat.lweb"));
-        lw2.start();
         
         
         
-        lw2.start();
-        lw.addCallable("nekaj", (Object... o)->{
-            System.out.println("Zivjo!");
-            //funkcija mora nekaj vrniti
-            //za pravilno delovanje
-            return null;
-        });
         
-        lw.addCallable("vracam", (Object... o)->{
-            return "Zivjo!";
-        });
-        
-        String podatek = lw.getNamedAPI("podatek", String.class);
-        
-        lw.putNamedApi("drugi", 25.4);
-        
-        lw.putCheckedNamedApi("tretji", "stvari");
-        
-        
-        System.out.println(lognm()+""+podatek);
         //System.out.println(Core.resources.toString());
         
         

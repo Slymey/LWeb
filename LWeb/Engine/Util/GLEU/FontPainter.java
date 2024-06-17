@@ -22,11 +22,11 @@ public class FontPainter {
     public static Pair<Integer,Integer> viewBox=Pair(0, 0);
     public static Vector4f defaultColor=new Vector4f(0,0,0,1);
     public static Vector4f voidColor=new Vector4f(0,0,0,0);
-    private static Shader fontShader = new Shader()
+    public static Shader fontShader = new Shader()
             .addVertShader("font.vert")
             .addFragShader("font.frag")
             .initialize();
-    private static VertexArray fontBox = VertexArray.basicQuad();
+    public static VertexArray fontBox = VertexArray.basicQuad();
     private static LinkedHashMap<Pair<String, Font>, RenderedString> cache = new LinkedHashMap<>();
     private static FontRenderContext deafultFrc = new FontRenderContext(new AffineTransform(1,0,0,1,0,0), true, true);
     
@@ -87,7 +87,7 @@ public class FontPainter {
     public FontPainter draw(int x, int y){
         return draw(curent, x, y, c);
     }
-    public FontPainter draw(String text,  int x, int y, Vector4f c){
+    public FontPainter draw(String text,  int x, int y, Vector4f c){//
         return prepareText(text).draw(curent, x, y, c);
     }
     public FontPainter draw(String text, int x, int y){
@@ -96,7 +96,7 @@ public class FontPainter {
     public FontPainter draw(RenderedString rstr, int x, int y){
         return draw(rstr, x, y, c);
     }
-    public FontPainter draw(RenderedString rstr, int x, int y, Vector4f c){
+    public FontPainter draw(RenderedString rstr, int x, int y, Vector4f c){//
         return draw(rstr, (x*1.0f/viewBox.first), (y*1.0f/viewBox.second), c);
     }
     public FontPainter draw(float x, float y, Vector4f c){
@@ -114,7 +114,7 @@ public class FontPainter {
     public FontPainter draw(RenderedString rstr, float x, float y){
         return draw(rstr, x, y, c);
     }
-    public FontPainter draw(RenderedString rstr, float x, float y,  Vector4f c){
+    public FontPainter draw(RenderedString rstr, float x, float y,  Vector4f c){//
         if(rstr==null)return this;
 //        System.out.println(lognm()+" W: "+rstr.box.getWidth()+" H: "+rstr.box.getHeight());
         return draw(rstr, x, y, (float)rstr.box.getWidth()/viewBox.first, (float)rstr.box.getHeight()/viewBox.second, c);
@@ -122,7 +122,7 @@ public class FontPainter {
     public FontPainter draw(String text, float x, float y, float w, float h, Vector4f c){
         return prepareText(text).draw(curent, x, y, w, h, c);
     }
-    public FontPainter draw(RenderedString rstr, float x, float y, float w, float h, Vector4f c){
+    public FontPainter draw(RenderedString rstr, float x, float y, float w, float h, Vector4f c){//
         if(rstr==null)return this;
 //        System.out.println(lognm()+"ft: "+x+" "+y+" "+w+" "+h);
         fontShader.use();
@@ -163,13 +163,14 @@ public class FontPainter {
     
     private static Pair<BufferedImage, Rectangle2D> displayText( String text, Font font, FontRenderContext frc){
 //        System.out.println(lognm()+""+text);
+        if(text.length()==0)text=" ";
         Rectangle2D bd = font.getStringBounds(text, frc);
         BufferedImage image=new BufferedImage((int)bd.getWidth()+2, (int)bd.getHeight()+2, TYPE_INT_ARGB);
         Graphics2D g = image.createGraphics();
         g.setFont(font);
         g.drawString(text, 1, (int)bd.getMaxY()+(int)(bd.getHeight()+2)/2);
         g.dispose();
-        
+        //System.out.println(lognm()+""+text);
         TextLayout layout = new TextLayout(text, font, frc);
         Rectangle2D bounds = layout.getBounds();
 //        System.out.println(lognm()+" bds: "+bounds);

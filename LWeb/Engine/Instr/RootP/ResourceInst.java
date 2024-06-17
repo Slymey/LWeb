@@ -69,7 +69,17 @@ public class ResourceInst {
             BlendMode::getRsc,       //20
             FlatFloatColor::getRsc,       //21
             FlatFloatColor::getRsc,       //22
-            Curve::getRsc       //23
+            Curve::getRsc,       //23
+            FlatFloatColor::getRsc,       //24*
+            FlatFloatColor::getRsc,       //25*
+            FlatFloatColor::getRsc,       //26*
+            FlatFloatColor::getRsc,       //27*
+            FlatFloatColor::getRsc,       //28*
+            FlatFloatColor::getRsc,       //29*
+            FlatFloatColor::getRsc,       //30*
+            FlatFloatColor::getRsc,       //31*
+            FlatFloatColor::getRsc,       //32*
+            Border::getRsc       //33
         );
     public static class Resource{
         public static Runnable getInst(ByteCounter i, Core c){
